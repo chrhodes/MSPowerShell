@@ -1,0 +1,123 @@
+{
+  "Failures": [],
+  "Tasks": [
+    {
+      "Attachments": [],
+      "Attributes": [
+        {
+          "Name": "ecs.cpu-architecture",
+          "TargetId": null,
+          "TargetType": null,
+          "Value": "x86_64"
+        }
+      ],
+      "AvailabilityZone": "us-west-2c",
+      "CapacityProviderName": "noae-sbx01",
+      "ClusterArn": "arn:aws:ecs:us-west-2:049751716774:cluster/noae-sbx01",
+      "Connectivity": {
+        "Value": "CONNECTED"
+      },
+      "ConnectivityAt": "2022-05-24T09:23:58.309Z",
+      "ContainerInstanceArn": "arn:aws:ecs:us-west-2:049751716774:container-instance/noae-sbx01/84de27e814cd4ae39af06ed15965bf00",
+      "Containers": [
+        {
+          "ContainerArn": "arn:aws:ecs:us-west-2:049751716774:container/noae-sbx01/00b559e2e6e943b8a14726084a172043/0c1b2b75-d7be-4f35-9f91-816d5f6d0ff5",
+          "Cpu": "1024",
+          "ExitCode": 0,
+          "GpuIds": [],
+          "HealthStatus": {
+            "Value": "UNKNOWN"
+          },
+          "Image": "049751716774.dkr.ecr.us-west-2.amazonaws.com/zuora/transformer:2.94.0-0daa0070c1",
+          "ImageDigest": "sha256:bfbba9a7addb6374cc4ee2381496ab35794de5bbf53eba10f44155caead1b970",
+          "LastStatus": "RUNNING",
+          "ManagedAgents": [],
+          "Memory": "6144",
+          "MemoryReservation": null,
+          "Name": "transformer",
+          "NetworkBindings": [
+            {
+              "BindIP": "0.0.0.0",
+              "ContainerPort": 7070,
+              "HostPort": 7070,
+              "Protocol": {
+                "Value": "tcp"
+              }
+            },
+            {
+              "BindIP": "0.0.0.0",
+              "ContainerPort": 7071,
+              "HostPort": 7071,
+              "Protocol": {
+                "Value": "tcp"
+              }
+            }
+          ],
+          "NetworkInterfaces": [],
+          "Reason": null,
+          "RuntimeId": "bbf5fbb4edc7870023fd08dca6746433ace3e49600c3bec8cd4081c6457359a3",
+          "TaskArn": "arn:aws:ecs:us-west-2:049751716774:task/noae-sbx01/00b559e2e6e943b8a14726084a172043"
+        }
+      ],
+      "Cpu": "1024",
+      "CreatedAt": "2022-05-24T09:23:58.309Z",
+      "DesiredStatus": "RUNNING",
+      "EnableExecuteCommand": false,
+      "EphemeralStorage": null,
+      "ExecutionStoppedAt": "0001-01-01T00:00:00",
+      "Group": "service:transformer",
+      "HealthStatus": {
+        "Value": "UNKNOWN"
+      },
+      "InferenceAccelerators": [],
+      "LastStatus": "RUNNING",
+      "LaunchType": {
+        "Value": "EC2"
+      },
+      "Memory": "6144",
+      "Overrides": {
+        "ContainerOverrides": [
+          {
+            "Command": [],
+            "Cpu": 0,
+            "Environment": [],
+            "EnvironmentFiles": [],
+            "Memory": 0,
+            "MemoryReservation": 0,
+            "Name": "transformer",
+            "ResourceRequirements": []
+          }
+        ],
+        "Cpu": null,
+        "EphemeralStorage": null,
+        "ExecutionRoleArn": null,
+        "InferenceAcceleratorOverrides": [],
+        "Memory": null,
+        "TaskRoleArn": null
+      },
+      "PlatformFamily": null,
+      "PlatformVersion": null,
+      "PullStartedAt": "2022-05-24T09:24:21.502Z",
+      "PullStoppedAt": "2022-05-24T09:24:21.502Z",
+      "StartedAt": "2022-05-24T09:24:22.502Z",
+      "StartedBy": "ecs-svc/9862749233873157768",
+      "StopCode": null,
+      "StoppedAt": "0001-01-01T00:00:00",
+      "StoppedReason": null,
+      "StoppingAt": "0001-01-01T00:00:00",
+      "Tags": [],
+      "TaskArn": "arn:aws:ecs:us-west-2:049751716774:task/noae-sbx01/00b559e2e6e943b8a14726084a172043",
+      "TaskDefinitionArn": "arn:aws:ecs:us-west-2:049751716774:task-definition/noae-sbx01-transformer:72",
+      "Version": 2
+    }
+  ],
+  "ResponseMetadata": {
+    "RequestId": "f19c993a-5356-4193-8c5d-3d886329f2ed",
+    "Metadata": {},
+    "ChecksumAlgorithm": 0,
+    "ChecksumValidationStatus": 0
+  },
+  "ContentLength": 1893,
+  "HttpStatusCode": 200,
+  "LoggedAt": "2022-07-01T06:41:06.4303631-07:00"
+}

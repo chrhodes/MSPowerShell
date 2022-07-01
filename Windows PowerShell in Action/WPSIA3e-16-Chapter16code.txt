@@ -1,0 +1,393 @@
+## Code for chapter 16 PowerShell in Action third edition
+##  This file contains the code from the chapter body. 
+##  Any individual listings are supplied in separate files
+##  Code has been unwrapped so may look slightly different 
+##  to that presented in the book
+
+
+## 16.1 PowerShell providers
+## 16.1.2 Working with PSDrives
+New-PSDrive -Name Test -PSProvider FileSystem -Description 'Test area' -Root C:\test\
+
+Add-Content -Value 'Hello There' -Path test:\junk.txt
+Get-Content -Path Test:\junk.txt
+
+
+## 16.1.3 Working with paths
+## Hidden files
+Get-ChildItem -Path C:\ -Filter *.sys
+Get-ChildItem -Path C:\ -Filter *.sys -Force
+
+
+## Paths and wildcards
+Get-ChildItem -Path test:\*.txt | Format-Table -AutoSize
+
+Get-ChildItem -Path test:\*````[*.txt
+Get-ChildItem -Path "test:\My New File ````[*````].txt"
+
+
+## The -LiteralPath parameter
+Set-Location -Path C:\test\
+Copy-Item 'My New File [1].txt' C:\test1\junk.txt
+Get-ChildItem -Path C:\test1\junk.txt
+
+Copy-Item -LiteralPath 'My New File [1].txt' C:\test1\junk.txt
+Get-ChildItem -Path C:\test1\junk.txt
+
+Get-ChildItem 'My New File ``[*'
+Get-ChildItem 'My New File ``[*' | Remove-Item
+
+
+## 16.1.4 The Registry provider
+cd hklm:\software\microsoft\powershell
+Get-ChildItem
+
+Get-ChildItem ./1
+Get-Item ./1 | select Property
+
+Get-ItemProperty -Path ./1 -Name PID
+
+(Get-ItemProperty -Path ./1 -Name PID).PID
+Get-ItemProperty -Path ./1 -Name PID | select -ExpandProperty PID
+
+Get-ChildItem -Path Registry::
+
+Get-ChildItem -Path registry::HKEY_CURRENT_CONFIG\System\CurrentControlSet\SERVICES\TSDDD\
+
+
+## 16.2 Files, text, and XML
+## 16.2.1 File processing
+## Reading text files
+
+Get-Content -Path myfile.txt
+
+Set-Location -Path C:\test\
+1..3 | foreach { "This is file $_" > "file$_.txt"}
+
+Get-Content -Path file1.txt,file2.txt,file3.txt
+
+$v1 = Get-Content .\multifile.txt
+$v1.Count
+
+$v2 = Get-Content .\multifile.txt -Raw
+$v2.count
+
+
+## Reading binary files
+see get-hexdump.ps1 - listing 16.1
+
+
+## Writing files
+1..3 | foreach{ "This is file $_" |
+Set-Content -Encoding ascii file$_.txt }
+
+
+## 16.2.2 Unstructured text
+## Using System.String to work with text
+'Hello there world'.Split().length
+
+"Hello`there world".Split()
+
+'First,Second;Third'.Split(',;')
+
+'Hello there   world'.Split().length
+
+[StringSplitOptions]'abc'
+
+'Hello there   world'.split(' ',[StringSplitOptions]::RemoveEmptyEntries)
+
+
+## Analyzing word use in a document
+$s = Get-Content -Path $PSHOME\en-US\about_Assignment_Operators.help.txt -Raw
+$s.length
+
+$words = $s.Split(" `t", [stringsplitoptions]::RemoveEmptyEntries)
+$words.Length
+
+$uniq = $words | sort -Unique
+$uniq.count
+
+$grouped = $words | group | sort count
+$grouped[-1]
+$grouped[-1..-10]
+
+
+## Splitting strings with regular expressions
+$s = "Hello-1-there-22-World!"
+[regex]::split($s,'-[0-9]+-')
+
+
+## Tokenizing text with regular expressions
+$pat = [regex] "[0-9]+|\+|\-|\*|/| +"
+
+$m = $pat.match("11+2 * 35 -4")
+
+while ($m.Success)
+{
+  $m.value
+  $m = $m.NextMatch()
+}
+
+
+## Searching files with the Select-String cmdlet
+Select-String -Path $pshome/en-US/about*.txt -Pattern 'wildcard description'
+
+Select-String -Path $pshome/en-US/about*.txt -Pattern 'wildcard description' -CaseSensitive
+
+Get-ChildItem -Recurse -Filter *.log -Path $env:windir\system32 |
+Select-String -List -Pattern 'fail' | Format-Table path
+
+Get-Help Select-String |
+Out-String -Stream |
+Select-String -Pattern 'syntax' -Context 0,4
+
+
+## Getting all matches in the line
+
+'1 + 2 *3' |
+Select-String -AllMatches -Pattern '[0-9]+|\+|\-|\*|/| +' |
+foreach { $_.Matches } | Format-Table -AutoSize
+
+
+## 16.2.3 XML structured text processing
+## Using XML as objects
+
+$d = [xml] '<top><a>one</a><b>two</b><c>3</c></top>'
+$d
+$d.top
+
+$d.top.a = 'Four'
+$d.top.a
+
+
+## Adding elements to an XML object
+$el= $d.CreateElement('d')
+$el.Set_InnerText('Hello')
+$d.top.AppendChild($el)
+
+$ne = $d.CreateElement('e')
+$ne.InnerText = 'World'
+$d.top.AppendChild($ne)
+
+$attr = $d.CreateAttribute('BuiltBy')
+$attr.Value = 'Windows PowerShell'
+$d.DocumentElement.SetAttributeNode($attr)
+
+$d.Save('C:\test\new.xml')
+Get-Content -Path C:\test\new.xml
+<top BuiltBy="Windows PowerShell">
+<a>one</a>
+<b>two</b>
+<c>3</c>
+<d>Hello</d>
+<e>World</e>
+</top>
+
+
+## Loading and saving XML files
+$nd = [xml] (Get-Content -Path C:\test\new.xml)
+$nd.top
+
+## Using the XmlReader class
+see fancyxml.ps1 -- listing 16.2
+
+see format-xml.ps1 - - listing 16.3
+
+
+## Processing XML docu ments in a pipeline
+see search-help.ps1 - - listing 16.4
+
+Search-Help scriptblock
+
+
+## XPath and Select-Xml
+see bookstoreinventory.ps1 - - listing 16.5
+
+Select-Xml -Content $inventory -XPath /bookstore
+(Select-Xml -Content $inventory -XPath /bookstore).Node
+Select-Xml -Content $inventory -XPath /bookstore/book
+
+Select-Xml -Content $inventory -XPath /bookstore/book |
+foreach { $_.node }
+
+Select-Xml -Content $inventory -XPath /bookstore/book |
+foreach { $_.node.title }
+
+filter node { $_.node }
+
+Select-Xml -Content $inventory -XPath /bookstore/book |
+node | where { [double] ($_.price) -lt 10}
+
+Select-Xml -Content $inventory -XPath '/bookstore/book[price < 10]' | node
+
+Select-Xml -Content $inventory -XPath '/bookstore/book/title[../price < 10]' | node
+
+Select-Xml -Content $inventory -XPath '//@genre' | node
+
+Select-Xml -Content $inventory -XPath '//book[@genre = "Novel"]' | node
+
+Select-Xml -Content $inventory -XPath '//book' | node |
+foreach {[double] $_.price * $_.stock } |
+Measure-Object -Sum | foreach { $_.sum }
+
+
+## Rendering objects as XML
+$doc = Get-Service | select -First 3 | ConvertTo-Xml
+$doc
+$doc.Objects.Object
+
+Get-Service | select -First 1 | ConvertTo-Xml -As String
+
+Get-Service | select -First 1 |
+ConvertTo-Xml -As String -NoTypeInformation
+
+$data = @{a=1;b=2;c=3},"Hi there", 3.5
+$data | Export-Clixml -Path C:\test\out.xml
+
+Get-Content -Path C:\test\out.xml
+
+Compare-Object -ReferenceObject $data -DifferenceObject (Import-Clixml -Path C:\test\out.xml) -IncludeEqual
+
+
+## 16.2.4 Converting text output to objects
+netstat -n | ConvertFrom-String | Select-Object -First 5
+netstat -n | select -Skip 3 | ConvertFrom-String
+
+netstat -n | select -Skip 4 |
+ConvertFrom-String -PropertyNames Protocol,
+LocalAddress, ForeignAddress, State
+
+netstat -n | select -Skip 4 |
+ConvertFrom-String -PropertyNames Blank, Protocol,
+LocalAddress, ForeignAddress, State
+
+netstat -n | select -Skip 4 |
+ConvertFrom-String -PropertyNames Blank, Protocol,
+LocalAddress, ForeignAddress, State |
+Select-Object Protocol, LocalAddress, ForeignAddress, State
+
+$nso = netstat -n | select -Skip 4 |
+ConvertFrom-String -PropertyNames Blank, Protocol, LocalAddress, ForeignAddress, State |
+Select-Object Protocol, LocalAddress, ForeignAddress, State
+
+$nso.where({$_.State -eq 'ESTABLISHED'})
+$nso | sort State
+$nso | where LocalAddress -like '192.168.0.5*' | sort ForeignAddress
+
+
+## Accessing COM objects
+## Creating COM objects
+
+$word = New-Object -ComObject 'Word.application'
+
+
+## Identifying and locating COM classes
+see get-progid.ps1 - - listing 16.10
+
+Get-ProgId | Sort-Object
+Get-ProgId -filter internet
+
+
+## Automating Windows with COM
+$shell = New-Object -ComObject Shell.Application
+$shell.Explore('C:\Temp\')
+
+function eject { ( New-Object -ComObject Shell.Application ).EjectPC()}
+
+$shell.Windows() | select Name, LocationURL
+$shell.Windows()[0] | select Name, LocationURL
+
+$shell.Windows()[3].Quit()
+$shell.Windows() | where LocationURL -match 'amazon' |
+foreach {$_.Quit()}
+
+
+## Using Microsoft Word for spell checking
+see test-spelling.ps1 - - listing 16.11
+
+Set-Clipboard -Value 'Some text with errros'
+Test-Spelling
+
+
+## Issues with COM
+$word = New-Object -ComObject Word.Application
+$word = New-Object -ComObject Word.Application -Strict
+
+$word = New-Object -ComObject Word.Application -Strict 2> $null
+$?
+
+$word.GetType().Fullname
+
+$shell = New-Object -ComObject Shell.Application
+$shell | Get-Member
+
+
+## 16.4 Using CIM
+## 16.4.1 The CIM cmdlets
+
+Get-CimClass -ClassName *bios*
+
+Get-CimClass -ClassName Win32_Bios
+
+
+## Selecting CIM instances
+Get-CimInstance -ClassName Win32_Bios
+Get-CimInstance -ClassName Win32_Bios -ComputerName W510W16
+
+Get-CimInstance -ClassName Win32_NetworkAdapterConfiguration -ComputerName W510W16 -Filter "DHCPEnabled = $true"
+
+Get-CimInstance -ComputerName W510W16 -Query "SELECT * FROM Win32_NetworkAdapterConfiguration WHERE DHCPEnabled = $true"
+
+
+## Invoking CIM methods
+Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{CommandLine = 'calc.exe'}
+
+Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{CommandLine = 'notepad.exe'; CurrentDirectory = 'C:\test'}
+
+Get-CimInstance -ClassName Win32_Process -Filter "Name='calculator.exe'" | Invoke-CimMethod -MethodName Terminate
+
+
+## Deleting CIM instances
+Get-CimInstance -ClassName Win32_Process -Filter "Name='calculator.exe'" | Remove-CimInstance
+
+
+## Modifying CIM instances
+(Get-CimClass -ClassName Win32_OperatingSystem).CimClassProperties['Manufacturer']
+
+Get-CimClass -ClassName Win32_OperatingSystem |
+select -ExpandProperty CimClassProperties |
+where Flags -like '*ReadOnly*' |
+select Name, CimType
+
+New-CimInstance -ClassName Win32_Environment -Property @{
+Name = 'PiAvar';
+VariableValue = 'PiA 2017';
+UserName = "$($env:COMPUTERNAME)\bpayette"}
+
+Get-CimInstance -ClassName Win32_Environment `
+-Filter "Name = 'PiAvar'" |
+Set-CimInstance -Property @{VariableValue='What about next year?'} -PassThru
+
+
+## CIM sessions
+$computers = 'W16DSC01', 'W16AS01'
+PS> $cs = New-CimSession -ComputerName $computers
+
+Get-CimSession -ComputerName W16DSC01
+
+Get-CimInstance -CimSession $cs -ClassName Win32_OperatingSystem |
+select SystemDirectory, BuildNumber, Version, PSComputerName
+
+$cs2 = New-CimSession -ComputerName W8R2STD01
+PS> Get-CimInstance -CimSession $cs2 -ClassName Win32_OperatingSystem |
+select SystemDirectory, BuildNumber, Version, PSComputerName
+
+$opt = New-CimSessionOption -Protocol Dcom
+PS> $csd = New-CimSession -ComputerName W8R2STD01 -SessionOption $opt
+PS> $csd
+
+Get-CimInstance -CimSession $csd -ClassName Win32_OperatingSystem |
+select SystemDirectory, BuildNumber, Version, PSComputerName
+
+Get-CimInstance -CimSession ($cs + $csd) -ClassName Win32_OperatingSystem |
+select SystemDirectory, BuildNumber, Version, PSComputerName

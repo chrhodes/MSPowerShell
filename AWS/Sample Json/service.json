@@ -1,0 +1,601 @@
+{
+  "Failures": [],
+  "Services": [
+    {
+      "CapacityProviderStrategy": [
+        {
+          "Base": 0,
+          "CapacityProvider": "noae-sbx01",
+          "Weight": 100
+        }
+      ],
+      "ClusterArn": "arn:aws:ecs:us-west-2:049751716774:cluster/noae-sbx01",
+      "CreatedAt": "2021-05-22T07:34:17.087Z",
+      "CreatedBy": "arn:aws:iam::049751716774:role/jenkins_farm",
+      "DeploymentConfiguration": {
+        "DeploymentCircuitBreaker": {
+          "Enable": false,
+          "Rollback": false
+        },
+        "MaximumPercent": 200,
+        "MinimumHealthyPercent": 50
+      },
+      "DeploymentController": null,
+      "Deployments": [
+        {
+          "CapacityProviderStrategy": [
+            {
+              "Base": 0,
+              "CapacityProvider": "noae-sbx01",
+              "Weight": 100
+            }
+          ],
+          "CreatedAt": "2022-06-20T17:33:56.19Z",
+          "DesiredCount": 2,
+          "FailedTasks": 0,
+          "Id": "ecs-svc/4364503625307766446",
+          "LaunchType": null,
+          "NetworkConfiguration": null,
+          "PendingCount": 0,
+          "PlatformFamily": null,
+          "PlatformVersion": null,
+          "RolloutState": {
+            "Value": "COMPLETED"
+          },
+          "RolloutStateReason": "ECS deployment ecs-svc/4364503625307766446 completed.",
+          "RunningCount": 2,
+          "Status": "PRIMARY",
+          "TaskDefinition": "arn:aws:ecs:us-west-2:049751716774:task-definition/noae-sbx01-notification:126",
+          "UpdatedAt": "2022-06-20T17:38:40.299Z"
+        }
+      ],
+      "DesiredCount": 2,
+      "EnableECSManagedTags": false,
+      "EnableExecuteCommand": false,
+      "Events": [
+        {
+          "CreatedAt": "2022-06-22T23:41:18.219Z",
+          "Id": "2f5d09d2-4bb4-4d0d-9c01-f9e38fa19c49",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-22T17:41:14.229Z",
+          "Id": "a0374aea-d480-4370-8d03-769ef16ced65",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-22T11:41:03.877Z",
+          "Id": "c95da307-0178-4309-ae92-463cb629c6ce",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-22T05:40:25.1Z",
+          "Id": "9617dbc3-d6ae-438f-b6cd-f5852ea2f966",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-21T23:40:14.928Z",
+          "Id": "f87a08f1-65af-4261-a895-e2378905dc59",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-21T17:40:13.147Z",
+          "Id": "447b861c-3471-4ea3-899a-64a0f3313ef0",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-21T11:40:12.455Z",
+          "Id": "f6a75122-e3a3-4b7e-982e-56b675a15141",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-21T05:39:33.209Z",
+          "Id": "699575fc-fb47-46df-8921-1d08c0c776c4",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-20T23:39:21.578Z",
+          "Id": "e3ddbd9d-abf9-4235-be1d-0c37a2f8aa8e",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-20T17:38:40.304Z",
+          "Id": "509ba278-d68f-4395-9b2a-fbf981895314",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-20T17:38:40.303Z",
+          "Id": "b1e15b8c-4838-4a1e-bd98-6a30b6ce2625",
+          "Message": "(service notification) (deployment ecs-svc/4364503625307766446) deployment completed."
+        },
+        {
+          "CreatedAt": "2022-06-20T17:37:52.389Z",
+          "Id": "08a61532-2256-493e-acd0-ac7975809273",
+          "Message": "(service notification) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-20T17:37:23.221Z",
+          "Id": "f7b24272-2cf3-4041-8da1-4aae4b47b60b",
+          "Message": "(service notification) has stopped 1 running tasks: (task 23f341a0e2c04b1190f6802721bcd383)."
+        },
+        {
+          "CreatedAt": "2022-06-20T17:37:10.462Z",
+          "Id": "2b888b91-ac57-4b74-ace4-6993bc3d0069",
+          "Message": "(service notification, taskSet ecs-svc/4364503625307766446) has started 1 tasks: (task 672c8ba9510c49fc8eb24b40dd22ef6e)."    
+        },
+        {
+          "CreatedAt": "2022-06-20T17:36:44.722Z",
+          "Id": "b924e040-94e5-4eb2-9f44-eaa722204745",
+          "Message": "(service notification) has begun draining connections on 1 tasks."
+        },
+        {
+          "CreatedAt": "2022-06-20T17:36:44.721Z",
+          "Id": "df2343aa-e7d2-4405-8ff0-ad4fa8ecfd44",
+          "Message": "(service notification) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-20T17:35:55.517Z",
+          "Id": "5a4721c9-1820-41db-9a56-d6f3ea57a1de",
+          "Message": "(service notification) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-20T17:35:05.46Z",
+          "Id": "f708d74f-460e-4699-bdb2-08ed4cdd752d",
+          "Message": "(service notification, taskSet ecs-svc/4364503625307766446) has started 1 tasks: (task 21d14c6fe8ed4a40af6dac082e00148d)."    
+        },
+        {
+          "CreatedAt": "2022-06-20T17:35:05.326Z",
+          "Id": "3bf1a652-82c2-407e-9254-cd6d31ef8bac",
+          "Message": "(service notification) has stopped 1 running tasks: (task f509f6709d5142d6befd1597bbe93fc6)."
+        },
+        {
+          "CreatedAt": "2022-06-20T17:34:26.191Z",
+          "Id": "95d1496a-57ae-47ea-99fa-804d905dd20b",
+          "Message": "(service notification) has started 2 tasks: (task 21d14c6fe8ed4a40af6dac082e00148d) (task 672c8ba9510c49fc8eb24b40dd22ef6e)." 
+        },
+        {
+          "CreatedAt": "2022-06-20T17:34:26.054Z",
+          "Id": "15b7f408-961d-4865-b5c2-9ab069f01ca3",
+          "Message": "(service notification) has begun draining connections on 1 tasks."
+        },
+        {
+          "CreatedAt": "2022-06-20T17:34:26.053Z",
+          "Id": "34e65d4a-5f6e-4b8c-b44c-ae29dc33b120",
+          "Message": "(service notification) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-20T14:03:28.709Z",
+          "Id": "9a5a38bf-e94f-4e8e-957e-d79785191273",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-20T08:03:14.646Z",
+          "Id": "65b3f07a-71f5-4dd9-90db-eae3695f5e09",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-20T02:02:35.961Z",
+          "Id": "81b77585-75d4-424d-8139-457b01a75e55",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-19T20:02:21.003Z",
+          "Id": "3cd92538-2879-4846-b4cc-a8a9b8e86c7f",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-19T14:02:01.403Z",
+          "Id": "65bed7da-4ece-477e-a754-efa42cf0dae2",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-19T08:01:40.538Z",
+          "Id": "b1385aa3-3ca1-47ff-8431-d6e1edb0116e",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-19T02:01:35.273Z",
+          "Id": "3e900f01-5632-4ea7-a7e4-fa2db54a29b1",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-18T20:01:28.921Z",
+          "Id": "56a35d1f-f78d-41b1-9961-8ad174c12555",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-18T14:01:00.404Z",
+          "Id": "bf24e4e1-4e91-474a-b0a7-efb6b6208449",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-18T08:00:45.756Z",
+          "Id": "303af990-aa3b-408a-b099-1a1b3ff851d8",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-18T02:00:02.56Z",
+          "Id": "34274cce-a60f-4253-a041-9d279e32f428",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-17T19:59:27.759Z",
+          "Id": "66f3c870-b19a-4ef3-9a19-41cd40bee527",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-17T13:58:44.037Z",
+          "Id": "b0622c1c-9e61-4c54-a0ec-43144eb415ed",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-17T07:58:34.763Z",
+          "Id": "78262b95-382a-4b3d-840d-ff043d5cae3f",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-17T01:58:19.75Z",
+          "Id": "f23ebb31-2e74-4375-92d0-2c9863cc21fe",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-16T19:58:01.211Z",
+          "Id": "2cec59fd-3195-4fc3-8762-578eddfec389",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-16T13:57:49.017Z",
+          "Id": "131ae1eb-6471-4f0a-9513-144055cbc047",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-16T07:57:14.602Z",
+          "Id": "184aa4e5-36c0-4396-a1fd-e2cdaac7eca4",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-16T01:57:07.001Z",
+          "Id": "0533223e-de4b-43fc-a864-0a7a4b80f6f6",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-16T01:57:07Z",
+          "Id": "8b645e49-73e4-4ca4-83ca-e998ee06cbce",
+          "Message": "(service notification) (deployment ecs-svc/1388316587142421586) deployment completed."
+        },
+        {
+          "CreatedAt": "2022-06-16T01:56:18.583Z",
+          "Id": "09d84265-1654-407c-84ab-3d567c95e9ef",
+          "Message": "(service notification) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-16T01:55:46.688Z",
+          "Id": "5350d949-92d6-42c2-a7bc-9eb47f538ce6",
+          "Message": "(service notification, taskSet ecs-svc/1388316587142421586) has started 1 tasks: (task f509f6709d5142d6befd1597bbe93fc6)."    
+        },
+        {
+          "CreatedAt": "2022-06-16T01:55:28.07Z",
+          "Id": "89115122-ce27-42b5-9338-6dda2c44a9aa",
+          "Message": "(service notification) has stopped 1 running tasks: (task 02a167085c0a4fc3a09babe04b48c18e)."
+        },
+        {
+          "CreatedAt": "2022-06-16T01:54:49.462Z",
+          "Id": "e66b8520-e7a2-4322-a315-6c717cc6116c",
+          "Message": "(service notification) has begun draining connections on 1 tasks."
+        },
+        {
+          "CreatedAt": "2022-06-16T01:54:49.461Z",
+          "Id": "ae1bac09-6bcc-499f-91b2-65fea269383e",
+          "Message": "(service notification) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-16T01:53:59.585Z",
+          "Id": "1ec09c0f-f9dc-4499-996d-14d0f2124682",
+          "Message": "(service notification) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-16T01:53:11.531Z",
+          "Id": "ed400ad2-cc2f-49ef-8621-19856dca2949",
+          "Message": "(service notification, taskSet ecs-svc/1388316587142421586) has started 1 tasks: (task 23f341a0e2c04b1190f6802721bcd383)."    
+        },
+        {
+          "CreatedAt": "2022-06-16T01:53:10.716Z",
+          "Id": "4d905c83-03c5-4d57-b21c-fff0f9640bf2",
+          "Message": "(service notification) has stopped 1 running tasks: (task 2e6cc318a4d841c0a7b6cd5b222c3413)."
+        },
+        {
+          "CreatedAt": "2022-06-16T01:52:31.609Z",
+          "Id": "3d79ec5a-1c7c-46a1-b68e-fecf096c4d6f",
+          "Message": "(service notification) has started 2 tasks: (task 23f341a0e2c04b1190f6802721bcd383) (task f509f6709d5142d6befd1597bbe93fc6)." 
+        },
+        {
+          "CreatedAt": "2022-06-16T01:52:31.476Z",
+          "Id": "187d5f6b-1c94-48b2-8832-69e6abd3bb6a",
+          "Message": "(service notification) has begun draining connections on 1 tasks."
+        },
+        {
+          "CreatedAt": "2022-06-16T01:52:31.475Z",
+          "Id": "3250afa8-0687-4e19-8cb6-d4e5c2034f36",
+          "Message": "(service notification) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-16T01:31:03.847Z",
+          "Id": "ab4d0023-d348-4572-8b08-8aec25cc6d05",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-15T19:30:32.566Z",
+          "Id": "2a3f9e5c-ea64-4b68-bc04-9cf8bd7a652b",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-15T13:30:04.215Z",
+          "Id": "a18c527c-81ca-436b-a8ab-f70675812d55",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-15T07:29:35.557Z",
+          "Id": "84986162-b6c4-45c8-b587-55b5ba8dbdb3",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-15T01:29:29.51Z",
+          "Id": "2adc36ea-359a-485b-990b-639d93a80520",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-14T19:29:15.468Z",
+          "Id": "570a3b34-1cc9-4ea0-a3dd-2d96e5dfa27b",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-14T14:43:19.542Z",
+          "Id": "b22d69a0-9117-4888-9a15-c827e808e342",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-14T08:42:48.602Z",
+          "Id": "fdb26604-a0a9-46d5-b8c8-9473b3d77cca",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-14T02:42:14.907Z",
+          "Id": "cad5156a-48d5-4955-99bd-13e48b546a05",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-13T20:41:50.204Z",
+          "Id": "53d58380-a7b6-4549-808d-203cbb239931",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-13T14:41:31.148Z",
+          "Id": "e962a051-a244-4147-b342-12f5d2ff1da8",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-13T08:41:28.739Z",
+          "Id": "99039e95-fed0-41aa-8733-5cf1442572b9",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-13T02:41:08.576Z",
+          "Id": "5109bd37-76d3-4655-94b3-77f70d2d928f",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-12T20:40:49.839Z",
+          "Id": "15f4749b-e992-4ab9-9541-4ba144f0e929",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-12T14:40:42.147Z",
+          "Id": "56050c18-2708-4bbd-bfa3-ccbcdcc0fc43",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-12T08:40:17.23Z",
+          "Id": "f7fe19c0-e4f5-4fd2-b755-6a02fbb10eb1",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-12T02:39:34.859Z",
+          "Id": "e95b76c5-10b5-458a-afdc-aeb718470e81",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-11T20:39:16.036Z",
+          "Id": "75ddb081-4fde-43ca-b67b-1e964a5f46da",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-11T14:38:41.856Z",
+          "Id": "23733ac5-e6ce-4920-920b-cacbafcd82cb",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-11T08:38:35.669Z",
+          "Id": "86352354-487e-42bb-b2a9-b827f5978135",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-11T02:38:16.83Z",
+          "Id": "b647c150-2e4a-4aeb-8180-11cabcd8d8ee",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-11T02:38:16.829Z",
+          "Id": "8d5e0975-0afb-4402-8d3b-40190aecf4a6",
+          "Message": "(service notification) (deployment ecs-svc/7906810032665434037) deployment completed."
+        },
+        {
+          "CreatedAt": "2022-06-11T02:37:28.013Z",
+          "Id": "7061a6eb-c541-4d52-8e34-4f27cd07ec4f",
+          "Message": "(service notification) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-11T02:36:56.357Z",
+          "Id": "0920ac4c-fa75-4409-a0e3-87ccc59dc1c1",
+          "Message": "(service notification, taskSet ecs-svc/7906810032665434037) has started 1 tasks: (task 2e6cc318a4d841c0a7b6cd5b222c3413)."    
+        },
+        {
+          "CreatedAt": "2022-06-11T02:36:40.238Z",
+          "Id": "29d9d6c6-bcfb-4b0d-973f-d2a7c3def3d4",
+          "Message": "(service notification) has stopped 1 running tasks: (task fde3fc8561254ca9a38f6518996bbd5f)."
+        },
+        {
+          "CreatedAt": "2022-06-11T02:36:00.646Z",
+          "Id": "9d762fb7-7d31-4717-b8c7-a262c0fdc161",
+          "Message": "(service notification) has begun draining connections on 1 tasks."
+        },
+        {
+          "CreatedAt": "2022-06-11T02:36:00.645Z",
+          "Id": "ba39ac8b-fd55-4dbb-862b-52e29ad16c87",
+          "Message": "(service notification) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-11T02:35:12.096Z",
+          "Id": "66ab0f2d-4d42-426b-a411-e0781af3ff30",
+          "Message": "(service notification) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-11T02:34:46.39Z",
+          "Id": "83eb2fb6-77c3-4d7f-af6b-e1651ed867be",
+          "Message": "(service notification, taskSet ecs-svc/7906810032665434037) has started 1 tasks: (task 02a167085c0a4fc3a09babe04b48c18e)."    
+        },
+        {
+          "CreatedAt": "2022-06-11T02:34:22.709Z",
+          "Id": "863a66ea-641a-443d-b9c5-306600e7725f",
+          "Message": "(service notification) has stopped 1 running tasks: (task f3c4130fb4b6453db848c19bb3364958)."
+        },
+        {
+          "CreatedAt": "2022-06-11T02:33:43.785Z",
+          "Id": "7e184bd4-7f0f-49bf-85a6-d362cf39089a",
+          "Message": "(service notification) has started 2 tasks: (task 02a167085c0a4fc3a09babe04b48c18e) (task 2e6cc318a4d841c0a7b6cd5b222c3413)." 
+        },
+        {
+          "CreatedAt": "2022-06-11T02:33:43.656Z",
+          "Id": "72b69580-d770-4596-88a1-199647343bb2",
+          "Message": "(service notification) has begun draining connections on 1 tasks."
+        },
+        {
+          "CreatedAt": "2022-06-11T02:33:43.655Z",
+          "Id": "142524e1-59f7-4b42-8c32-15592b762ee2",
+          "Message": "(service notification) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-10T21:33:52.244Z",
+          "Id": "a0bf45f2-05de-4487-ac06-d07978442ec3",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-10T15:33:08.303Z",
+          "Id": "063b103d-03f7-486e-b538-f9f80dcb0430",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-10T09:32:45.419Z",
+          "Id": "918445f3-1d4f-4c7a-8dde-1db5f5b1d82b",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-10T03:32:28.502Z",
+          "Id": "61487d2c-3d7a-4727-8ad6-4eaf2b59acdd",
+          "Message": "(service notification) has reached a steady state."
+        },
+        {
+          "CreatedAt": "2022-06-10T03:32:28.501Z",
+          "Id": "787d5be2-e478-43d2-b7f3-4b059bfaa8ac",
+          "Message": "(service notification) (deployment ecs-svc/6499965445238563675) deployment completed."
+        },
+        {
+          "CreatedAt": "2022-06-10T03:31:40.628Z",
+          "Id": "7f5d6c48-88a9-4b9e-9723-cc5a23c19e7e",
+          "Message": "(service notification) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-10T03:31:11.179Z",
+          "Id": "6db4aefe-8b8c-464d-9060-2be50dcad8db",
+          "Message": "(service notification) has stopped 1 running tasks: (task e55578f0e26646e2b163049abbcc1006)."
+        },
+        {
+          "CreatedAt": "2022-06-10T03:31:01.376Z",
+          "Id": "71c5e5b2-5d72-4974-b278-653158eb87ba",
+          "Message": "(service notification, taskSet ecs-svc/6499965445238563675) has started 1 tasks: (task fde3fc8561254ca9a38f6518996bbd5f)."    
+        },
+        {
+          "CreatedAt": "2022-06-10T03:30:41.105Z",
+          "Id": "99ff6990-2101-44b3-89bc-ec2336d01f0b",
+          "Message": "(service notification) has begun draining connections on 1 tasks."
+        },
+        {
+          "CreatedAt": "2022-06-10T03:30:41.104Z",
+          "Id": "e1569b0f-83dc-4562-acb9-775ebdcee60b",
+          "Message": "(service notification) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-10T03:29:44.747Z",
+          "Id": "d058ff2d-291b-4dea-9d90-c442e0397759",
+          "Message": "(service notification) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437)"
+        },
+        {
+          "CreatedAt": "2022-06-10T03:29:26.365Z",
+          "Id": "e2d7d6ff-2660-4063-8e82-1be83c38c775",
+          "Message": "(service notification, taskSet ecs-svc/6499965445238563675) has started 1 tasks: (task f3c4130fb4b6453db848c19bb3364958)."    
+        },
+        {
+          "CreatedAt": "2022-06-10T03:28:56.738Z",
+          "Id": "4b2fe0a1-9d1f-4bf2-9551-569a2e570bb0",
+          "Message": "(service notification) has stopped 1 running tasks: (task 253587e9e0304439ad382d1fa277b2c0)."
+        }
+      ],
+      "HealthCheckGracePeriodSeconds": 0,
+      "LaunchType": null,
+      "LoadBalancers": [
+        {
+          "ContainerName": "notification",
+          "ContainerPort": 9090,
+          "LoadBalancerName": null,
+          "TargetGroupArn": "arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/noae-sbx01-notification/bbe89e27aa885437"
+        }
+      ],
+      "NetworkConfiguration": null,
+      "PendingCount": 0,
+      "PlacementConstraints": [
+        {
+          "Expression": "attribute:ecs.availability-zone exists",
+          "Type": {
+            "Value": "memberOf"
+          }
+        }
+      ],
+      "PlacementStrategy": [],
+      "PlatformFamily": null,
+      "PlatformVersion": null,
+      "PropagateTags": {
+        "Value": "NONE"
+      },
+      "RoleArn": "arn:aws:iam::049751716774:role/noae-sbx01-us-west-2-ecs-service",
+      "RunningCount": 2,
+      "SchedulingStrategy": {
+        "Value": "REPLICA"
+      },
+      "ServiceArn": "arn:aws:ecs:us-west-2:049751716774:service/noae-sbx01/notification",
+      "ServiceName": "notification",
+      "ServiceRegistries": [],
+      "Status": "ACTIVE",
+      "Tags": [],
+      "TaskDefinition": "arn:aws:ecs:us-west-2:049751716774:task-definition/noae-sbx01-notification:126",
+      "TaskSets": []
+    }
+  ],
+  "ResponseMetadata": {
+    "RequestId": "3b082174-cc03-4c17-a9c8-213477fa408b",
+    "Metadata": {},
+    "ChecksumAlgorithm": 0,
+    "ChecksumValidationStatus": 0
+  },
+  "ContentLength": 18632,
+  "HttpStatusCode": 200,
+  "LoggedAt": "2022-06-22T16:49:37.9226909-07:00"
+}

@@ -1,0 +1,170 @@
+## Code for chapter 14 PowerShell in Action third edition
+##  This file contains the code from the chapter body. 
+##  Any individual listings are supplied in separate files
+##  Code has been unwrapped so may look slightly different 
+##  to that presented in the book
+
+
+## 14.1.1 ErrorRecords and the error stream
+Get-ChildItem -Path nosuchfile
+
+Get-ChildItem -Path nosuchfile 2> err.txt
+Get-Content .\err.txt
+
+$err = Get-ChildItem -Path nosuchfile 2>&1
+$err | Get-Member -Type property
+$err | Format-List -Property * -Force
+
+$err.InvocationInfo
+
+# see listing 14.1
+
+
+## 14.1.2 The $error variable and –ErrorVariable parameter
+Get-ChildItem -Path nosuchfile
+
+$error[0]
+$error[0].Exception
+$error[0].TargetObject
+
+1/0
+$error[0].Exception
+$error[1].Exception
+
+Get-ChildItem -Path nofuss, nomuss, nobother -ErrorVariable errs
+$errs.Count
+$errs
+
+Get-ChildItem -Path nofuss, nomuss, nobother -ErrorVariable errs 2>$null
+$errs.Count
+$errs[2].TargetObject
+
+
+## 14.1.3 Determining whether a command had an error
+Get-Item c:, nosuchfile, c:
+$?
+
+Get-Item c:, c:
+$?
+
+cmd /c exit 0
+$?
+$LASTEXITCODE
+
+cmd /c exit 1
+$?
+$LASTEXITCODE
+
+'exit 0' > invoke-exit.ps1
+.\invoke-exit.ps1
+$?
+$LASTEXITCODE
+
+'exit 25' > invoke-exit.ps1
+.\invoke-exit.ps1
+$?
+$LASTEXITCODE
+
+
+## 14.1.4 Controlling the actions taken on an error
+$ErrorActionPreference = 'SilentlyContinue'
+
+Get-Item -Path c:\, nosuchfile, c:\test, c:\nosuchfolder
+Get-Item -Path c:\, nosuchfile, c:\test, c:\nosuchfolder 2> $null
+
+Get-Item -Path c:\, nosuchfile, c:\test, c:\nosuchfolder -ErrorAction SilentlyContinue
+
+Get-Item -Path c:\, nosuchfile, c:\test, c:\nosuchfolder -ErrorAction Stop
+
+& {
+$ErrorActionPreference = 'Stop'
+Get-Item -Path c:\, nosuchfile, c:\test, c:\nosuchfolder
+}
+
+
+## 14.2 Dealing with errors that terminate execution
+## 14.2.1 The try/catch/finally statement
+try {
+  1
+  2
+  3/$null
+  4
+  5
+}
+catch {
+  "ERROR: $_"
+}
+finally {
+  'ALL DONE'
+}
+
+
+## Using try/catch in expressions
+function div {
+param
+(
+  [int]$x,
+  [int]$y
+)
+
+  try {
+    $x/$y
+  }
+  catch {
+    [int]::MaxValue
+  }
+}
+
+div 1 0
+
+
+## 14.2.2 The throw statement
+throw
+throw 'My Message!'
+
+
+## 14.3 PowerShell and the event log
+## 14.3.1 The EventLog cmdlets
+Get-EventLog -List
+Limit-EventLog -LogName Application -MaximumSize 25mb
+
+Get-EventLog -List | where Log -match 'Application'
+Get-EventLog -LogName Application -Newest 10
+Get-EventLog -LogName Application -Index 34931 | Format-List
+Get-EventLog -LogName Application -InstanceId 1073741851 -Newest 5
+
+Get-EventLog -LogName Application -After 'April 30/2017' -Before 'May 3/2017'
+Get-EventLog -LogName Application -Before 'May 3/2017' -Newest 10
+
+Get-EventLog -LogName Application -Message '*Defender*' -After 'April 30/2017' |
+Format-List UserName, TimeGenerated, EntryType, Message
+
+
+## 14.3.2 Examining the PowerShell event log
+Get-EventLog -LogName 'Windows PowerShell' | select -Last 5
+Get-EventLog -LogName 'Windows PowerShell' |
+select -Last 1 | Format-List *
+
+
+## 14.3.3 Get-WinEvent
+Get-WinEvent -ListLog *
+
+Get-WinEvent -ListLog Microsoft-Windows-PowerShell* |
+select Logmode, RecordCount, LogName
+
+Get-WinEvent -LogName Application | select -First 5
+
+Get-WinEvent -LogName Application | where RecordId -eq 34935
+
+$start = (Get-Date).AddDays(-2)
+$end = (Get-Date).AddDays(-1)
+Get-WinEvent -FilterHashtable @{LogName='Application';
+StartTime=$start; EndTime=$end}
+
+Get-WinEvent -FilterHashtable @{LogName='Application';
+StartTime=$start; EndTime=$end} |
+Sort-Object -Property @{Expression='ProviderName';
+Descending=$false},
+@{Expression='TimeCreated';Descending=$true}
+
+Get-WinEvent -FilterHashtable @{Logname='Application'; ProviderName='SecurityCenter'; StartTime=$start; EndTime=$end}

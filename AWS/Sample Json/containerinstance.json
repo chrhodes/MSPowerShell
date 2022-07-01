@@ -1,0 +1,487 @@
+{
+	"ContainerInstances": [
+		{
+			"AgentConnected": true,
+			"AgentUpdateStatus": null,
+			"Attachments": [],
+			"Attributes": [
+				{
+					"Name": "ecs.capability.secrets.asm.environment-variables",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.branch-cni-plugin-version",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": "a21d3a41-"
+				},
+				{
+					"Name": "ecs.ami-id",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": "ami-0fb56e8c2d653b297"
+				},
+				{
+					"Name": "ecs.capability.secrets.asm.bootstrap.log-driver",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.task-eia.optimized-cpu",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.ecr-endpoint",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.docker-plugin.local",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.task-cpu-mem-limit",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.secrets.ssm.bootstrap.log-driver",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.efsAuth",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.30",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.full-sync",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.31",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.32",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.logging-driver.fluentd",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.firelens.options.config.file",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.availability-zone",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": "us-west-2b"
+				},
+				{
+					"Name": "ecs.capability.aws-appmesh",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.logging-driver.awslogs",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.24",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.task-eni-trunking",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.25",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.26",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.27",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.privileged-container",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.28",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.29",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.cpu-architecture",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": "x86_64"
+				},
+				{
+					"Name": "ecs.capability.firelens.fluentbit",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.ecr-auth",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.20",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.os-type",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": "linux"
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.21",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.22",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.task-eia",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.private-registry-authentication.secretsmanager",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.23",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.logging-driver.awsfirelens",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.firelens.options.config.s3",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.logging-driver.json-file",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.execution-role-awslogs",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.vpc-id",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": "vpc-132ba874"
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.17",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.18",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.docker-remote-api.1.19",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.docker-plugin.amazon-ecs-volume-plugin",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.task-eni",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.firelens.fluentd",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.efs",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.execution-role-ecr-pull",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.task-eni.ipv6",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.container-health-check",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.subnet-id",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": "subnet-ae8f77e7"
+				},
+				{
+					"Name": "ecs.instance-type",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": "m5.large"
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.task-iam-role-network-host",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.container-ordering",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.cni-plugin-version",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": "55b2ae77-2020.09.0"
+				},
+				{
+					"Name": "ecs.capability.env-files.s3",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.secrets.ssm.environment-variables",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "ecs.capability.pid-ipc-namespace-sharing",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				},
+				{
+					"Name": "com.amazonaws.ecs.capability.task-iam-role",
+					"TargetId": null,
+					"TargetType": null,
+					"Value": null
+				}
+			],
+			"CapacityProviderName": "noae-sbx01",
+			"ContainerInstanceArn": "arn:aws:ecs:us-west-2:049751716774:container-instance/noae-sbx01/0b560e913071410ebfe287f3f3f1c9dc",
+			"Ec2InstanceId": "i-0fbe022dc6350c3c0",
+			"HealthStatus": null,
+			"PendingTasksCount": 0,
+			"RegisteredAt": "2022-04-07T08:08:59.225Z",
+			"RegisteredResources": [
+				{
+					"DoubleValue": 0.0,
+					"IntegerValue": 2048,
+					"LongValue": 0,
+					"Name": "CPU",
+					"StringSetValue": [],
+					"Type": "INTEGER"
+				},
+				{
+					"DoubleValue": 0.0,
+					"IntegerValue": 7766,
+					"LongValue": 0,
+					"Name": "MEMORY",
+					"StringSetValue": [],
+					"Type": "INTEGER"
+				},
+				{
+					"DoubleValue": 0.0,
+					"IntegerValue": 0,
+					"LongValue": 0,
+					"Name": "PORTS",
+					"StringSetValue": [
+						"22",
+						"2376",
+						"2375",
+						"51678",
+						"51679"
+					],
+					"Type": "STRINGSET"
+				},
+				{
+					"DoubleValue": 0.0,
+					"IntegerValue": 0,
+					"LongValue": 0,
+					"Name": "PORTS_UDP",
+					"StringSetValue": [],
+					"Type": "STRINGSET"
+				}
+			],
+			"RemainingResources": [
+				{
+					"DoubleValue": 0.0,
+					"IntegerValue": 512,
+					"LongValue": 0,
+					"Name": "CPU",
+					"StringSetValue": [],
+					"Type": "INTEGER"
+				},
+				{
+					"DoubleValue": 0.0,
+					"IntegerValue": 598,
+					"LongValue": 0,
+					"Name": "MEMORY",
+					"StringSetValue": [],
+					"Type": "INTEGER"
+				},
+				{
+					"DoubleValue": 0.0,
+					"IntegerValue": 0,
+					"LongValue": 0,
+					"Name": "PORTS",
+					"StringSetValue": [
+						"22",
+						"2376",
+						"2375",
+						"4444",
+						"4445",
+						"51678",
+						"7071",
+						"7070",
+						"51679"
+					],
+					"Type": "STRINGSET"
+				},
+				{
+					"DoubleValue": 0.0,
+					"IntegerValue": 0,
+					"LongValue": 0,
+					"Name": "PORTS_UDP",
+					"StringSetValue": [],
+					"Type": "STRINGSET"
+				}
+			],
+			"RunningTasksCount": 2,
+			"Status": "ACTIVE",
+			"StatusReason": null,
+			"Tags": [],
+			"Version": 11046,
+			"VersionInfo": {
+				"AgentHash": "e9b600d2",
+				"AgentVersion": "1.48.1",
+				"DockerVersion": "DockerVersion: 19.03.13-ce"
+			}
+		}
+	],
+	"Failures": [],
+	"ResponseMetadata": {
+		"RequestId": "95ac04a1-1012-4996-bcb4-45d3942c2f61",
+		"Metadata": {},
+		"ChecksumAlgorithm": 0,
+		"ChecksumValidationStatus": 0
+	},
+	"ContentLength": 4740,
+	"HttpStatusCode": 200,
+	"LoggedAt": "2022-06-22T17:27:51.7027285-07:00"
+}

@@ -1,0 +1,360 @@
+## Code for chapter 12 PowerShell in Action third edition
+##  This file contains the code from the chapter body. 
+##  Any individual listings are supplied in separate files
+##  Code has been unwrapped so may look slightly different 
+##  to that presented in the book
+
+
+## 12.1.3 Your first workflow
+
+workflow hello
+{
+'Hello World'
+}
+hello
+
+# see helloworkflow.txt
+
+Get-Command hello
+Get-ChildItem -Path Function:\hello
+Get-Command hello | select -ExpandProperty Scriptblock
+Get-Command hello | select -ExpandProperty Parameters
+
+# see listing 12.1.xaml
+
+
+## 12.1.4 Running a workflow
+
+# see listing 12.2.ps1
+
+workflow test1
+{
+Get-CimInstance -ClassName Win32_ComputerSystem
+}
+test1
+
+workflow test1
+{
+Get-CimInstance -ClassName Win32_ComputerSystem |
+Format-Table Name, Model
+}
+test1
+
+
+## 12.1.6 Workflow restrictions
+## Using aliases in workflows
+workflow test1
+{
+gps powershell*
+}
+test1
+
+
+## Objects returned from workflows
+workflow test2
+{
+$prc = Get-Process -Name notepad
+$prc.Kill()
+}
+test2
+
+
+## 12.2.1	Parallel
+
+workflow p1 {
+    foreach ($i in 1..4){$i}
+    foreach ($j in 4..1){$j}
+}
+p1
+
+function f1 {
+    foreach ($i in 1..4){$i}
+    foreach ($j in 4..1){$j}
+}
+f1 
+
+
+
+workflow p2 {
+    parallel {
+        foreach ($i in 1..4){$i}
+        foreach ($j in 4..1){$j}
+    }  
+}
+"$(p2)"
+
+Measure-Command {p1} | Select Milliseconds
+Measure-Command {p2} | Select Milliseconds
+
+
+## 12.2.2	Sequence
+
+workflow ps1 {
+    parallel {
+        foreach ($i in 1..4){$i}
+        sequence {
+            foreach ($k in 65..68){[char][byte]$k}
+            foreach ($k in 87..90){[char][byte]$k}
+        }
+        foreach ($j in 4..1){$j}
+    }  
+}
+"$(ps1)"
+
+
+## 12.2.3 InlineScript
+# see listing 12.3.ps1
+
+
+## 12.2.4	Foreach -parallel
+# see listing 12.4
+
+workflow fep {
+    foreach -parallel ($i in 1..10){$i}
+}
+"$(fep)"
+
+
+workflow fs {
+    $fileshares = Get-FileShare
+    foreach -parallel ($fileshare in $fileshares){
+        InlineScript { 
+            Get-Volume -FileShare $using:fileshare |
+            Select-Object @{N='Share'; E={$using:fileshare.Name}},
+            DriveLetter, FileSystem, HealthStatus,
+            @{N='FreePercent'; E={[math]::Round(($($_.SizeRemaining) / $($_.Size)) * 100, 2)}}
+        }
+    }
+}
+fs
+
+## 12.3.1	Workflow parameters
+workflow test {'Hello'}
+Get-Command test -Syntax
+
+## PSComputerName
+workflow test-remoteaccess {
+ Get-WmiObject -Class Win32_ComputerSystem
+} 
+test-remoteaccess -PSComputerName W16TGT01, W16DSC01
+
+Get-WmiObject -Class Win32_ComputerSystem
+
+workflow test-remoteaccess {
+ param(
+  [string[]]$computername
+ )
+ foreach -parallel ($computer in $computername) {
+   Get-WmiObject -Class Win32_ComputerSystem -PSComputerName $computer
+ }
+} 
+test-remoteaccess -computername W16TGT01, W16DSC01
+
+
+workflow test-remoteaccess {
+ param(
+  [string[]]$computername
+ )
+ inlinescript {
+  foreach ($computer in $using:computername) {
+   Get-WmiObject -Class Win32_ComputerSystem -ComputerName $computer
+  }
+ }
+}   
+test-remoteaccess -computername W16TGT01, W16DSC01
+
+
+## 12.3.2 variables in workflows
+# see listing 12.5
+
+## 12.3.3	Nested workflows
+
+workflow Get-ADReport {
+ parallel { 
+ Search-ADAccount -AccountDisabled |
+ Select-Object -Property DistinguishedName |
+ Export-Csv -Path c:\ADReports\DisabledAccounts.csv `
+ -NoTypeInformation
+
+ Search-ADAccount -AccountExpired |
+ Select-Object -Property DistinguishedName |
+ Export-Csv -Path c:\ADReports\ExpiredAccounts.csv `
+ -NoTypeInformation
+ 
+ Search-ADAccount -PasswordNeverExpires                                                                                                  |
+ Select-Object -Property DistinguishedName |
+ Export-Csv -Path c:\ADReports\PsswdNeverExpireAccounts.csv `
+ -NoTypeInformation
+ }
+}
+Get-ADReport 
+
+
+workflow get-disabled
+{
+Search-ADAccount -AccountDisabled |
+Select-Object -Property DistinguishedName |
+Export-Csv -Path c:\ADReports\DisabledAccounts.csv `
+-NoTypeInformation
+}
+workflow get-expired
+{
+Search-ADAccount -AccountExpired |
+Select-Object -Property DistinguishedName |
+Export-Csv -Path c:\ADReports\ExpiredAccounts.csv `
+-NoTypeInformation
+}
+workflow get-passwordneverexpire
+{
+Search-ADAccount -PasswordNeverExpires |
+Select-Object -Property DistinguishedName |
+Export-Csv -Path c:\ADReports\PsswdNeverExpireAccounts.csv `
+-NoTypeInformation
+}
+workflow Get-ADReport
+{
+parallel {
+get-disabled
+get-expired
+get-passwordneverexpire
+}
+}
+Get-ADReport
+
+
+function get-fcomputersystem {
+param ([string]$fcomputer)
+Get-WmiObject -Class Win32_ComputerSystem -ComputerName $fcomputer
+}
+workflow get-computersystem
+{
+param([string[]]$computerName)
+## Alternate location for function
+# The contents of the foreach block will be executed in parallel
+foreach -parallel($computer in $computerName) {
+if (Test-Connection -ComputerName $computer -Quiet -Count 1) {
+get-fcomputersystem -fcomputer $computer
+}
+else {
+"$computer unreachable"
+}
+}
+}
+Get-ComputerSystem -ComputerName $ENV:COMPUTERNAME
+
+
+workflow get-ADReport {
+parallel {
+inlinescript {c:\adreports\get-disabledaccount.ps1}
+inlinescript {c:\adreports\get-expiredaccount.ps1}
+inlinescript {c:\adreports\get-passwordNexpire.ps1 }
+}
+}
+
+
+## 12.4 Workflow cmdlets
+
+Get-Module -ListAvailable *workflow* | Format-Table -AutoSize
+
+12.4.1 Workflow execution options
+workflow Invoke-ParallelForEach
+{
+foreach -parallel ($i in 1..10)
+{
+InlineScript
+{
+"foo: $using:i"
+}
+$count = Get-Process -Name PowerShell* |
+Measure-Object |
+Select-Object -ExpandProperty Count
+"Number of PowerShell processes = $count"
+}
+}
+
+$wfopt = New-PSWorkflowExecutionOption -MaxSessionsPerWorkflow 20 -MaxSessionsPerRemoteNode 20 -MaxActivityProcesses 20
+$wfopt
+
+Register-PSSessionConfiguration -Name PiAWorkflows -SessionTypeOption $wfopt -SessionType Workflow -Force
+
+Invoke-ParallelForEach -PSConfigurationName Microsoft.PowerShell.Workflow
+
+Invoke-ParallelForEach -PSConfigurationName PiAWorkflows
+
+Set-PSSessionConfiguration -Name PiAWorkFlows -SessionTypeOption (New-PSWorkflowExecutionOption -SessionThrottleLimit 500) -Force
+
+Get-PSSessionConfiguration -Name PiAWorkflows |
+select SessionThrottleLimit
+
+UnRegister-PSSessionConfiguration -Name PiAWorkflows –Force
+
+
+## 12.4.2 Workflow sessions
+$wfs = New-PSWorkflowSession -ComputerName W16TGT01
+
+$sb = {
+workflow Invoke-ParallelForEach
+{
+  foreach -parallel ($i in 1..10)
+  {
+    InlineScript
+    {
+      "foo: $using:i"
+    }
+    $count = Get-Process -Name PowerShell* |
+    Measure-Object |
+    Select-Object -ExpandProperty Count
+    "Number of PowerShell processes = $count"
+  }
+}
+Invoke-ParallelForEach
+}
+
+Invoke-Command -Session $wfs -ScriptBlock $sb
+
+Remove-PSSession -Session $wfs
+
+
+# Double-hop problem
+Invoke-Command -ScriptBlock {Get-Process lsass} -ComputerName W16TGT01
+
+Invoke-Command -ScriptBlock {
+Invoke-Command -ScriptBlock {
+Get-Process lsass } -ComputerName W16DSC01
+} -ComputerName W16TGT01
+
+$cred = Get-Credential manticore\richard
+Register-PSSessionConfiguration -Name DHsol -RunAsCredential $cred
+
+$tsd = New-PSSession -ComputerName W16TGT01 -ConfigurationName DHsol
+Invoke-Command -ScriptBlock {Invoke-Command -ScriptBlock {Get-Process lsass } -ComputerName W16DSC01 } -Session $tsd
+
+Register-PSSessionConfiguration -Name PiAWorkflows -RunAsCredential $cred -SessionType Workflow -Force
+
+Set-PSSessionConfiguration -Name PiAWorkflows -RunAsCredential $cred
+
+$sb = {
+workflow Invoke-ParallelForEach
+{
+  foreach -parallel ($i in 1..10)
+  {
+    InlineScript
+    {
+      "foo: $using:i"
+    }
+    $count = Get-Process -Name PowerShell* -PSComputerName W16DSC01 |
+    Measure-Object |
+    Select-Object -ExpandProperty Count
+    "Number of PowerShell processes = $count"
+  }
+}
+Invoke-ParallelForEach
+}
+
+$ts = New-PSSession -ComputerName W16TGT01 -ConfigurationName PiAWorkflows
+Invoke-Command -Session $ts -ScriptBlock $sb
+
+
+## 12.4.3 Invoking as workflow
+Invoke-AsWorkflow -CommandName Get-Process -Parameter @{Name = 'powershell'}
+Invoke-AsWorkflow -Expression 'ping 127.0.0.1'

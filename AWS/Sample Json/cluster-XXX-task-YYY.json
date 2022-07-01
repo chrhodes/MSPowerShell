@@ -1,0 +1,123 @@
+{
+    "Failures": [],
+    "Tasks": [
+        {
+            "Attachments": [],
+            "Attributes": [
+                {
+                    "Name": "ecs.cpu-architecture",
+                    "TargetId": null,
+                    "TargetType": null,
+                    "Value": "x86_64"
+                }
+            ],
+            "AvailabilityZone": "us-west-2b",
+            "CapacityProviderName": null,
+            "ClusterArn": "arn:aws:ecs:us-west-2:049751716774:cluster/daco-prod02",
+            "Connectivity": {
+                "Value": "CONNECTED"
+            },
+            "ConnectivityAt": "2022-06-09T01:35:37.177Z",
+            "ContainerInstanceArn": "arn:aws:ecs:us-west-2:049751716774:container-instance/daco-prod02/9f937b339cc44cfe861d23a827eef10c",
+            "Containers": [
+                {
+                    "ContainerArn": "arn:aws:ecs:us-west-2:049751716774:container/daco-prod02/ff467617-567f-4f3d-b015-4b294bf0c7de/6c25b767-26ae-42c9-b7cf-214b686b2d5a",
+                    "Cpu": "1025",
+                    "ExitCode": 0,
+                    "GpuIds": [],
+                    "HealthStatus": {
+                        "Value": "UNKNOWN"
+                    },
+                    "Image": "122972921717.dkr.ecr.us-west-2.amazonaws.com/zuora/event:4.37.0",
+                    "ImageDigest": "sha256:e4dca4fab16f02c8afe0baa1778c1bf9e296d84f49bbc70b78b0c0cdafa92096",
+                    "LastStatus": "RUNNING",
+                    "ManagedAgents": [],
+                    "Memory": "6144",
+                    "MemoryReservation": null,
+                    "Name": "dc-event",
+                    "NetworkBindings": [
+                        {
+                            "BindIP": "0.0.0.0",
+                            "ContainerPort": 9080,
+                            "HostPort": 11821,
+                            "Protocol": {
+                                "Value": "tcp"
+                            }
+                        },
+                        {
+                            "BindIP": "0.0.0.0",
+                            "ContainerPort": 9081,
+                            "HostPort": 11822,
+                            "Protocol": {
+                                "Value": "tcp"
+                            }
+                        }
+                    ],
+                    "NetworkInterfaces": [],
+                    "Reason": null,
+                    "RuntimeId": "a5c7956ae8cac920cf48433985ef0f48dcce1f7d3a31f4941a18de279b841d1c",
+                    "TaskArn": "arn:aws:ecs:us-west-2:049751716774:task/ff467617-567f-4f3d-b015-4b294bf0c7de"
+                }
+            ],
+            "Cpu": "1025",
+            "CreatedAt": "2022-06-09T01:35:37.177Z",
+            "DesiredStatus": "RUNNING",
+            "EnableExecuteCommand": false,
+            "EphemeralStorage": null,
+            "ExecutionStoppedAt": "0001-01-01T00:00:00",
+            "Group": "service:dc-event",
+            "HealthStatus": {
+                "Value": "UNKNOWN"
+            },
+            "InferenceAccelerators": [],
+            "LastStatus": "RUNNING",
+            "LaunchType": {
+                "Value": "EC2"
+            },
+            "Memory": "6144",
+            "Overrides": {
+                "ContainerOverrides": [
+                    {
+                        "Command": [],
+                        "Cpu": 0,
+                        "Environment": [],
+                        "EnvironmentFiles": [],
+                        "Memory": 0,
+                        "MemoryReservation": 0,
+                        "Name": "dc-event",
+                        "ResourceRequirements": []
+                    }
+                ],
+                "Cpu": null,
+                "EphemeralStorage": null,
+                "ExecutionRoleArn": null,
+                "InferenceAcceleratorOverrides": [],
+                "Memory": null,
+                "TaskRoleArn": null
+            },
+            "PlatformFamily": null,
+            "PlatformVersion": null,
+            "PullStartedAt": "2022-06-09T01:35:39.541Z",
+            "PullStoppedAt": "2022-06-09T01:35:59.541Z",
+            "StartedAt": "2022-06-09T01:36:00.541Z",
+            "StartedBy": "ecs-svc/9796074207442424738",
+            "StopCode": null,
+            "StoppedAt": "0001-01-01T00:00:00",
+            "StoppedReason": null,
+            "StoppingAt": "0001-01-01T00:00:00",
+            "Tags": [],
+            "TaskArn": "arn:aws:ecs:us-west-2:049751716774:task/ff467617-567f-4f3d-b015-4b294bf0c7de",
+            "TaskDefinitionArn": "arn:aws:ecs:us-west-2:049751716774:task-definition/daco-prod02-dc-event:21",
+            "Version": 2
+        }
+    ],
+    "ResponseMetadata": {
+        "RequestId": "33419497-1abc-4ca5-9b4f-851df6e6f76e",
+        "Metadata": {},
+        "ChecksumAlgorithm": 0,
+        "ChecksumValidationStatus": 0
+    },
+    "ContentLength": 1824,
+    "HttpStatusCode": 200,
+    "LoggedAt": "2022-06-23T13:54:30.7245171-07:00"
+}

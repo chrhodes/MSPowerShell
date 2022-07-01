@@ -1,0 +1,366 @@
+## Code for chapter 15 PowerShell in Action third edition
+##  This file contains the code from the chapter body. 
+##  Any individual listings are supplied in separate files
+##  Code has been unwrapped so may look slightly different 
+##  to that presented in the book
+
+
+## 15.1.1 The Write* cmdlets
+Get-Command write* -Module Microsoft.PowerShell.Utility |
+Format-Wide -Column 3
+
+1..3 | foreach {$psitem | Write-Output}
+
+$max = 10000
+1..$max |foreach {
+  Write-Progress -Activity Test -PercentComplete (($psitem/$max)*100)
+}
+
+1..3 | foreach {
+  $x = $psitem * 2
+  Write-Host -Object "$psitem doubled is: $x"
+}
+
+1..3 | foreach {
+  $x = $psitem * 2
+  Write-Host -Object "$psitem doubled is: $x"
+  $y += $x
+  $y
+}
+
+
+## Verbose and Debug
+function fdvtest {
+[CmdletBinding()]
+param(
+ [Parameter(ValueFromPipeline=$true)]
+ [int]$i,
+ [int]$mult=2
+)
+ PROCESS {
+  $i * $mult
+ }
+}
+
+1..3 | fdvtest
+
+Get-Command fdvtest -Syntax
+
+function fdvtest {
+[CmdletBinding()]
+param(
+  [Parameter(ValueFromPipeline=$true)]
+  [int]$i,
+  [int]$mult=2
+)
+ PROCESS {
+   Write-Verbose -Message 'Performing multiplication'
+   $i * $mult
+ }
+}
+
+1..3 | fdvtest -Verbose
+
+$host.PrivateData
+$host.PrivateData.ErrorForegroundColor = 'Green'
+
+function fdvtest {
+[CmdletBinding()]
+param(
+  [Parameter(ValueFromPipeline=$true)]
+  [int]$i,
+  [int]$mult=2
+)
+ BEGIN {
+   Write-Debug "`$mult = $mult"
+ }
+ PROCESS {
+   Write-Verbose -Message 'Performing multiplication'
+   Write-Debug -Message "`$i = $i"
+   $i * $mult
+ }
+}
+
+Get-Item variable:*preference
+
+1..7 |
+foreach {
+  switch ($psitem) {
+        1 {
+            Write-Information -MessageData "Starting. Value is $_" -InformationAction Continue
+            Break
+          }
+        5 {
+            Write-Warning -Message "Nearly Finished. Value is $_"
+            Break
+          }
+        7 {
+            Write-Error -Message "Value of $_ is too high" -ErrorAction Continue
+          }
+  default {
+            Write-Information -MessageData "Value is $_" -InformationAction Continue
+          }
+  }
+}
+
+
+## 15.1.2 Writing events to the event Log
+New-EventLog -LogName PiALog -Source Functions
+
+Get-CimInstance -ClassName Win32_NTEventLogFile -Filter "LogFileName='PiALog'" |
+select -ExpandProperty Sources
+
+1..7 |
+foreach {
+  switch ($psitem) {
+          1 {
+               Write-EventLog -Message "Starting. Value is $_" -LogName PiALog -Source Scripts -EntryType Information -EventId 1001
+               Break
+            }
+          5 {
+               Write-EventLog -Message "Nearly Finished. Value is $_" -LogName PiALog -Source Scripts -EntryType Warning -EventId 1010
+               Break
+            }
+          7 {
+               Write-EventLog -Message "Value of $_ is too high" -LogName PiALog -Source Scripts -EntryType Error -EventId 1020
+            }
+    default {
+               Write-EventLog -Message "Value is $_" -LogName PiALog -Source Scripts -EntryType Information -EventId 1002
+            }
+ }
+}
+
+
+## 15.1.3 Catching errors with strict mode
+## Catching uninitialized variable use in string expansions
+
+Set-StrictMode -Version 1
+$nosuchvariable
+"$nosuchvariable"
+
+Set-StrictMode -Version 2
+"$nosuchvariable"
+
+
+## Catching attempts to read nonexistent properties
+dir | foreach { $_.name + " " + $_.length }
+
+Set-StrictMode -Off
+$date = Get-Date
+$date.nosuchproperty
+
+Set-StrictMode -Version Latest
+$date.nosuchproperty
+
+
+## Checking for functions called like methods
+Set-StrictMode -Off
+function divide ($x,$y) { $x / $y }
+divide(9, 3)
+
+Set-StrictMode -Version Latest
+divide(9, 3)
+
+divide 9 3
+
+
+## Applying strict mode to scripts
+dir | foreach { $_.name + " " + $_.length }
+dir | foreach { $_.name + " " + $(try { $_.length } catch { $null })}
+
+
+## 15.1.4 Static analysis of scripts
+Set-StrictMode -Off
+
+$script = "function abc ($x) {dir; $x + 1}"
+
+$parse_errs = $null
+$tokens = [System.Management.Automation.PSParser]::Tokenize($script,[ref] $parse_errs)
+
+$parse_errs | Write-Error
+$tokens | Format-Table -AutoSize Type,Content,StartLine,StartColumn
+
+function Test-Script {
+param (
+  [Object]$script
+)
+  $parse_errs = $null
+  $tokens = [system.management.automation.psparser]::Tokenize($script,[ref] $parse_errs)
+  $parse_errs | Write-Error
+  $tokens
+}
+
+Test-Script "function ($x) {$x + }" |
+Format-Table -AutoSize Type,Content,StartLine, StartColumn
+
+function Test-Script {
+param (
+  [Object]$script
+)
+  $parse_errs = $null
+  $tokens = [system.management.automation.psparser]::Tokenize($script, [ref] $parse_errs)
+  foreach ($err in $parse_errs)
+  {
+    'ERROR on line ' +
+    $err.Token.StartLine +
+    ': ' + $err.Message +
+    "`n"
+  }
+  foreach ($token in $tokens)
+  {
+    if ($token.Type -eq 'CommandArgument')
+    {
+      $gcmerr = Get-Command $token.Content 2>&1
+      if (! $? )
+      {
+        'WARNING on line ' +
+        $gcmerr.InvocationInfo.ScriptLineNumber +
+        ': ' + $gcmerr.Exception.Message +
+        "`n"
+      }
+   }
+ }
+}
+
+$badScript = @'
+  for ($a1 in nosuchcommand)
+  {
+    while ( )
+    $a2*3
+  }
+'@
+
+Test-Script $badScript
+
+
+## 15.3 PowerShell script debugging features
+## 15.3.1 The Set-PSDebug cmdlet
+## Tracing statement execution
+Set-PSDebug -Trace 1
+Set-PSDebug -Trace 2
+function foo {"`$args is " + $args}
+
+
+## Stepping through statement execution
+Set-PSDebug -Step
+foreach ($i in 1..3) {foo $i}
+
+
+## 15.3.2 Nested prompts and the Suspend operation
+## Suspending a script while in step mode
+Set-PSDebug -Step
+$i=0; while ($i++ -lt 10) { $i }
+$i
+
+
+## 15.4 Command-line debugging
+## 15.4.1 Working with breakpoint objects
+@'
+"Starting"
+$sum = 0
+foreach ($i in 1..10)
+{
+  $sum += $i
+}
+"The sum is $sum"
+'@ > testscript2.ps1
+
+$firstBP = Set-PSBreakpoint -Script testscript2.ps1 -Line 4 -Action {
+  if ($i -gt 3 -and $i -lt 7)
+  {
+    Write-Host "> DEBUG ACTION: i = $i, sum = $sum"
+  }
+}
+
+$firstBP | Format-List
+
+Get-PSBreakpoint | Get-Member
+
+.\testscript2.ps1
+Get-PSBreakpoint | Remove-PSBreakpoint
+
+$firstBP = Set-PSBreakpoint -Script testscript2.ps1 -Line 4 -Action {
+  if ($i -eq 4)
+  {
+    Write-Host "> DEBUG ACTION: i = $i, sum = $sum"
+    break
+  }
+}
+
+
+## 15.4.2 Setting breakpoints on commands
+function hello { 'Hello world!' }
+Set-PSBreakpoint -Command hello
+hello
+
+
+## 15.4.3 Setting breakpoints on variable assignment
+
+$thirdBP = Set-PSBreakpoint -Script testscript2.ps1 -Variable sum -Mode Write -Action {
+  if ($sum -gt 10)
+  {
+    Write-Host "> VARIABLE sum was set to $sum"
+  }
+}
+
+$thirdBP | Format-List
+.\testscript2.ps1
+
+
+## 15.5 Beyond scripts
+## 15.5.1 Debugging PowerShell jobs
+$sb = {
+  $i = 0
+  while ($true) {
+    "My value is $i"
+    $i++
+    Start-Sleep -Seconds 5
+  }
+}
+Start-Job -Name MyLongJob -ScriptBlock $sb
+
+Debug-Job -id 3
+
+@'
+  $i = 0
+  while ($true) {
+    "My value is $i"
+    $i++
+    Start-Sleep -Seconds 5
+  }
+'@ > dbjob.ps1
+
+$job = Start-Job -ScriptBlock {
+  Set-PSBreakpoint -Script C:\test\dbjob.ps1 -Line 3
+  C:\test\dbjob.ps1
+}
+
+
+## 15.5.2 Debugging remote scripts
+$s = New-PSSession -ComputerName server01
+Enter-PSSession -Session $s
+psedit -FileName C:\scripts\dbjob.ps1
+
+
+## 15.5.3 Debugging PowerShell runspaces
+Get-Runspace
+$rsp = [RunspaceFactory]::CreateRunspace()
+$rsp.Open()
+Get-Runspace
+
+$ps = [powershell]::Create()
+$ps.Runspace = $rsp
+[void]$ps.AddScript('C:\test\dbjob.ps1')
+$as = $ps.BeginInvoke()
+
+Get-Runspace
+Debug-Runspace -Id 2
+
+$ps.Stop()
+Get-Runspace
+
+$rsp.Close()
+$rsp.Dispose()
+
+Get-PSHostProcessInfo
+Enter-PSHostProcess -Id 4624

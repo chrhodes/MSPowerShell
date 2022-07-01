@@ -1,0 +1,368 @@
+{
+    "Tags": [],
+    "TaskDefinition": {
+        "Compatibilities": [
+            "EC2"
+        ],
+        "ContainerDefinitions": [
+            {
+                "Command": [],
+                "Cpu": 0,
+                "DependsOn": [],
+                "DisableNetworking": false,
+                "DnsSearchDomains": [],
+                "DnsServers": [],
+                "DockerLabels": {},
+                "DockerSecurityOptions": [],
+                "EntryPoint": [],
+                "Environment": [
+                    {
+                        "Name": "ORGANIZATION_DATABASE_DRIVER",
+                        "Value": "org.postgresql.Driver"
+                    },
+                    {
+                        "Name": "SENTRY_PROJECT_URL",
+                        "Value": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                    },
+                    {
+                        "Name": "LOG_BASE_PATH",
+                        "Value": "/logs"
+                    },
+                    {
+                        "Name": "MONITOR_PORT",
+                        "Value": "11830"
+                    },
+                    {
+                        "Name": "LOG_CATEGORY",
+                        "Value": "us-west-2-zin-prod-api-event"
+                    },
+                    {
+                        "Name": "DATA_WAREHOUSE_01_DATABASE_PASSWORD",
+                        "Value": "mfDXLiGBLMy4"
+                    },
+                    {
+                        "Name": "JAVA_OPTS",
+                        "Value": ""
+                    },
+                    {
+                        "Name": "QUERY_01_DATABASE_PASSWORD",
+                        "Value": ""
+                    },
+                    {
+                        "Name": "AMAZON_REGION",
+                        "Value": "us-west-2"
+                    },
+                    {
+                        "Name": "HOST_NAME",
+                        "Value": "0.0.0.0"
+                    },
+                    {
+                        "Name": "STAGING_01_DATABASE_PASSWORD",
+                        "Value": ""
+                    },
+                    {
+                        "Name": "EMAIL_DEFAULT_FAILURE_ADDRESS",
+                        "Value": "zin-sad-trombone@zuora.com"
+                    },
+                    {
+                        "Name": "INTEGRATION_ENCRYPTION_KEY",
+                        "Value": "nachosgrande"
+                    },
+                    {
+                        "Name": "REDIS_TIMEOUT",
+                        "Value": "10000"
+                    },
+                    {
+                        "Name": "AMAZON_ACCESS_KEY_ID",
+                        "Value": "XXXXXXXXXXXXXXXXXXXXXXX"
+                    },
+                    {
+                        "Name": "CONTENT_BUCKET_URL",
+                        "Value": "http://insights-global-prod-cdn.s3.amazonaws.com"
+                    },
+                    {
+                        "Name": "LOG_TYPE",
+                        "Value": "local"
+                    },
+                    {
+                        "Name": "AMAZON_SECRET_KEY",
+                        "Value": "Hc9fg9t6wD3VH3VqaKm2vYd+0vuuKGqEoEtlloTp"
+                    },
+                    {
+                        "Name": "DATA_WAREHOUSE_01_DATABASE_MAX_AGE",
+                        "Value": "7200"
+                    },
+                    {
+                        "Name": "DATA_WAREHOUSE_01_DATABASE_URL",
+                        "Value": "jdbc:redshift://zin-prod-redshift.cm3rfhdohxd7.us-west-2.redshift.amazonaws.com:5439/wildcatprd"
+                    },
+                    {
+                        "Name": "AMAZON_KMS_KEY_ID",
+                        "Value": "arn:aws:kms:us-west-2:049751716774:key/57d913a6-7c2a-43ae-af79-5f71d307add0"
+                    },
+                    {
+                        "Name": "DEFAULT_DATABASE_POOL_NAME",
+                        "Value": "organization"
+                    },
+                    {
+                        "Name": "EMAIL_DEFAULT_DRAFT_FAILURE_ADDRESS",
+                        "Value": "zin-sad-trombone-draft@zuora.com"
+                    },
+                    {
+                        "Name": "STAGING_01_DATABASE_URL",
+                        "Value": "jdbc:postgresql://zin01-spgrds-zin-prod.c3xesb8bb70d.us-west-2.rds.amazonaws.com/wildcat_prod?user=zinsights&password=lS2RzagpezM5&OpenSourceSubProtocolOverride=true"
+                    },
+                    {
+                        "Name": "BUILD_TAG",
+                        "Value": "4.15.1"
+                    },
+                    {
+                        "Name": "PORT",
+                        "Value": "11829"
+                    },
+                    {
+                        "Name": "DATA_WAREHOUSE_01_DATABASE_USER",
+                        "Value": "zinsights"
+                    },
+                    {
+                        "Name": "ORGANIZATION_DATABASE_POOL_NAME",
+                        "Value": "organization"
+                    },
+                    {
+                        "Name": "SENDGRID_API_KEY",
+                        "Value": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                    },
+                    {
+                        "Name": "PROTOCOL",
+                        "Value": "http"
+                    },
+                    {
+                        "Name": "QUERY_01_DATABASE_MAX_ACTIVE",
+                        "Value": "7200"
+                    },
+                    {
+                        "Name": "QUERY_01_DATABASE_USER",
+                        "Value": ""
+                    },
+                    {
+                        "Name": "DATA_WAREHOUSE_01_DATABASE_MAX_ACTIVE",
+                        "Value": "7200"
+                    },
+                    {
+                        "Name": "ORGANIZATION_DATABASE_INITIAL_CONNECTIONS",
+                        "Value": "0"
+                    },
+                    {
+                        "Name": "ORGANIZATION_DATABASE_URL",
+                        "Value": "jdbc:postgresql://zin01-mpgrds-zin-prod.c3xesb8bb70d.us-west-2.rds.amazonaws.com/wildcat_prod?user=zinsights&password=lS2RzagpezM5&OpenSourceSubProtocolOverride=true"
+                    },
+                    {
+                        "Name": "AMAZON_ENVIRONMENT",
+                        "Value": "zin-prod"
+                    },
+                    {
+                        "Name": "QUERY_01_DATABASE_URL",
+                        "Value": "jdbc:postgresql://zin01-mpgrds-zin-prod.c3xesb8bb70d.us-west-2.rds.amazonaws.com/wildcat_prod?user=zinsights&password=lS2RzagpezM5&OpenSourceSubProtocolOverride=true"
+                    },
+                    {
+                        "Name": "DEFAULT_LOG_LEVEL",
+                        "Value": "INFO"
+                    },
+                    {
+                        "Name": "EMAIL_SENDER_ADDRESS",
+                        "Value": "support@insights.zuora.com"
+                    },
+                    {
+                        "Name": "SERVER_URL",
+                        "Value": "https://nw1.events.insights.zuora.com"
+                    },
+                    {
+                        "Name": "STAGING_01_DATABASE_USER",
+                        "Value": ""
+                    },
+                    {
+                        "Name": "ORGANIZATION_DATABASE_USER",
+                        "Value": ""
+                    },
+                    {
+                        "Name": "EMAIL_SENDER_DISPLAY_NAME",
+                        "Value": "Zuora Insights Notifications"
+                    },
+                    {
+                        "Name": "ORGANIZATION_DATABASE_PASSWORD",
+                        "Value": ""
+                    },
+                    {
+                        "Name": "REDIS_URL",
+                        "Value": "zin-redis-prod-02.vomwhc.0001.usw2.cache.amazonaws.com"
+                    }
+                ],
+                "EnvironmentFiles": [],
+                "Essential": true,
+                "ExtraHosts": [],
+                "FirelensConfiguration": null,
+                "HealthCheck": null,
+                "Hostname": null,
+                "Image": "122972921717.dkr.ecr.us-west-2.amazonaws.com/insights/api-event:4.15.1",
+                "Interactive": false,
+                "Links": [],
+                "LinuxParameters": null,
+                "LogConfiguration": {
+                    "LogDriver": {
+                        "Value": "json-file"
+                    },
+                    "Options": {},
+                    "SecretOptions": []
+                },
+                "Memory": 2048,
+                "MemoryReservation": 0,
+                "MountPoints": [
+                    {
+                        "ContainerPath": "/data",
+                        "ReadOnly": false,
+                        "SourceVolume": "docker-data"
+                    },
+                    {
+                        "ContainerPath": "/tmp",
+                        "ReadOnly": false,
+                        "SourceVolume": "docker-tmp"
+                    },
+                    {
+                        "ContainerPath": "/logs",
+                        "ReadOnly": false,
+                        "SourceVolume": "docker-logs"
+                    },
+                    {
+                        "ContainerPath": "/opt/jdk",
+                        "ReadOnly": false,
+                        "SourceVolume": "jdk"
+                    }
+                ],
+                "Name": "api-event",
+                "PortMappings": [
+                    {
+                        "ContainerPort": 11829,
+                        "HostPort": 11829,
+                        "Protocol": {
+                            "Value": "tcp"
+                        }
+                    }
+                ],
+                "Privileged": true,
+                "PseudoTerminal": false,
+                "ReadonlyRootFilesystem": true,
+                "RepositoryCredentials": null,
+                "ResourceRequirements": [],
+                "Secrets": [],
+                "StartTimeout": 0,
+                "StopTimeout": 0,
+                "SystemControls": [],
+                "Ulimits": [],
+                "User": null,
+                "VolumesFrom": [],
+                "WorkingDirectory": null
+            }
+        ],
+        "Cpu": null,
+        "DeregisteredAt": "0001-01-01T00:00:00",
+        "EphemeralStorage": null,
+        "ExecutionRoleArn": null,
+        "Family": "api-event",
+        "InferenceAccelerators": [],
+        "IpcMode": null,
+        "Memory": null,
+        "NetworkMode": null,
+        "PidMode": null,
+        "PlacementConstraints": [],
+        "ProxyConfiguration": null,
+        "RegisteredAt": "0001-01-01T00:00:00",
+        "RegisteredBy": null,
+        "RequiresAttributes": [
+            {
+                "Name": "com.amazonaws.ecs.capability.ecr-auth",
+                "TargetId": null,
+                "TargetType": null,
+                "Value": null
+            },
+            {
+                "Name": "com.amazonaws.ecs.capability.privileged-container",
+                "TargetId": null,
+                "TargetType": null,
+                "Value": null
+            },
+            {
+                "Name": "com.amazonaws.ecs.capability.docker-remote-api.1.17",
+                "TargetId": null,
+                "TargetType": null,
+                "Value": null
+            },
+            {
+                "Name": "com.amazonaws.ecs.capability.docker-remote-api.1.18",
+                "TargetId": null,
+                "TargetType": null,
+                "Value": null
+            },
+            {
+                "Name": "com.amazonaws.ecs.capability.logging-driver.json-file",
+                "TargetId": null,
+                "TargetType": null,
+                "Value": null
+            }
+        ],
+        "RequiresCompatibilities": [],
+        "Revision": 503,
+        "RuntimePlatform": null,
+        "Status": {
+            "Value": "ACTIVE"
+        },
+        "TaskDefinitionArn": "arn:aws:ecs:us-west-2:049751716774:task-definition/api-event:503",
+        "TaskRoleArn": null,
+        "Volumes": [
+            {
+                "DockerVolumeConfiguration": null,
+                "EfsVolumeConfiguration": null,
+                "FsxWindowsFileServerVolumeConfiguration": null,
+                "Host": {
+                    "SourcePath": null
+                },
+                "Name": "docker-tmp"
+            },
+            {
+                "DockerVolumeConfiguration": null,
+                "EfsVolumeConfiguration": null,
+                "FsxWindowsFileServerVolumeConfiguration": null,
+                "Host": {
+                    "SourcePath": "/data"
+                },
+                "Name": "docker-data"
+            },
+            {
+                "DockerVolumeConfiguration": null,
+                "EfsVolumeConfiguration": null,
+                "FsxWindowsFileServerVolumeConfiguration": null,
+                "Host": {
+                    "SourcePath": "/tmp/clogs"
+                },
+                "Name": "docker-logs"
+            },
+            {
+                "DockerVolumeConfiguration": null,
+                "EfsVolumeConfiguration": null,
+                "FsxWindowsFileServerVolumeConfiguration": null,
+                "Host": {
+                    "SourcePath": "/opt/jdk"
+                },
+                "Name": "jdk"
+            }
+        ]
+    },
+    "ResponseMetadata": {
+        "RequestId": "f5bb56c0-f30b-4745-b13a-411cdce2a006",
+        "Metadata": {},
+        "ChecksumAlgorithm": 0,
+        "ChecksumValidationStatus": 0
+    },
+    "ContentLength": 4798,
+    "HttpStatusCode": 200,
+    "LoggedAt": "2022-07-01T10:09:55.7665894-07:00"
+}

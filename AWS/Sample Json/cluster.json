@@ -1,0 +1,39 @@
+{
+	"Clusters": [
+		{
+			"ActiveServicesCount": 5,
+			"Attachments": [],
+			"AttachmentsStatus": null,
+			"CapacityProviders": [
+				"noae-sbx01"
+			],
+			"ClusterArn": "arn:aws:ecs:us-west-2:049751716774:cluster/noae-sbx01",
+			"ClusterName": "noae-sbx01",
+			"Configuration": null,
+			"DefaultCapacityProviderStrategy": [
+				{
+					"Base": 0,
+					"CapacityProvider": "noae-sbx01",
+					"Weight": 1
+				}
+			],
+			"PendingTasksCount": 0,
+			"RegisteredContainerInstancesCount": 30,
+			"RunningTasksCount": 60,
+			"Settings": [],
+			"Statistics": [],
+			"Status": "ACTIVE",
+			"Tags": []
+		}
+	],
+	"Failures": [],
+	"ResponseMetadata": {
+		"RequestId": "438c0679-927a-4277-b7e5-d671d4488d5f",
+		"Metadata": {},
+		"ChecksumAlgorithm": 0,
+		"ChecksumValidationStatus": 0
+	},
+	"ContentLength": 417,
+	"HttpStatusCode": 200,
+	"LoggedAt": "/Date(1655867285467)/"
+}

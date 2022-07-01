@@ -1,0 +1,49 @@
+﻿<Window  
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  
+   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    Title="PowerSearch: Search Files for String"  
+     SizeToContent="WidthAndHeight" >  
+  <DockPanel>
+    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" 
+      Width="425" DockPanel.Dock="Top" Margin="10,17,10,17">
+       <Label Width="100" >Path to search</Label>  
+      
+ <TextBox Name="Path" Width="300" >Add Row</TextBox>  
+    </StackPanel>
+    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" 
+      Width="425" DockPanel.Dock="Top" Margin="10,17,10,17">
+       <Label Width="70" >File Filter</Label>
+       <ComboBox Name="FileFilter" Width="100" IsEditable="True">  
+         *.ps1
+       </ComboBox>
+       <Label Width="100" >Search Pattern</Label>
+       <TextBox Name="TextPattern" Width="125" >
+          function.*[a-z]+
+       </TextBox>
+    </StackPanel>
+    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal"
+      Width="425" DockPanel.Dock="Top" Margin="10,17,10,17">
+       <CheckBox Name="UseRegex" Width="150" >
+          Use Regular Expressions
+       </CheckBox>
+       <CheckBox Name="Recurse" Width="150" >
+         Search Subfolders
+       </CheckBox>
+       <CheckBox Name="FirstOnly" Width="150" >
+           First Match Only
+       </CheckBox>
+    </StackPanel>  
+    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal"
+      DockPanel.Dock="Top" Margin="75,5,5,5">
+       <Button Width="100" Name="Run" Margin="5,0,5,0" >  
+        Run Command
+       </Button>
+       <Button Width="100" Name="Show" Margin="5,0,5,0" >
+        Show Command
+       </Button>
+       <Button Width="100" Name="Cancel" Margin="5,0,5,0" >
+        Cancel
+       </Button>
+    </StackPanel>  
+  </DockPanel>
+</Window>

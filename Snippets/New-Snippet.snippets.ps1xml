@@ -1,0 +1,32 @@
+﻿<?xml version='1.0' encoding='utf-8' ?>
+    <Snippets  xmlns='http://schemas.microsoft.com/PowerShell/Snippets'>
+        <Snippet Version='1.0.0'>
+            <Header>
+                <Title>New-Snippet</Title>
+                <Description>Use to create a new snippet</Description>
+                <Author></Author>
+                <SnippetTypes>
+                    <SnippetType>Expansion</SnippetType>
+                </SnippetTypes>
+            </Header>
+
+            <Code>
+                <Script Language='PowerShell' CaretOffset='249'>
+                    <![CDATA[
+    [scriptblock]$code = 
+    {#PutYourCodeHere
+    }
+ 
+    New-IseSnippet `
+        -Text $code.ToString() `
+        -CaretOffset $code.ToString().Length `
+        -Force `
+        -Title ‘SnippetTitle’ `
+        -Description ‘SnippetDescription’
+]]>
+                </Script>
+            </Code>
+
+    </Snippet>
+</Snippets>
+

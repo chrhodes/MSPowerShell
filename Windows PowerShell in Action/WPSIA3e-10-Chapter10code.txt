@@ -1,0 +1,416 @@
+﻿## Code for chapter 10 PowerShell in Action third edition
+##  This file contains the code from the chapter body. 
+##  Any individual listings are supplied in separate files
+##  Code has been unwrapped so may look slightly different 
+##  to that presented in the book
+
+
+## 10.1 Scriptblock basics
+1..10 | foreach-object { $_ * 2 }
+
+
+## 10.1.2 Getting CommandInfo objects
+$d = Get-Command Get-Date
+$d.CommandType
+$d.Name
+
+& $d
+
+function Get-Date {'Hi there'}
+Get-Date
+& 'Get-Date'
+
+Get-Command Get-Date
+Get-Command -CommandType cmdlet Get-Date
+
+$ci = Get-command -CommandType cmdlet Get-Date
+& $ci
+
+&(Get-Command Get-Date -CommandType All)[1]
+
+& {param($x,$y) $x+$y} 2 5
+
+
+## 10.1.3 The scriptblock literal
+1..5 | &{process{$_ * 2}}
+1..5 | ForEach-Object {$_ * 2}
+
+
+## 10.1.4 Defining functions at runtime
+function foo {2+2}
+foo
+
+Get-ChildItem function:foo
+Get-ChildItem function:foo | Get-Member sc*
+
+(Get-ChildItem function:foo).ScriptBlock
+$function:foo.GetType().Fullname
+
+$function:foo = {'Bye!'}
+foo
+
+
+## 10.2.1 Looking at members
+12 | Get-Member
+12 | Get-Member -Static
+
+
+## 10.2.2 Defining synthetic members
+Get-ChildItem $profile | Get-Member ps*
+Get-ChildItem hklm:\software | Get-Member ps*
+
+
+## 10.2.3. Using Add-Member to extend objects
+$s = 'Hi there'
+
+## Adding AliasProperty members
+$s.Length
+
+$s = Add-Member -InputObject $s -MemberType AliasProperty -Name size -Value length -PassThru
+
+$s | Get-Member size
+
+$s -is [PSObject]
+$s -is [string]
+
+$s.size
+$s.Length
+
+
+## Adding NoteProperty members
+$s = Add-Member -InputObject $s -MemberType NoteProperty -Name Description -Value 'A string' -Passthru
+
+$s.Description
+'Hi there'.Description
+
+$s.Description = 'A greeting'
+$s.Description
+
+$s.Description = Get-Date
+$s.Description
+
+$s.Description.DayOfWeek
+$s.Description.GetType().FullName
+
+
+## Adding ScriptMethod members
+$a = [char[]] $s
+$a.GetType().FullName
+"$a"
+
+[array]::reverse($a)
+"$a"
+
+$ns = -join $a
+$ns
+$ns.GetType().FullName
+
+# see listing 10.1 for $sb
+Add-Member -InputObject $s -MemberType ScriptMethod -Name Reverse -Value $sb
+$s.Reverse()
+
+
+## Adding ScriptProperty members
+# see listing 10.2
+
+$s.Description = 'Old description'
+$s.Desc
+
+$s.desc = 'New description'
+
+$s.Description
+$s.desc
+
+$s.desc = Get-Date
+
+
+## 10.2.4 Adding note properties with New-Object
+$obj = New-Object PSCustomObject -Property @{a=1; b=2; c=3}
+$obj | Get-Member
+
+$obj.a = 5
+$obj | Format-Table
+
+$obj.d = 10
+
+$co = [PSCustomObject] @{ a=1; b=2; c=3 }
+$co | Get-Member
+
+function ToPSco { param( [PSCustomObject] $x) $x }
+$co = ToPSco @{ a=1; b=2; c=3 }
+$co
+
+
+## 10.3 Using the Select-Object cmdlet
+1..10 | Select-Object -First 3
+
+Get-ChildItem | Select-Object name,length
+Get-ChildItem | Select-Object name,length | Get-Member
+
+(Get-ChildItem .\a.txt | Select name, length ).PSTypeNames
+Get-ChildItem | Select-Object Name,Length | sort Length
+
+Get-ChildItem | foreach {$_.LastWriteTime.Minute}
+
+Get-ChildItem | Select-Object Name,Length,
+@{Name="Minute";Expression={$_.LastWriteTime.Minute}}
+
+
+## 10.4.1 Dynamic script modules
+$dm = New-Module {
+  $c=0
+  function Get-NextCount { $script:c++; $script:c }
+}
+
+Get-NextCount
+$dm | Format-List
+$dm | Import-Module
+Get-Module
+Get-Module -Name *dynamic* | Remove-Module
+
+New-Module -Name Dynamic1 {
+  $c=0
+  function Get-NextCount{ $script:c++; $script:c }
+} | 
+Import-Module
+
+Get-Module
+
+
+## 10.4.2 Closures in PowerShell
+function add([int]$x) { return { param([int]$y) return $y + $x } }
+
+## see listing 10.3
+
+$c1 = New-Counter
+$c1.GetType().FullName
+& $c1
+& $c1
+
+$c2 = New-Counter 2
+& $c2
+& $c2
+& $c2
+
+& $c1
+& $c1
+
+$c = & {param ($x) {$x+$x}.GetNewClosure()} 3.1415
+& $c
+
+& $c.Module Set-Variable -Name x -Value 'Abc'
+& $c
+
+$c2 = $c.Module.NewBoundScriptBlock({"x is $x"})
+
+& $c2
+& $c2.module Set-Variable -Name x -Value 123
+& $c2
+
+& $c
+
+$function:myfunc = $c
+myfunc
+
+& $c2.Module Set-Variable -Name x -Value 3
+myfunc
+
+
+## 10.4.3 Creating custom objects from modules
+# see listing 10.4
+
+$p1 = New-Point 1 1
+$p2 = New-Point 2 3
+
+"p1 is $p1"
+"p2 is $p2"
+
+$p1.X = 'Hi'
+
+
+## 10.5.1 How steppable pipelines work
+$sb = { Select-Object name, length }
+$sp = $sb.GetSteppablePipeline()
+$sp | Get-Member
+
+$sp.Begin($true)
+$dlls = Get-ChildItem -Path $pshome -Filter *.dll
+foreach ($dll in $dlls) { $sp.Process($dll) }
+
+$sp.End()
+$sp.Dispose()
+
+
+## 10.5.2 Creating a proxy command with steppable pipelines
+# see listing 10.5
+2+2
+$last+3
+$last*7
+
+
+## 10.6 A closer look at the type-system plumbing
+[psobject].GetProperties() | foreach Name
+$f = Get-Item c:\
+$f
+$f.psobject
+$f.psobject.TypeNames
+$f.psobject.Properties | where {$_.name -match 'name'}
+
+
+## 10.6.1 Adding a property
+$np = New-Object -TypeName System.Management.Automation.PSNoteProperty -ArgumentList hi, 'Hello there'
+
+$f.PSObject.Members.add($np)
+$f.hi
+
+$f.PSObject.Members | where {$_.name -match '^hi'}
+
+($f.PSObject.Members | where {
+$_.name -match '^hi'}).value = 'Goodbye!'
+$f.hi
+
+$f.hi = 'Hello again!'
+$f.PSObject.Members | where {$_.name -match '^hi'}
+
+[int] $VariableProperty = 0
+
+$vp = New-Object -TypeName System.Management.Automation.PSVariableProperty -ArgumentList (Get-Variable VariableProperty)
+$f.psobject.members.add($vp)
+
+$f.VariableProperty
+$f.VariableProperty = 7
+$f.VariableProperty
+$f.VariableProperty = 'Hi'
+
+
+## 10.6.2 Shadowing an existing property
+$f = Get-Item c:\windows
+$f.name
+
+$n=New-Object -TypeName Management.Automation.PSScriptProperty -ArgumentList name,{$this.psbase.name.ToUpper()}
+$f.psobject.members.add($n)
+
+$f.name
+$f.psbase.name
+
+
+## 10.7.1 Little languages
+function loop ([int] $i, [scriptblock] $b) {
+  while ($i-- -gt 0) { . $b }
+}
+
+loop 3 { 'Hello World' }
+
+
+## 10.7.2 Type extension
+(1,2,3,4).Sum()
+
+$a = (1,2,3,4)
+$a = Add-Member -PassThru -in $a scriptmethod sum {
+  $r=0
+  foreach ($e in $this) {$r += $e}
+  $r
+}
+
+$a.sum()
+
+# see SumMethod.ps1xml - - Listing 10.6
+
+Update-TypeData SumMethod.ps1xml
+(1,2,3,4,5).Sum()
+('abc','def','ghi').Sum()
+(@{a=1},@{b=2},@{c=3}).Sum()
+([char[]] 'hal' | foreach{[char]([int]$_+1)}).Sum()
+
+# see Listing 10.7
+
+
+## 10.8.1 The Invoke-Expression cmdlet
+Invoke-Expression -Command '$a=2+2; $a'
+$a
+
+Invoke-Expression '$a++'
+$a
+
+$expr = '$a=10;'
+$expr += 'while ($a--) { $a }'
+$expr += '"A is now $a"'
+[string](Invoke-Expression $expr)
+
+
+## 10.8.2 The ExecutionContext variable
+$ExecutionContext.InvokeCommand | Get-Member
+
+
+## 10.8.3 The ExpandString() method
+$a = 13
+$str='a is $a'
+$str
+$ExecutionContext.InvokeCommand.ExpandString($str)
+
+$ExecutionContext.InvokeCommand.ExpandString((Get-Content templatefile.txt))
+
+
+## 10.84 The InvokeScript() method
+$ExecutionContext.InvokeCommand.InvokeScript('2+2')
+
+
+## 10.8.5 Mechanisms for creating scriptblocks
+
+$sb = $ExecutionContext.InvokeCommand.NewScriptBlock(
+'1..4 | foreach {$_ * 2}')
+
+$sb
+& $sb
+
+$sb = [scriptblock]::Create('1..4 | foreach {$_ * 2}')
+& $sb
+
+
+## 10.8.6 Creating functions using the function: drive
+$function:foo = {'Hello there'}
+PS> foo
+
+New-Item function:foo -Value {'Hi!'}
+New-Item function:foo -Value { 'Hi!' } -Force
+
+$x=5
+PS> $y=6
+PS> $function:foo = "$x*$y"
+
+foo
+$function:foo
+
+New-Item function:bar -Value "$function:foo*3"
+bar
+
+
+## 10.9.1 Defining a new .NET class: C#
+# see listing 10.8
+
+[example1]::Reverse('hello there')
+
+
+## 10.9.2 Defining a new enum at runtime
+$beverages = 'Latte, Mocha, Americano, Cappuccino, Espresso'
+Add-Type "public enum BeverageType { $beverages }"
+
+function New-DrinkOrder ([BeverageType] $beverage)
+{
+  "A $beverage was ordered"
+}
+
+New-DrinkOrder latte
+New-DrinkOrder coke
+
+$beverages += ", Coke"
+
+
+## 10.9.3 Dynamic binary modules
+# see ExampleModuleScript.ps1 - - Listing 10.9
+
+./ExampleModuleScript
+Get-Module
+
+$cmd = Get-Command Write-InputObject
+$cmd | Format-List

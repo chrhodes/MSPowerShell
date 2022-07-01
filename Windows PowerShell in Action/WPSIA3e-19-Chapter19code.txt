@@ -1,0 +1,312 @@
+## Code for chapter 19 PowerShell in Action third edition
+##  This file contains the code from the chapter body. 
+##  Any individual listings are supplied in separate files
+##  Code has been unwrapped so may look slightly different 
+##  to that presented in the book
+
+
+## 19.1.1 Using properties in a PowerShell class
+
+class Point
+{
+  $x
+  $y
+}
+
+class Point { $x; $y }
+
+New-Object Point
+[Point]::new()
+
+$p = [Point]::new()
+$p | Get-Member
+
+class Point
+{
+  [int] $x
+  [int] $y
+}
+
+[Point]::New()
+
+class Point {
+  [int] $x = 1
+  [int] $y = 2
+}
+
+$p = [Point] @{ x=1; y=2 }
+$p
+
+class Square {
+  [Point] $c1
+  [Point] $c2
+}
+
+$sq = [square] @{c1 = @{x=1; y=2}; c2 = @{x=3; y="4"}}
+$sq.c1.x
+$sq.c2.y
+
+$jstr = '{"c1": {"x": 1, "y": 2}, "c2": { "x": 3, "y": "4"}}'
+
+$sq = [square] ($jstr | ConvertFrom-Json)
+$sq.c1.x
+$sq.c2.y
+
+$jstr = '{"c1": {"x": 1, "y": 2}, "c2": { "x": 3, "z": "4"}}'
+
+
+## 19.1.2 Class member attributes
+## The static attribute
+
+class myclass {
+  static $foo = 123
+}
+
+[myclass]::foo
+
+class myclass2 {
+  static $foo = 123
+  hidden static $bar = 3.14
+}
+
+[myclass2]::bar
+
+[myclass2] | Get-Member -Static -Type Properties
+
+[myclass2] | Get-Member -Static -Type Properties -Force
+
+
+## Member validation attributes
+class ApartmentPets
+{
+  [int]
+  [ValidateRange(1,88)]
+  $UnitNumber
+
+  [string]
+  [ValidateSet("cat", "dog", "bird")]
+  $Type
+  
+  [int]
+  [ValidateRange(0,3)]
+  $Count
+}
+
+[ApartmentPets] @{ UnitNumber = 22; Type = "cat"; Count = 2 }
+
+[ApartmentPets] @{ UnitNumber = 22; Type = "cat"; Count = 10 }
+
+
+## 19.1.3 PowerShell enumerations
+[System.DayOfWeek]0
+[System.DayOfWeek] "Saturday"
+
+[int] [System.DayOfWeek] "Saturday"
+
+[enum]::GetNames([System.DayOfWeek]) -join ', '
+
+enum foo { one; two; three }
+
+[foo] 0
+[foo] "one"
+[foo]::one
+
+enum foo { one = 1; two = 2; three = 3 }
+
+[foo]5
+[foo]::five
+
+
+## Flags enumerations
+[flags()] enum mybitfield {one = 0x1; two = 0x2; three = 0x4; all = 0x7}
+
+[int] [mybitfield] "one,three"
+[int] [mybitfield] "one,two,three"
+[int] [mybitfield] "all"
+
+
+## Using enums
+
+function foo {
+  param([dayofweek] $bf)
+  "$bf is day $([int] $bf) in the week"
+}
+
+foo tuesday
+
+foo september
+
+
+## 19.2 Methods in PowerShell classes
+## 19.2.2 Static methods
+
+see listing 19.1 
+
+[utils]::Sum(1..10)
+
+function Sum {
+  param ([int[]] $na)
+  $result = 0
+  if ($na -eq $null -or $na.Length -eq 0) {
+    $result
+  }
+  foreach ($n in $na) {
+    $result += $n
+  }
+  $result
+}
+
+sum -na (1..10)
+
+
+## 19.2.3 Instance methods
+
+see listing 19.2
+
+[utils]::ISum(1..10)
+
+$ui = [utils]::new()
+$ui | Get-Member
+$ui | Get-Member -Static
+
+$ad = 1.1,2.2,3.3,4.4,5.5
+$ui.DSum($ad)
+
+see listing 19.3
+
+
+## 19.2.4 Method overloads
+
+see listing 19.4
+
+$ui = [utils]::new()
+$ui | Get-Member
+
+$ui.Sum
+
+$ui.Sum(1..10)
+
+$ad = 1.1,2.2,3.3,4.4,5.5
+$ui.Sum($ad)
+
+
+## 19.2.5 Hidden methods
+
+see listing 19.5
+
+[haslogging]::new() | Get-Member
+
+
+## 19.2.6 Constructors in PowerShell classes
+
+class ApartmentPets
+{
+  [int]
+  [ValidateRange(1,100)]
+  $UnitNumber
+  
+  [string]
+  $Type
+  
+  [int]
+  [ValidateRange(0,3)]
+  $Count
+}
+
+$petEntry = [ApartmentPets]::new()
+$petEntry.Count = 2
+$petEntry.Type = "cat"
+$petEntry.UnitNumber = 7
+
+[ApartmentPets] @{ UnitNumber = 22; Type = "cat"; Count = 2 }
+
+see lsiting 19.6
+
+[ApartmentPets]::new(22, 'cat', 2)
+
+[ApartmentPets]::new(22, 'cat', 4)
+[ApartmentPets]::new(22, 'parrot', 4)
+
+
+## 19.3 Extending existing classes
+## 19.3.1 Creating a derived class
+
+see listing 19.7 
+see listing 19.8
+
+$ui = [newutils]::new()
+$ui | Get-Member
+
+$ad = 1.1, 2.2, 3.3, 4.4, 5.5
+$ui.Sum($ad)
+$ui.Sum(1..10)
+
+
+## 19.3.2 Overriding members on the base class
+
+see listing 19.9
+
+$ui = [newutils]::new()
+$ui | Get-Member
+
+$ui = [newutils]::new()
+$ui.Sum(1..10)
+
+
+## Accessing the base class
+
+class newutils2 : utils {
+  [int] Sum([int[]] $na){
+  return ([utils]$this).Sum([int[]] $na)
+  }
+}
+
+$ui = [newutils2]::new()
+$ui.Sum(1..10)
+
+
+## 19.3.3 Extending .NET classes
+
+see listing 19.10
+
+AutocapPet gEorGE
+
+
+## 19.4 Classes, modules, using, and namespaces
+## The using module pattern
+
+see lsiting 19.11
+
+.\usingpets.ps1
+
+
+## Using modules and namespaces
+
+using module apartmentpets
+class apartmentpets2 : apartmentpets.apartmentpets
+{
+  [string]
+  $Notes
+}
+
+
+## 19.5 Writing class-based DSC resources
+
+see listing 19.12
+
+New-ModuleManifest -Path 'C:\Program Files\WindowsPowerShell\Modules\FirewallStatus\firewallstatus.psd1' `
+-RootModule firewallstatus.psm1 -Guid ([GUID]::NewGuid()) `
+-ModuleVersion 1.0 -Author 'Bruce & Richard' `
+-Description 'Class based resource to toggle Windows firewall' `
+-DscResourcesToExport 'FirewallStatus
+
+see listing 19.13
+
+$cs = New-CimSession -ComputerName W16TGT01
+Get-NetFirewallProfile -CimSession $cs | select Name, Enabled
+
+Start-DscConfiguration -CimSession $cs -Path .\MOF -Wait
+
+Get-NetFirewallProfile -CimSession $cs | select Name, Enabled
+
+Test-DscConfiguration -CimSession $cs

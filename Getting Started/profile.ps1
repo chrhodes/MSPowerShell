@@ -1,0 +1,1 @@
+Import-Module B:\bin\PowerShell\Modules\VNCPowerShell.psm1 -WarningAction Ignore

@@ -1,0 +1,369 @@
+## Code for chapter 17 PowerShell in Action third edition
+##  This file contains the code from the chapter body. 
+##  Any individual listings are supplied in separate files
+##  Code has been unwrapped so may look slightly different 
+##  to that presented in the book
+
+
+## 17.1 .NET and PowerShell
+## 17.1.1 Using .NET from PowerShell
+## The default PowerShell assemblies
+
+[System.AppDomain]::CurrentDomain.GetAssemblies() |
+sort Fullname | select Fullname
+
+
+see get-type.ps1  - - listing 17.1
+
+Get-Type -Pattern '^system\.timers'
+Get-Type -Pattern '^system\.timers' -Verbose
+
+
+## Dynamic assembly loading
+
+Add-Type -AssemblyName System*forms
+
+
+## The New-Object -Property parameter
+New-Object -TypeName System.Timers.Timer -Property @{
+AutoReset = $true
+Interval = 500
+Enabled = $true
+}
+
+
+## A word of caution about using New-Object
+$x = 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'
+New-Object string($x,1,3)
+
+New-Object -TypeName string -ArgumentList $x,1,3
+$constructor_arguments= $x,1,3
+New-Object string $constructor_arguments
+
+
+## Working with generic types
+$ilist = New-Object System.Collections.Generic.List[int]
+$slist = New-Object System.Collections.Generic.List[string]
+
+$nlist = New-Object System.Collections.Generic.List[System.Collections.Generic.List[int]]
+
+$stoi = New-Object 'System.Collections.Generic.Dictionary[string,int]'
+
+
+## 17.1.2 PowerShell and GUIs
+## PowerShell and WinForms
+
+see wpiaforms.psm1 - - listing 17.2
+see winformsexample.ps1 - - code from figure 17.1
+
+
+## PowerShell and the WPF
+see search.xaml - - listing 17.3
+see search.ps1 - - listing 17.4
+
+
+## 17.2 Real-time events
+## 17.2.2 Synchronous events
+Add-Type -AssemblyName System.Windows.Forms
+$form = New-Object -TypeName System.Windows.Forms.Form
+$button = New-Object -TypeName Windows.Forms.Button
+$button.text='Push Me!'
+$button.Dock='fill'
+$button.add_Click({$form.close()})
+$form.Controls.Add($button)
+$form.ShowDialog()
+
+
+## A non-GUI synchronous event example
+[regex]::Replace
+
+[System.Text.RegularExpressions.MatchEvaluator] | Format-List Name,FullName,BaseType
+
+[System.Text.RegularExpressions.MatchEvaluator] | foreach {[string] ($_.GetMembers() -match ' Invoke')}
+
+$inputString = 'abcd'
+[regex]::replace($inputString, '.',
+[System.Text.RegularExpressions.MatchEvaluator] {
+param($match)
+'{0:x4}' -f [int] [char]$match.value
+}
+)
+
+
+## 17.2.4 Working with asynchronous .NET events
+## Creating the Timer object
+$timer = New-Object -TypeName System.Timers.Timer
+$timer | Get-Member -MemberType Event
+$timer | Get-Member
+
+
+## Binding the event action
+Register-ObjectEvent -InputObject $timer -EventName Elapsed -Action { Write-Host '<TIMER>' } |
+Format-List Id, Name, PSJobTypeName, State, HasMoreData, Location, Command
+
+## Enabling the event
+$timer.Interval = 500
+$timer.AutoReset = $true
+$timer.Enabled = $true
+$timer.Stop()
+
+$timer.Start()
+$timer.Stop()
+
+
+## Managing event subscriptions
+Get-EventSubscriber
+Unregister-Event -SubscriptionId 2 -Verbose
+
+
+## 17.2.6 Automatic variables in the event handler
+$timer = New-Object -TypeName System.Timers.Timer -Property @{
+Interval = 1000; Enabled = $true; AutoReset = $false }
+
+Register-ObjectEvent $timer Elapsed -Action {$Event | Out-Host}
+$timer.Start()
+
+
+## 17.2.7 Dynamic modules and event handler state
+$timer = New-Object System.Timers.Timer -Property @{
+Interval = 500; AutoReset = $true}
+
+Register-ObjectEvent -InputObject $timer -MessageData 5 -SourceIdentifier Stateful -EventName Elapsed -Action {
+  $script:counter += 1
+  Write-Host "Event counter is $counter"
+  if ($counter -ge $Event.MessageData)
+  {
+    Write-Host 'Stopping timer'
+    $timer.Stop()
+  }
+} > $null
+
+$timer.Start()
+
+
+## 17.2.8 Queued events and the Wait-Event cmdlet
+
+[System.IO.FileSystemWatcher].GetEvents() | Select-String .
+
+$path = (Resolve-Path ~/desktop).Path
+$fsw = [System.IO.FileSystemWatcher] $path
+
+Register-ObjectEvent -InputObject $fsw –EventName Created -SourceIdentifier fsw1
+Register-ObjectEvent -InputObject $fsw –EventName Changed -SourceIdentifier fsw2
+
+$fsw.EnableRaisingEvents = $true
+
+Get-Event
+
+Get-Date | Out-File -LiteralPath ~/desktop/date.txt
+Get-Event | select SourceIdentifier
+
+Get-Event | Remove-Event
+
+Wait-Event
+
+Get-Date > ~/desktop/date.txt
+
+Get-Event | Remove-Event
+
+
+## 17.2.10 Class-based CIM event registration
+Get-CimClass Win32_*trace | select CimClassName, CimSuperClassName
+
+Register-CimIndicationEvent -ClassName Win32_ProcessStartTrace -Action {
+'Process Start: ' +
+$event.SourceEventArgs.NewEvent.ProcessName |
+Out-Host
+}
+
+Register-CimIndicationEvent -ClassName Win32_ProcessStopTrace -Action {
+'Process Stop: ' +
+$event.SourceEventArgs.NewEvent.ProcessName |
+Out-Host
+}
+
+Register-CimIndicationEvent -ClassName Win32_ProcessTrace -Action {
+'Process Any: ' +
+$event.SourceEventArgs.NewEvent.ProcessName |
+Out-Host
+}
+
+& {
+Start-Process calc
+Start-Sleep 3
+Stop-Process -Name Calculator
+Start-Sleep 3
+Start-Process calc
+Start-Sleep 3
+Stop-Process -Name Calculator
+Start-Sleep 3
+}
+
+Get-EventSubscriber | Unregister-Event
+Get-Job | Remove-Job
+
+
+## Query-based CIM event registrations
+$svcQuery = @"
+SELECT * FROM __InstanceOperationEvent WITHIN 1
+WHERE TargetInstance ISA 'Win32_Service'
+AND TargetInstance.Name='BITS'
+"@
+
+Register-CimIndicationEvent -Query $svcQuery -Action {
+Write-Host 'Got instance operation event on Win32_Service'
+$Event | Format-List * | Out-Host
+}
+
+Start-Service BITS
+
+$GroupQuery = @"
+Select * From __InstanceOperationEvent Within .5
+Where TargetInstance Isa 'Win32_Service'
+and TargetInstance.Name='BITS'
+Group Within 20
+"@
+
+$global:TotalEvents = 0
+
+Register-CimIndicationEvent -Query $GroupQuery -Action {
+Write-Host 'Got grouped event'
+$ne = $Event.SourceEventArgs.NewEvent
+$ti = $ne.Representative.TargetInstance
+$global:TotalEvents += $ne.NumberOfEvents
+$msg = 'Type: ' + $ne.__CLASS +
+' Num Evnts: ' + $ne.NumberOfEvents +
+' Name: ' + $ti.Name +
+' (' + $ti.DisplayName + ')' |
+Out-Host
+}
+
+foreach ($i in 1..3){
+Start-Service -Name BITS
+Start-Sleep 2
+Stop-Service -Name BITS
+Start-Sleep 2
+}
+
+Start-Sleep 10
+
+"Total events: $TotalEvents"
+
+Get-EventSubscriber | Unregister-Event
+
+
+## 17.2.11 Engine events
+## Predefined engine events
+[System.Management.Automation.PsEngineEvent]::Exiting
+
+Register-EngineEvent -SourceIdentifier PowerShell.Exiting -Action {
+"@{Directory='$PWD'}" > ~/pshState.ps1
+}
+
+powershell {
+Register-EngineEvent -SourceIdentifier PowerShell.Exiting -Action {
+"@{Directory='$PWD'}" > ~/pshState.ps1
+} | Format-List Id,Name
+cd ~/desktop
+exit
+}
+
+Get-Content ~/pshState.ps1
+
+
+## 17.2.12 Generating events in functions and scripts
+$timer = New-Object System.Timers.Timer -Property @{
+Interval = 5000; Enabled = $true; AutoReset = $false }
+
+Register-ObjectEvent $timer Elapsed -Action {
+Write-Host '<TIMER>'
+New-Event -SourceIdentifier generatedEvent -Sender 3.14
+} > $null
+
+$timer.Start() > $null
+
+Wait-Event -SourceIdentifier generatedEvent |
+foreach {
+  'Received generated event'
+  $_ | Format-Table -AutoSize SourceIdentifier, EventIdentifier, Sender
+  $_ | Remove-Event
+}
+
+Get-EventSubscriber | Unregister-Event
+
+
+## 17.2.13 Remoting and event forwarding
+## Handling remote EventLog events
+
+$s = New-PSSession -ComputerName W16DSC01
+
+Invoke-Command -Session $s {
+  $myLog = New-Object System.Diagnostics.EventLog application
+  Register-ObjectEvent -InputObject $myLog -SourceIdentifier EventWatcher1 -EventName EntryWritten -Forward
+  $myLog.EnableRaisingEvents = $true
+}
+
+Register-EngineEvent -SourceIdentifier EventWatcher1 -Action {
+  param($sender, $event)
+  Write-Host "Got an event: $($event.entry.message)"
+}
+
+powershell "[System.Environment]::FailFast('An event')"
+
+
+## Serialization issues with remote events
+$typeSpec = @'
+<Types>
+  <Type>
+  <Name>System.Diagnostics.EntryWrittenEventArgs</Name>
+  <Members>
+    <MemberSet>
+      <Name>PSStandardMembers</Name>
+      <Members>
+        <NoteProperty>
+          <Name>SerializationDepth</Name>
+          <Value>2</Value>
+        </NoteProperty>
+      </Members>
+    </MemberSet>
+   </Members>
+  </Type>
+</Types>
+'@
+
+Invoke-Command $s { Unregister-Event EventWatcher1 }
+Unregister-Event EventWatcher1
+
+Invoke-Command -ArgumentList $typeSpec -Session $s {
+  param ($typeSpec)
+  $tfile = New-TemporaryFile
+  $newfilename = $tfile.FullName -replace '\.tmp$', '.ps1xml'
+  Rename-Item -Path $tfile.FullName -NewName $newfilename
+  Set-Content -Value $typeSpec -Path $newfilename
+  Update-TypeData -PrependPath $newfilename
+  Remove-Item -Path $newfilename -Force
+}
+
+Invoke-Command $s {
+$myLog = New-Object System.Diagnostics.EventLog application
+  Register-ObjectEvent -InputObject $myLog -SourceIdentifier EventWatcher1 -EventName EntryWritten -Forward
+  $myLog.EnableRaisingEvents = $true
+}
+
+Register-EngineEvent -SourceIdentifier EventWatcher1 -Action {
+  param($sender, $event)
+  Write-Host "Got an event: $($event.entry.message)"
+}
+
+powershell "[System.Environment]::FailFast('An event')"
+
+
+## 17.2.14 How eventing works
+$timer = New-Object -TypeName System.Timers.Timer
+Register-ObjectEvent -InputObject $timer -EventName Elapsed -Action { Write-Host '<TIMER>' }
+Get-Job | Format-List
+
+$timer.Interval = 60000
+$timer.Start()
+
+Get-Job | Format-Table State,Command -AutoSize

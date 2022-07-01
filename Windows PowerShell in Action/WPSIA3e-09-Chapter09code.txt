@@ -1,0 +1,213 @@
+﻿## Code for chapter 9 PowerShell in Action third edition
+##  This file contains the code from the chapter body. 
+##  Any individual listings are supplied in separate files
+##  Code has been unwrapped so may look slightly different 
+##  to that presented in the book
+
+
+## 9.2 Module manifest structure
+## see testmanifest.psd1 - Listing 9.1
+
+Test-ModuleManifest testManifest.psd1
+Import-Module .\testManifest.psd1 -PassThru | Format-List
+
+
+## 9.6 Advanced module operations
+## 9.6.1 The PSModuleInfo object
+Import-Module .\counter.psm1
+$m = Get-Module counter
+Get-Count
+
+Set-Variable -Name count -Value 33
+Get-Count
+& $m Get-Variable count
+
+& $m Set-Variable -Name count -Value 33
+Get-Count
+
+& $m Get-Item function:Get-Count
+
+& $m {
+  function script:Get-Count
+  {
+    return $script:count += $increment * 2
+  }
+}
+
+Import-Module .\counter.psm1
+Get-Count
+Get-Count
+
+Import-Module .\counter.psm1 -Force
+Get-Count
+
+
+## Accessing modules exports using the PS ModuleInfo object
+$m = New-Module {
+  function foo {"In foo x is $x"}
+  $x=2
+  Export-ModuleMember -func foo -var x
+}
+
+$m | Format-List exported*
+$m.ExportedFunctions.foo
+& $m.ExportedFunctions.foo
+
+$m.ExportedVariables.x.value = 3
+& $m.ExportedFunctions.foo
+
+
+## 9.6.2 Using the PSModuleInfo methods
+[psmoduleinfo].GetMethods() | Select-String -notmatch '(get_|set_)'
+
+
+## The Invoke() method
+$m = Get-Module counter
+$m.Invoke({$script:count = 0; $script:increment = 5})
+& $m {$script:count = 0; $script:increment = 5}
+Get-Count
+Get-Count
+
+
+## The NewBoundScriptBlock() method
+$gcc = Get-Command Get-Count
+$gcc.Module
+
+$sb = {param($incr) $script:increment = $incr}
+$setIncrement = $gcc.Module.NewBoundScriptblock( $sb )
+& $setIncrement 10
+
+Get-Count
+Get-Count
+
+${function:Set-CountIncrement} = $setIncrement
+Set-CountIncrement 100
+Get-Count
+Get-Count
+
+Get-Command Set-CountIncrement | Format-Table name, module
+
+
+## 9.6.3 The defining module vs. the calling module
+## Accessing the defining module
+
+function Test-ModuleContext {
+  $MyInvocation.MyCommand.Module
+}
+
+Test-ModuleContext | select name,privatedata
+
+@'
+function Test-ModuleContext {
+  $MyInvocation.MyCommand.Module
+}
+'@ > TestModuleContext.psm1
+
+Import-Module ./TestModuleContext.psm1
+Test-ModuleContext | Format-List name, privatedata
+
+@'
+@{
+  ModuleVersion = '1.0.0.0'
+  ModuleToProcess = 'TestModuleContext.psm1'
+  PrivateData = @{a = 1; b = 2 }
+}
+'@ > TestModuleContext.psd1
+
+Import-Module -Force ./TestModuleContext.psd1
+Test-ModuleContext | Format-List name, privatedata
+
+
+## Working with both contexts
+@'
+$testv = 123
+function Test-ModuleContext {
+  [CmdletBinding()] param()
+  "module testv is $testv"
+  $ctestv = $PSCmdlet.SessionState.PSVariable.Get("testv").Value;
+  "caller's testv is $ctestv"
+}
+'@ > TestModuleContext.psm1
+
+Import-Module -Force ./TestModuleContext.psm1
+$testv = '456'
+Test-ModuleContext
+
+function nested {
+  $testv = "789"
+  Test-ModuleContext
+}
+
+nested
+
+
+## 9.6.4 Setting module properties from inside a script module
+## Setting the module description
+@'
+  $mInfo = $MyInvocation.MyCommand.ScriptBlock.Module
+  $mInfo.Description = "My Module's Description on $(Get-Date)"
+'@ > setdescription.psm1
+
+Import-Module .\setdescription.psm1
+Get-Module setdescription | Format-List name, description
+
+
+## 9.6.5 Controlling when modules can be unloaded
+@'
+  $mInfo = $MyInvocation.MyCommand.ScriptBlock.Module
+  $mInfo.AccessMode = 'readonly'
+'@ > readonly.psm1
+
+Import-Module .\readonly.psm1
+Remove-Module readonly
+Remove-Module readonly -Force
+
+
+## 9.6.6 Running an action when a module is removed
+@'
+  $mInfo = $MyInvocation.MyCommand.ScriptBlock.Module
+  $mInfo.OnRemove = {
+  Write-Host "I was removed on $(Get-Date)"
+}
+'@ > onremove.psm1
+
+Import-Module .\onremove.psm1
+Remove-Module onremove
+
+
+## 9.7 Publishing a module to a PowerShell Gallery
+Get-PSRepository
+Find-Module -Name A*tools -Repository PSGallery
+Install-Module -Name ARTools -Repository PSGallery
+Save-Module -Name ARTools -Repository PSGallery -Path C:\testscripts
+
+$path = "$HOME\Documents\WindowsPowerShell\Modules"
+$module = "Counter\1.0.0"
+New-ModuleManifest -Path "$path\$module\Counter.psd1" `
+-RootModule Counter.psm1 -CompanyName 'PowerShell in Action' `
+-Description 'Test module' `
+-Author 'Bruce and Richard' -Guid ([System.Guid]::NewGuid()) `
+-Copyright 'Bruce and Richard 2017' -ModuleVersion 1.0.0 `
+-Tags 'PowerShell', 'Example', 'Counters' `
+-ProjectUri 'http://BRproject.com' `
+-LicenseUri 'http://BRproject.com/License.html' `
+-IconUri 'http://BRproject.com/Counter.png' `
+-ReleaseNotes 'http://BRproject.com/ReleaseNotes.html'
+
+Find-Module -Tag 'Active Directory', 'ActiveDirectory', 'Active', 'Directory', 'AD'
+
+
+## 9.7.3 Publishing a module
+Find-Module -Repository PSPrivateGallery
+Publish-Module -Name Counter -Repository PSPrivateGallery -NuGetApiKey 'c34d0782-b5ad-4b45-9165-a168b7f0436f'
+Find-Module -Repository PSPrivateGallery
+
+
+## 9.7.4 Publishing module updates
+$path = "$HOME\Documents\WindowsPowerShell\Modules"
+$module = "Counter\1.0.1"
+Update-ModuleManifest -Path "$path\$module\Counter.psd1" -FunctionsToExport 'Get-Count', 'Reset-Count'
+
+Publish-Module -Name Counter -Repository PSprivateGallery -RequiredVersion 1.0.1 -NuGetApiKey 'c34d0782-b5ad-4b45-9165-a168b7f0436f'
+
+Find-Module -Repository PSPrivateGallery -Name Counter -AllVersions

@@ -1,0 +1,220 @@
+## Code for chapter 13 PowerShell in Action third edition
+##  This file contains the code from the chapter body. 
+##  Any individual listings are supplied in separate files
+##  Code has been unwrapped so may look slightly different 
+##  to that presented in the book
+
+## 13.1.2 Working with the job cmdlets
+
+Start-Job -ScriptBlock {'Hi'} | Format-List
+Get-Job | Format-List
+Receive-Job -Id 3
+
+Start-Job -ScriptBlock {'Hi'}
+Receive-Job -Id 5 -Keep
+Get-Job
+
+$jsb = {
+foreach ($i in 1..10) { Start-Sleep 5; "i is $i" }
+}
+
+Start-Job -ScriptBlock $jsb
+Receive-Job 9
+Receive-Job 9
+Receive-Job 9
+Receive-Job 9
+Get-Job 9
+
+
+## Waiting for jobs to complete
+$jb = Start-Job $jsb; Wait-Job $jb ; Receive-Job $jb
+Start-Job $jsb | Wait-Job | Receive-Job
+
+
+## Removing jobs
+Get-Job
+Get-Job | Remove-Job
+
+Remove-Job *
+
+function Clear-CompletedJobs {
+  Get-Job |
+  where { $_.State -eq "Completed" -and -not $_.HasMoreData } |
+  Remove-Job
+}
+
+Remove-Job -Id 5
+Get-Job
+
+
+## 13.1.3 Working with multiple jobs
+# see listing 13.1
+# see listing 13.2
+
+## 13.1.4 Starting jobs on remote computers
+## Child jobs and nesting
+Get-Job | Format-List -Property Name, ChildJobs
+Get-Job -Name Job4
+
+
+## Child jobs with Invoke-Command
+
+$j = Invoke-Command -ComputerName localhost, W16DC01, W16TGT01 -ScriptBlock {Get-Date} -AsJob
+$j | Format-List Name, ChildJobs
+$j
+Get-Job -Name job2, job3, job4
+
+Receive-Job -Id 3 -Keep |
+Format-Table PSComputerName, DateTime -AutoSize
+
+
+## 13.1.5 Running jobs in existing sessions
+$s = New-PSSession -ComputerName W16DC01
+$j = Invoke-Command -Session $s -ScriptBlock {$PID} -AsJob
+
+Receive-Job $j
+Invoke-Command -Session $s -ScriptBlock {$PID}
+
+
+## 13.1.6 Job types
+Get-WmiObject -Class Win32_ComputerSystem -AsJob
+Get-WmiObject -Class Win32_ComputerSystem -AsJob -ComputerName W16DC01
+Get-Job
+
+Get-Job | where PSJobTypeName -eq 'WmiJob'
+
+
+## 13.2 Workflows as jobs
+
+## 13.2.1 Check points
+workflow test-cw1 {
+    foreach ($i in 1..10) {$i}
+    Checkpoint-Workflow
+    foreach ($j in 50..60){$j}
+}
+test-cw1
+
+workflow test-cw2 {
+    Get-Process
+    Get-Service
+}
+test-cw2 -PSPersist $true
+
+workflow test-cw3 {
+    Get-Process -PSPersist $true
+    Get-Service -PSPersist $true
+}
+test-cw3 
+
+workflow test-cw4 {
+    $PSPersistPreference = $true
+    Get-Process
+    Get-Service
+    $PSPersistPreference = $false
+}
+test-cw4
+
+workflow test-cw5 {
+    foreach ($b in 1..1000) {
+        $b
+        Checkpoint-Workflow
+    }
+}
+test-cw5 -AsJob
+
+Get-Job
+$count = Receive-Job -Id 4 -Keep
+$count.Length
+
+
+## 13.2.2 Suspending workflows
+
+workflow test-ws1 {
+    Get-Process
+    Suspend-Workflow
+    Get-Service
+}
+test-ws1
+
+workflow test-ws2 {
+    Get-Process -PSPersist $true
+    Suspend-Workflow
+    Get-Service
+}
+test-ws2 -AsJob -JobName swtest
+
+workflow test-ws3 {
+    Get-Process 
+    Get-Service
+}
+test-ws3 -ErrorAction Suspend
+
+
+## 13.2.3 Workflows and reboots
+workflow test-restart {
+  Get-CimInstance -ClassName Win32_OperatingSystem |
+  Select-Object -ExpandProperty LastBootupTime
+  
+  Restart-Computer -Wait
+  
+  Get-CimInstance -ClassName Win32_OperatingSystem |
+  Select-Object -ExpandProperty LastBootupTime
+}
+test-restart -PSComputerName W16TGT01
+
+workflow test-restart {
+  Get-CimInstance -ClassName Win32_OperatingSystem |
+  Select-Object -ExpandProperty LastBootupTime
+
+  Restart-Computer
+  Suspend-Workflow
+
+  Get-CimInstance -ClassName Win32_OperatingSystem |
+  Select-Object -ExpandProperty LastBootupTime
+}
+
+test-restart -AsJob -JobName boottime
+Resume-Job -Name boottime
+Receive-Job -Name boottime
+
+# see listing 13.3
+Receive-Job -Name boottime -Keep
+
+
+## 13.3 Scheduled jobs
+## Creating scheduled jobs
+
+Get-Command -Module PSScheduledJob | Format-Wide -Column 3
+
+$t = New-JobTrigger -Once -At "09/05/2017 15:10" -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Minutes 10)
+Register-ScheduledJob -Name PiASJ1 -ScriptBlock {Get-Process} -Trigger $t -RunNow
+
+Get-Job -Name PiASJ1 | Format-Table -AutoSize
+Receive-Job -Id 6
+
+Start-Job -DefinitionName PiASJ1
+
+
+## 13.3.2 Modifying a scheduled job
+## Changing a trigger
+$t2 = New-JobTrigger -Once -At "09/05/2016 18:30" -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Minutes 10)
+
+Add-JobTrigger -Trigger $t2 -Name PiASJ1
+Get-JobTrigger -Name PiASJ1
+
+Remove-JobTrigger -Name PiASJ1 -TriggerId 1
+
+
+## Scheduled job options
+New-ScheduledJobOption
+
+
+## 13.3.3 Managing scheduled jobs
+Get-job -Name PiASJ1
+Get-job -Name PiASJ1 -Newest 2
+
+Get-job -Name PiASJ1 -Before "09/05/2017 15:20:00" -After "09/05/2017 15:15:00"
+
+Remove-Job -Id 12
+Remove-Job -Name PiASJ1
+Unregister-ScheduledJob -Name PiASJ1

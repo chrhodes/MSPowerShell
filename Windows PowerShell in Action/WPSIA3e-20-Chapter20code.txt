@@ -1,0 +1,252 @@
+## Code for chapter 20 PowerShell in Action third edition
+##  This file contains the code from the chapter body. 
+##  Any individual listings are supplied in separate files
+##  Code has been unwrapped so may look slightly different 
+##  to that presented in the book
+
+
+## 20.1 PowerShell API basics
+[PowerShell]::Create().AddCommand("Get-Date").Invoke()
+
+Get-CimInstance -ClassName Win32_BIOS
+[PowerShell]::Create().AddCommand("Get-CimInstance").AddParameter("ClassName", "Win32_BIOS").Invoke()
+
+[PowerShell]::Create().AddCommand("Get-CimInstance").AddArgument("Win32_BIOS").Invoke()
+
+
+## 20.1.1 Multi-command pipelines
+
+Get-Process -Name Power* | sort HandleCount -Descending
+
+[PowerShell]::Create().AddCommand("Get-Process").AddParameter("Name", "Power*").AddCommand("sort").AddArgument("HandleCount").AddParameter("Descending").Invoke()
+
+Get-Process | where HandleCount -GT 1000 |
+Measure-Object | foreach Count
+
+[PowerShell]::Create().AddCommand("Get-Process").AddCommand("where").AddArgument("HandleCount").AddParameter("GT").AddArgument(1000).AddCommand("Measure-Object").AddCommand("foreach").AddArgument("Count").Invoke()
+
+
+## 20.1.2 Building pipelines incrementally
+
+$p = [PowerShell]::Create()
+$p.AddCommand("Get-Process")
+
+$p -eq $p.AddCommand("where")
+$p -eq $p.AddArgument("HandleCount")
+
+$p = $p.AddParameter("GT").AddArgument(1000)
+
+$p=$p.AddCommand("Measure-Object").AddParameter("Sum").AddCommand("foreach").AddArgument("Count")
+
+$p.Invoke()
+
+$p.Invoke()
+
+
+## 20.1.3 Handling execution errors
+
+[PowerShell]::Create().AddCommand("foobar").Invoke()
+
+try { [PowerShell]::Create().AddCommand("foobar").Invoke() }
+catch { "Caught exception: $_" }
+
+[PowerShell]::Create().AddCommand("Write-Error").AddArgument("An error").Invoke()
+
+$p = [PowerShell]::Create().AddCommand("Write-Error").AddArgument("An error")
+$p.Invoke()
+
+$p.HadErrors
+
+$p.Streams | Get-Member -Type Property | foreach Name
+
+$p.Streams.Error.Count
+
+$p.Streams.Error
+
+$p = [PowerShell]::Create().AddCommand("Write-Warning").AddArgument("A warning")
+$p.Invoke()
+$p.Streams.Warning
+
+$p.HadErrors
+
+
+## 20.1.4 Adding scripts and statements
+## Adding scripts to the pipeline
+
+[PowerShell]::Create().AddScript{2+2}.Invoke()
+
+$p = [PowerShell]::Create().AddScript{1;2;3}
+$p.Invoke()
+
+$p = [PowerShell]::Create().AddScript{ foreach ($i in 1,2,3) { $i * $i }}
+$p.Invoke()
+
+$p = [PowerShell]::Create().AddCommand("Get-Process").AddScript{ $input |
+where { $_.name -like "csr*" } |
+foreach name
+}
+$p.Invoke()
+
+$p = [PowerShell]::Create().AddCommand("Get-Process").AddScript{process {
+if ($_.name -like "csr*")
+{
+$_.name
+}
+}
+}
+$p.Invoke()
+
+$p = [PowerShell]::Create().AddScript{ 1; Write-Error "@ is an error"; 3 }
+$p.Invoke()
+
+$p.HadErrors
+$p.Streams.Error
+
+
+## Adding statements to the pipeline
+$p = [PowerShell]::Create()
+$p = $p.AddScript{1}
+$p = $p.AddStatement()
+$p = $p.AddScript{2}
+$p = $p.AddStatement().AddScript(3)
+$p.Invoke()
+
+
+## 20.2 Runspaces and the PowerShell API
+## 20.2.1 Existing runspaces and isolated execution
+
+$x = 123
+
+[PowerShell]::Create().AddScript{$x}.Invoke()
+[PowerShell]::Create().AddScript{$x=456}.Invoke()
+[PowerShell]::Create().AddScript{$x}.Invoke()
+$x
+
+
+## Reusing the current runspace
+$x
+
+[PowerShell]::Create("CurrentRunspace").AddScript{$x=456}.Invoke()
+$x
+
+see listing 20.1
+
+
+## 20.2.2 Creating runspaces
+
+$rs = [runspacefactory]::CreateRunspace()
+$rs.Open()
+
+$p = [PowerShell]::Create()
+$p.Runspace = $rs
+
+$p.AddScript{$x = 123}.Invoke()
+
+$p.Commands.Clear()
+$p.AddScript{$x}.Invoke()
+
+
+## 20.2.3 Using runspaces for concurrency
+$ia = [PowerShell]::Create().AddCommand("Get-Date").BeginInvoke()
+$ia | Format-List
+
+$ia = [PowerShell]::Create().AddCommand("Start-Sleep").AddParameter("Seconds",5).BeginInvoke()
+$ia.IsCompleted
+
+Start-Sleep -Seconds 5 ; $ia.IsCompleted
+
+$p = [PowerShell]::Create().AddCommand("Start-Sleep").AddParameter("Seconds",5)
+$ia = $p.BeginInvoke(); $p.EndInvoke($ia)
+$ia.IsCompleted
+
+see listing 20.2
+
+
+## 20.3 Runspace pools
+
+$pool = [runspacefactory]::CreateRunspacePool(1, 3)
+$pool.Open()
+$pool.GetAvailableRunspaces()
+
+$p1 = [PowerShell]::Create().AddCommand("Start-Sleep").AddArgument(30)
+$p1.RunspacePool = $pool
+$ia1 = $p1.BeginInvoke()
+$pool.GetAvailableRunspaces()
+
+$p2 = [PowerShell]::Create().AddCommand("Start-Sleep").AddArgument(30)
+$p2.RunspacePool = $pool
+$ia2 = $p2.BeginInvoke()
+
+$p3 = [PowerShell]::Create().AddCommand("Start-Sleep").AddArgument(30)
+$p3.RunspacePool = $pool
+$ia3 = $p3.BeginInvoke()
+$pool.GetAvailableRunspaces()
+
+$p4 = [PowerShell]::Create().AddCommand("Start-Sleep").AddArgument(30)
+$p4.RunspacePool = $pool
+$ia4 = $p4.BeginInvoke()
+$pool.GetAvailableRunspaces()
+
+
+see foreachparallel.ps1 - listing 20.3
+
+
+## 20.4 Out-of-process runspaces
+$ooprs = [runspacefactory]::CreateOutOfProcessRunspace($null)
+$ooprs.Open()
+
+$p = [PowerShell]::Create().AddScript{"child PID is $PID"}
+
+$p.Runspace = $ooprs
+$p.Invoke()
+
+"Local pid is $pid"
+
+
+## 20.5 Remote runspaces
+## Sessions and runspaces
+
+$s = New-PSSession localhost
+$s.Runspace
+
+
+## 20.5.2 Creating remote runspaces
+
+$ci = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
+
+$ci | Format-List scheme,computerName,port,appname
+
+$rrs = [runspacefactory]::CreateRunspace($ci)
+$rrs.GetType().FullName
+
+$rrs.open()
+
+$p = [PowerShell]::Create()
+$p.Runspace = $rrs
+
+$p = $p.AddScript{
+  "I am on host $(hostname)"
+  "My PID is $pid"
+}
+
+$p.Invoke()
+
+"Local PID is $PID"
+
+
+## 20.6 Managing runspaces
+
+$r1 = [runspacefactory]::CreateRunspace()
+$r1.Open()
+$r2 = [runspacefactory]::CreateRunspace()
+$r2.Open()
+
+Get-RunSpace
+
+(Get-Runspace)[0].RunspaceStateInfo.State
+
+Get-Runspace |
+where { $_.RunspaceAvailability -eq "Available" } |
+foreach Close
+
+Get-RunSpace

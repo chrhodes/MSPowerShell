@@ -1,0 +1,46 @@
+﻿<Activity
+    x:Class="Microsoft.PowerShell.DynamicActivities.Activity_1303329265"
+    xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+    xmlns:sad="clr-namespace:System.Activities.Debugger;assembly=
+System.Activities"
+    xmlns:local="clr-namespace:Microsoft.PowerShell.DynamicActivities"
+    xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=
+System.Activities"
+    mva:VisualBasic.Settings="Assembly references and imported namespaces serialized as XML namespaces"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ns0="clr-namespace:System;assembly=mscorlib"
+    xmlns:ns1="clr-namespace:Microsoft.PowerShell.Utility.Activities;
+assembly=Microsoft.PowerShell.Utility.Activities"
+    xmlns:ns2="clr-namespace:Microsoft.PowerShell.Activities;
+assembly=Microsoft.PowerShell.Activities"
+    xmlns:ns3="clr-namespace:System.Activities;assembly=System.Activities"
+    xmlns:ns4="clr-namespace:System.Management.Automation;
+assembly=System.Management.Automation"
+    >
+    <Sequence>
+        <ns2:SetPSWorkflowData>
+            <ns2:SetPSWorkflowData.OtherVariableName>Position
+            </ns2:SetPSWorkflowData.OtherVariableName>
+            <ns2:SetPSWorkflowData.Value>
+                <ns3:InArgument x:TypeArguments="ns0:Object">
+                    <ns2:PowerShellValue 
+                     x:TypeArguments="ns0:Object" 
+                     Expression="'2:2:hello'" />
+                </ns3:InArgument>
+            </ns2:SetPSWorkflowData.Value>
+        </ns2:SetPSWorkflowData>
+        <ns1:WriteOutput>
+            <ns1:WriteOutput.NoEnumerate>[
+            System.Management.Automation.SwitchParameter.Present]
+            </ns1:WriteOutput.NoEnumerate>
+            <ns1:WriteOutput.InputObject>
+                <InArgument x:TypeArguments="ns4:PSObject[]">
+                    <ns2:PowerShellValue x:TypeArguments="ns4:PSObject[]" Expression="'Hello World'" />
+                </InArgument>
+            </ns1:WriteOutput.InputObject>
+        </ns1:WriteOutput>
+        <Sequence.Variables>
+            <Variable Name="WorkflowCommandName" x:TypeArguments="ns0:String" Default = "hello" />
+        </Sequence.Variables>
+    </Sequence>
+</Activity>

@@ -1,0 +1,33 @@
+{
+  "Clusters": [
+    {
+      "ActiveServicesCount": 7,
+      "Attachments": [],
+      "AttachmentsStatus": null,
+      "CapacityProviders": [
+        "daco-prod02"
+      ],
+      "ClusterArn": "arn:aws:ecs:us-west-2:049751716774:cluster/daco-prod02",
+      "ClusterName": "daco-prod02",
+      "Configuration": null,
+      "DefaultCapacityProviderStrategy": [],
+      "PendingTasksCount": 0,
+      "RegisteredContainerInstancesCount": 8,
+      "RunningTasksCount": 37,
+      "Settings": [],
+      "Statistics": [],
+      "Status": "ACTIVE",
+      "Tags": []
+    }
+  ],
+  "Failures": [],
+  "ResponseMetadata": {
+    "RequestId": "cdeaadf5-410d-4163-b706-3623cba050b8",
+    "Metadata": {},
+    "ChecksumAlgorithm": 0,
+    "ChecksumValidationStatus": 0
+  },
+  "ContentLength": 366,
+  "HttpStatusCode": 200,
+  "LoggedAt": "2022-06-25T08:14:14.7937906-07:00"
+}

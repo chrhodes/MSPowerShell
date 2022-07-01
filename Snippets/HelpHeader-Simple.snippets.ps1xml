@@ -1,0 +1,67 @@
+﻿<?xml version='1.0' encoding='utf-8' ?>
+    <Snippets  xmlns='http://schemas.microsoft.com/PowerShell/Snippets'>
+        <Snippet Version='1.0.0'>
+            <Header>
+                <Title>HelpHeader-Simple</Title>
+                <Description>Simple Help Comment</Description>
+                <Author></Author>
+                <SnippetTypes>
+                    <SnippetType>Expansion</SnippetType>
+                </SnippetTypes>
+            </Header>
+
+            <Code>
+                <Script Language='PowerShell' CaretOffset='481'>
+                    <![CDATA[
+<#
+<ScriptName - Consider Verb-Noun>.ps1
+
+.Synopsis
+   Short description
+.DESCRIPTION
+   Long description
+.PARAMETER firstNamedArgument
+	Description of parameter
+.PARAMETER secondNamedArgument
+	Description
+.EXAMPLE
+   Example of how to use this cmdlet
+.EXAMPLE
+   Another example of how to use this cmdlet
+.INPUTS
+   Inputs to this cmdlet (if any)
+.OUTPUTS
+   Output from this cmdlet (if any)
+.NOTES
+   General notes
+.LINK
+	Name of related topic.  Can repeat
+.COMPONENT
+   The component this cmdlet belongs to
+.ROLE
+   The role this cmdlet belongs to
+.FUNCTIONALITY
+   The functionality that best describes this cmdlet
+   
+SCC:
+	This script is under source code control.  
+	Modifications should be checked into 
+	the TFS repository located at 
+		<Team Project Collection>
+	under a project 
+		$<TeamProject>/<Path>
+
+ToDo:
+
+Last Update:
+
+v1.0.0 <Author>, <Date>, <Company>
+   
+#>
+    ]]>
+                </Script>
+            </Code>
+
+    </Snippet>
+</Snippets>
+

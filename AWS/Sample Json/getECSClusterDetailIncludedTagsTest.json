@@ -1,0 +1,82 @@
+{
+  "Clusters": [
+    {
+      "ActiveServicesCount": 7,
+      "Attachments": [],
+      "AttachmentsStatus": null,
+      "CapacityProviders": [
+        "daco-prod02"
+      ],
+      "ClusterArn": "arn:aws:ecs:us-west-2:049751716774:cluster/daco-prod02",
+      "ClusterName": "daco-prod02",
+      "Configuration": null,
+      "DefaultCapacityProviderStrategy": [],
+      "PendingTasksCount": 0,
+      "RegisteredContainerInstancesCount": 8,
+      "RunningTasksCount": 37,
+      "Settings": [],
+      "Statistics": [],
+      "Status": "ACTIVE",
+      "Tags": [
+        {
+          "Key": "created_time",
+          "Value": "2021-05-27T18:38:23Z"
+        },
+        {
+          "Key": "environment",
+          "Value": "prod02"
+        },
+        {
+          "Key": "product",
+          "Value": "daco"
+        },
+        {
+          "Key": "capacity_provider_id",
+          "Value": "arn:aws:ecs:us-west-2:049751716774:capacity-provider/daco-prod02"
+        },
+        {
+          "Key": "provisioned_by",
+          "Value": "wagon"
+        },
+        {
+          "Key": "termination_date",
+          "Value": "no-term"
+        },
+        {
+          "Key": "planet",
+          "Value": "prod"
+        },
+        {
+          "Key": "service_name",
+          "Value": "daco-prod02"
+        },
+        {
+          "Key": "project",
+          "Value": "data_connect"
+        },
+        {
+          "Key": "provisioned_by_user",
+          "Value": "arn:aws:sts::049751716774:assumed-role/jenkins_farm/i-0339097ab8ab10b87"
+        },
+        {
+          "Key": "department",
+          "Value": "engineering"
+        },
+        {
+          "Key": "planet_env",
+          "Value": "prod02"
+        }
+      ]
+    }
+  ],
+  "Failures": [],
+  "ResponseMetadata": {
+    "RequestId": "94b477c9-1c1c-45a7-88b3-d75a1563fa94",
+    "Metadata": {},
+    "ChecksumAlgorithm": 0,
+    "ChecksumValidationStatus": 0
+  },
+  "ContentLength": 994,
+  "HttpStatusCode": 200,
+  "LoggedAt": "2022-06-25T08:14:18.7199789-07:00"
+}

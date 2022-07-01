@@ -1,0 +1,105 @@
+## Code for Appendix of PowerShell in Action third edition
+##  This file contains the code from the chapter body. 
+##  Any individual listings are supplied in separate files
+##  Code has been unwrapped so may look slightly different 
+##  to that presented in the book
+
+
+## Installing on Windows
+Get-Module -ListAvailable | select name
+
+$s = New-PSSession -ComputerName W16DSC01
+
+Invoke-Command -Session $s -ScriptBlock {Get-Process l*} |
+Format-Table -AutoSize
+
+Invoke-Command -Session $s -ScriptBlock {Get-WmiObject -Class Win32_OperatingSystem}
+
+
+## PowerShell on Linux and macOS
+## Installation
+
+sudo su
+curl https://packages.microsoft.com/config/rhel/7/prod.repo > /etc/yum.repos.d/microsoft.repo
+exit
+
+sudo yum install -y powershell
+
+powershell
+
+sudo yum update powershell
+
+
+## Using PowerShell v6 on Linux
+
+$PSVersionTable
+
+$PSVersionTable
+
+see ListingA.1
+
+
+## PowerShell remoting and Linux
+
+$url = 'https://github.com/PowerShell/Win32-OpenSSH/releases/latest/'
+$request = [System.Net.WebRequest]::Create($url)
+$request.AllowAutoRedirect=$false
+$response=$request.GetResponse()
+$([String]$response.GetResponseHeader("Location")).Replace('tag','download') + '/OpenSSH-Win64.zip'
+$([String]$response.GetResponseHeader("Location")).Replace('tag','download') + '/OpenSSH-Win32.zip'
+
+$s = New-PSSession -HostName W16AS01.manticore.org -UserName Administrator
+
+Invoke-Command -Session $s -ScriptBlock {Get-Process}
+
+$sl = New-PSSession -HostName Lin01.manticore.org -UserName root
+
+Invoke-Command -Session $sl -ScriptBlock {Get-Process -Name powershell}
+
+Enter-PSSession -Session $sl
+
+Copy-Item -Path .\test.txt -Destination "/home/richard/Scripts/" -ToSession $sl -Force
+
+Copy-Item -Path "/home/richard/Scripts/*.txt" -Destination .\PIA3e\ -FromSession $sl -Force
+
+$sw = New-PSSession -ComputerName W16DSC01
+Get-PSSession
+
+Invoke-Command -Session $sl, $sw -ScriptBlock {Get-Process -Name PowerShell}
+
+## DSC and Linux
+## Install OMI on a Linux ma chine
+
+sudo /opt/omi/bin/omicli ei root/omi OMI_Identify
+
+## Install DSC for Linux module on a Windowows machine
+
+Find-Module nx* | Format-Table Version, Name, Description
+Find-Module nx* | Install-Module -Force
+
+Get-Module -ListAvailable nx* |
+foreach {Get-DscResource -Module $_.Name} |
+Format-Wide -Column 4
+
+## Test CIM on a Linux system
+
+$cred = Get-Credential root
+$sopt = New-CimSessionOption -UseSsl -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+$sl = New-CimSession -Credential $cred -Authentication Basic -ComputerName Lin01 -SessionOption $sopt
+
+$sl
+
+Get-CimInstance -CimSession $sl -ClassName OMI_Identify -Namespace root/omi
+
+## Using DSC for Linux
+## Creating a configuration file
+
+see listingA.2
+
+## Applying a Configuration
+
+Start-DscConfiguration -CimSession $sl -Path .\MOF\ -Verbose -Wait
+
+Test-DscConfiguration -CimSession $sl
+
+Get-DscConfiguration -CimSession $sl

@@ -1,0 +1,569 @@
+{
+  "GroupNames": [],
+  "Groups": [],
+  "Instances": [
+    {
+      "AmiLaunchIndex": 1,
+      "Architecture": {
+        "Value": "x86_64"
+      },
+      "BlockDeviceMappings": [
+        {
+          "DeviceName": "/dev/xvda",
+          "Ebs": {
+            "AttachTime": "2022-04-07T01:07:32-07:00",
+            "DeleteOnTermination": true,
+            "Status": {
+              "Value": "attached"
+            },
+            "VolumeId": "vol-01b04950226fe44db"
+          }
+        },
+        {
+          "DeviceName": "/dev/xvdcz",
+          "Ebs": {
+            "AttachTime": "2022-04-07T01:07:32-07:00",
+            "DeleteOnTermination": true,
+            "Status": {
+              "Value": "attached"
+            },
+            "VolumeId": "vol-052f56288bdb309f0"
+          }
+        }
+      ],
+      "BootMode": null,
+      "CapacityReservationId": null,
+      "CapacityReservationSpecification": {
+        "CapacityReservationPreference": {
+          "Value": "open"
+        },
+        "CapacityReservationTarget": null
+      },
+      "ClientToken": "XXXXXXXXXXXXXXXXXXXXXXXX",
+      "CpuOptions": {
+        "CoreCount": 1,
+        "ThreadsPerCore": 2
+      },
+      "EbsOptimized": false,
+      "ElasticGpuAssociations": [],
+      "ElasticInferenceAcceleratorAssociations": [],
+      "EnaSupport": true,
+      "EnclaveOptions": {
+        "Enabled": false
+      },
+      "HibernationOptions": {
+        "Configured": false
+      },
+      "Hypervisor": {
+        "Value": "xen"
+      },
+      "IamInstanceProfile": {
+        "Arn": "arn:aws:iam::049751716774:instance-profile/noae-sbx01-auw2-ecs-instance",
+        "Id": "AIPAJCSKACHL434E4C2MY"
+      },
+      "ImageId": "ami-0fb56e8c2d653b297",
+      "InstanceId": "i-0fbe022dc6350c3c0",
+      "InstanceLifecycle": null,
+      "InstanceType": {
+        "Value": "m5.large"
+      },
+      "Ipv6Address": null,
+      "KernelId": null,
+      "KeyName": "zuora",
+      "LaunchTime": "2022-04-07T01:07:32-07:00",
+      "Licenses": [],
+      "MaintenanceOptions": {
+        "AutoRecovery": {
+          "Value": "default"
+        }
+      },
+      "MetadataOptions": {
+        "HttpEndpoint": {
+          "Value": "enabled"
+        },
+        "HttpProtocolIpv6": {
+          "Value": "disabled"
+        },
+        "HttpPutResponseHopLimit": 1,
+        "HttpTokens": {
+          "Value": "optional"
+        },
+        "InstanceMetadataTags": {
+          "Value": "disabled"
+        },
+        "State": {
+          "Value": "applied"
+        }
+      },
+      "Monitoring": {
+        "State": {
+          "Value": "enabled"
+        }
+      },
+      "NetworkInterfaces": [
+        {
+          "Association": null,
+          "Attachment": {
+            "AttachmentId": "eni-attach-05fc08ca4ebaa51c4",
+            "AttachTime": "2022-04-07T01:07:32-07:00",
+            "DeleteOnTermination": true,
+            "DeviceIndex": 0,
+            "NetworkCardIndex": 0,
+            "Status": {
+              "Value": "attached"
+            }
+          },
+          "Description": null,
+          "Groups": [
+            {
+              "GroupId": "sg-b90bc5c3",
+              "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupInternetAll-U906OOSTMK0G"
+            },
+            {
+              "GroupId": "sg-14d9636c",
+              "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupPlanetSBX-1CZ68761SHQPD"
+            },
+            {
+              "GroupId": "sg-10d96368",
+              "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupCNCInfraStandard-7N0RAJYTQMH6"
+            },
+            {
+              "GroupId": "sg-15d9636d",
+              "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupCNCAuthStandard-ABS6OHSPXKSO"
+            }
+          ],
+          "InterfaceType": "interface",
+          "Ipv4Prefixes": [],
+          "Ipv6Addresses": [],
+          "Ipv6Prefixes": [],
+          "MacAddress": "06:30:ea:7c:cf:bd",
+          "NetworkInterfaceId": "eni-080124c5e86f0fa74",
+          "OwnerId": "049751716774",
+          "PrivateDnsName": "ip-10-83-115-194.us-west-2.compute.internal",
+          "PrivateIpAddress": "10.83.115.194",
+          "PrivateIpAddresses": [
+            {
+              "Association": null,
+              "Primary": true,
+              "PrivateDnsName": "ip-10-83-115-194.us-west-2.compute.internal",
+              "PrivateIpAddress": "10.83.115.194"
+            }
+          ],
+          "SourceDestCheck": true,
+          "Status": {
+            "Value": "in-use"
+          },
+          "SubnetId": "subnet-ae8f77e7",
+          "VpcId": "vpc-132ba874"
+        }
+      ],
+      "OutpostArn": null,
+      "Placement": {
+        "Affinity": null,
+        "AvailabilityZone": "us-west-2b",
+        "GroupName": null,
+        "HostId": null,
+        "HostResourceGroupArn": null,
+        "PartitionNumber": 0,
+        "SpreadDomain": null,
+        "Tenancy": {
+          "Value": "default"
+        }
+      },
+      "Platform": null,
+      "PlatformDetails": "Linux/UNIX",
+      "PrivateDnsName": "ip-10-83-115-194.us-west-2.compute.internal",
+      "PrivateDnsNameOptions": {
+        "EnableResourceNameDnsAAAARecord": false,
+        "EnableResourceNameDnsARecord": false,
+        "HostnameType": {
+          "Value": "ip-name"
+        }
+      },
+      "PrivateIpAddress": "10.83.115.194",
+      "ProductCodes": [],
+      "PublicDnsName": null,
+      "PublicIpAddress": null,
+      "RamdiskId": null,
+      "RootDeviceName": "/dev/xvda",
+      "RootDeviceType": {
+        "Value": "ebs"
+      },
+      "SecurityGroups": [
+        {
+          "GroupId": "sg-b90bc5c3",
+          "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupInternetAll-U906OOSTMK0G"
+        },
+        {
+          "GroupId": "sg-14d9636c",
+          "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupPlanetSBX-1CZ68761SHQPD"
+        },
+        {
+          "GroupId": "sg-10d96368",
+          "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupCNCInfraStandard-7N0RAJYTQMH6"
+        },
+        {
+          "GroupId": "sg-15d9636d",
+          "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupCNCAuthStandard-ABS6OHSPXKSO"
+        }
+      ],
+      "SourceDestCheck": true,
+      "SpotInstanceRequestId": null,
+      "SriovNetSupport": null,
+      "State": {
+        "Code": 16,
+        "Name": {
+          "Value": "running"
+        }
+      },
+      "StateReason": null,
+      "StateTransitionReason": null,
+      "SubnetId": "subnet-ae8f77e7",
+      "Tags": [
+        {
+          "Key": "planet_env",
+          "Value": "sbx01"
+        },
+        {
+          "Key": "aws:autoscaling:groupName",
+          "Value": "noae-sbx01-ecs-noae-sbx01-ecs-20190806171549484700000001"
+        },
+        {
+          "Key": "product",
+          "Value": "noae"
+        },
+        {
+          "Key": "provisioned_by_user",
+          "Value": "arn:aws:sts::049751716774:assumed-role/jenkins_farm/i-0d7ef80cfb5db6216"
+        },
+        {
+          "Key": "planet",
+          "Value": "sbx"
+        },
+        {
+          "Key": "service_name",
+          "Value": "noae-sbx01"
+        },
+        {
+          "Key": "provisioned_by",
+          "Value": "wagon"
+        },
+        {
+          "Key": "AmazonECSManaged",
+          "Value": null
+        },
+        {
+          "Key": "termination_date",
+          "Value": "no-term"
+        },
+        {
+          "Key": "Name",
+          "Value": "noae-sbx01-ecs"
+        },
+        {
+          "Key": "environment",
+          "Value": "sbx01"
+        },
+        {
+          "Key": "department",
+          "Value": "engineering"
+        },
+        {
+          "Key": "project",
+          "Value": "notifications"
+        }
+      ],
+      "TpmSupport": null,
+      "UsageOperation": "RunInstances",
+      "UsageOperationUpdateTime": "2022-04-07T01:07:32-07:00",
+      "VirtualizationType": {
+        "Value": "hvm"
+      },
+      "VpcId": "vpc-132ba874"
+    }
+  ],
+  "OwnerId": "049751716774",
+  "RequesterId": "903220451833",
+  "ReservationId": "r-0de0e47a52d487b60",
+  "RunningInstance": [
+    {
+      "AmiLaunchIndex": 1,
+      "Architecture": {
+        "Value": "x86_64"
+      },
+      "BlockDeviceMappings": [
+        {
+          "DeviceName": "/dev/xvda",
+          "Ebs": {
+            "AttachTime": "2022-04-07T01:07:32-07:00",
+            "DeleteOnTermination": true,
+            "Status": {
+              "Value": "attached"
+            },
+            "VolumeId": "vol-01b04950226fe44db"
+          }
+        },
+        {
+          "DeviceName": "/dev/xvdcz",
+          "Ebs": {
+            "AttachTime": "2022-04-07T01:07:32-07:00",
+            "DeleteOnTermination": true,
+            "Status": {
+              "Value": "attached"
+            },
+            "VolumeId": "vol-052f56288bdb309f0"
+          }
+        }
+      ],
+      "BootMode": null,
+      "CapacityReservationId": null,
+      "CapacityReservationSpecification": {
+        "CapacityReservationPreference": {
+          "Value": "open"
+        },
+        "CapacityReservationTarget": null
+      },
+      "ClientToken": "e126000c-41b0-2674-b536-7679c26cefb0",
+      "CpuOptions": {
+        "CoreCount": 1,
+        "ThreadsPerCore": 2
+      },
+      "EbsOptimized": false,
+      "ElasticGpuAssociations": [],
+      "ElasticInferenceAcceleratorAssociations": [],
+      "EnaSupport": true,
+      "EnclaveOptions": {
+        "Enabled": false
+      },
+      "HibernationOptions": {
+        "Configured": false
+      },
+      "Hypervisor": {
+        "Value": "xen"
+      },
+      "IamInstanceProfile": {
+        "Arn": "arn:aws:iam::049751716774:instance-profile/noae-sbx01-auw2-ecs-instance",
+        "Id": "AIPAJCSKACHL434E4C2MY"
+      },
+      "ImageId": "ami-0fb56e8c2d653b297",
+      "InstanceId": "i-0fbe022dc6350c3c0",
+      "InstanceLifecycle": null,
+      "InstanceType": {
+        "Value": "m5.large"
+      },
+      "Ipv6Address": null,
+      "KernelId": null,
+      "KeyName": "zuora",
+      "LaunchTime": "2022-04-07T01:07:32-07:00",
+      "Licenses": [],
+      "MaintenanceOptions": {
+        "AutoRecovery": {
+          "Value": "default"
+        }
+      },
+      "MetadataOptions": {
+        "HttpEndpoint": {
+          "Value": "enabled"
+        },
+        "HttpProtocolIpv6": {
+          "Value": "disabled"
+        },
+        "HttpPutResponseHopLimit": 1,
+        "HttpTokens": {
+          "Value": "optional"
+        },
+        "InstanceMetadataTags": {
+          "Value": "disabled"
+        },
+        "State": {
+          "Value": "applied"
+        }
+      },
+      "Monitoring": {
+        "State": {
+          "Value": "enabled"
+        }
+      },
+      "NetworkInterfaces": [
+        {
+          "Association": null,
+          "Attachment": {
+            "AttachmentId": "eni-attach-05fc08ca4ebaa51c4",
+            "AttachTime": "2022-04-07T01:07:32-07:00",
+            "DeleteOnTermination": true,
+            "DeviceIndex": 0,
+            "NetworkCardIndex": 0,
+            "Status": {
+              "Value": "attached"
+            }
+          },
+          "Description": null,
+          "Groups": [
+            {
+              "GroupId": "sg-b90bc5c3",
+              "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupInternetAll-U906OOSTMK0G"
+            },
+            {
+              "GroupId": "sg-14d9636c",
+              "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupPlanetSBX-1CZ68761SHQPD"
+            },
+            {
+              "GroupId": "sg-10d96368",
+              "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupCNCInfraStandard-7N0RAJYTQMH6"
+            },
+            {
+              "GroupId": "sg-15d9636d",
+              "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupCNCAuthStandard-ABS6OHSPXKSO"
+            }
+          ],
+          "InterfaceType": "interface",
+          "Ipv4Prefixes": [],
+          "Ipv6Addresses": [],
+          "Ipv6Prefixes": [],
+          "MacAddress": "06:30:ea:7c:cf:bd",
+          "NetworkInterfaceId": "eni-080124c5e86f0fa74",
+          "OwnerId": "049751716774",
+          "PrivateDnsName": "ip-10-83-115-194.us-west-2.compute.internal",
+          "PrivateIpAddress": "10.83.115.194",
+          "PrivateIpAddresses": [
+            {
+              "Association": null,
+              "Primary": true,
+              "PrivateDnsName": "ip-10-83-115-194.us-west-2.compute.internal",
+              "PrivateIpAddress": "10.83.115.194"
+            }
+          ],
+          "SourceDestCheck": true,
+          "Status": {
+            "Value": "in-use"
+          },
+          "SubnetId": "subnet-ae8f77e7",
+          "VpcId": "vpc-132ba874"
+        }
+      ],
+      "OutpostArn": null,
+      "Placement": {
+        "Affinity": null,
+        "AvailabilityZone": "us-west-2b",
+        "GroupName": null,
+        "HostId": null,
+        "HostResourceGroupArn": null,
+        "PartitionNumber": 0,
+        "SpreadDomain": null,
+        "Tenancy": {
+          "Value": "default"
+        }
+      },
+      "Platform": null,
+      "PlatformDetails": "Linux/UNIX",
+      "PrivateDnsName": "ip-10-83-115-194.us-west-2.compute.internal",
+      "PrivateDnsNameOptions": {
+        "EnableResourceNameDnsAAAARecord": false,
+        "EnableResourceNameDnsARecord": false,
+        "HostnameType": {
+          "Value": "ip-name"
+        }
+      },
+      "PrivateIpAddress": "10.83.115.194",
+      "ProductCodes": [],
+      "PublicDnsName": null,
+      "PublicIpAddress": null,
+      "RamdiskId": null,
+      "RootDeviceName": "/dev/xvda",
+      "RootDeviceType": {
+        "Value": "ebs"
+      },
+      "SecurityGroups": [
+        {
+          "GroupId": "sg-b90bc5c3",
+          "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupInternetAll-U906OOSTMK0G"
+        },
+        {
+          "GroupId": "sg-14d9636c",
+          "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupPlanetSBX-1CZ68761SHQPD"
+        },
+        {
+          "GroupId": "sg-10d96368",
+          "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupCNCInfraStandard-7N0RAJYTQMH6"
+        },
+        {
+          "GroupId": "sg-15d9636d",
+          "GroupName": "CF-AUW2-SBX-SBX01-00-SecurityGroupCNCAuthStandard-ABS6OHSPXKSO"
+        }
+      ],
+      "SourceDestCheck": true,
+      "SpotInstanceRequestId": null,
+      "SriovNetSupport": null,
+      "State": {
+        "Code": 16,
+        "Name": {
+          "Value": "running"
+        }
+      },
+      "StateReason": null,
+      "StateTransitionReason": null,
+      "SubnetId": "subnet-ae8f77e7",
+      "Tags": [
+        {
+          "Key": "planet_env",
+          "Value": "sbx01"
+        },
+        {
+          "Key": "aws:autoscaling:groupName",
+          "Value": "noae-sbx01-ecs-noae-sbx01-ecs-20190806171549484700000001"
+        },
+        {
+          "Key": "product",
+          "Value": "noae"
+        },
+        {
+          "Key": "provisioned_by_user",
+          "Value": "arn:aws:sts::049751716774:assumed-role/jenkins_farm/i-0d7ef80cfb5db6216"
+        },
+        {
+          "Key": "planet",
+          "Value": "sbx"
+        },
+        {
+          "Key": "service_name",
+          "Value": "noae-sbx01"
+        },
+        {
+          "Key": "provisioned_by",
+          "Value": "wagon"
+        },
+        {
+          "Key": "AmazonECSManaged",
+          "Value": null
+        },
+        {
+          "Key": "termination_date",
+          "Value": "no-term"
+        },
+        {
+          "Key": "Name",
+          "Value": "noae-sbx01-ecs"
+        },
+        {
+          "Key": "environment",
+          "Value": "sbx01"
+        },
+        {
+          "Key": "department",
+          "Value": "engineering"
+        },
+        {
+          "Key": "project",
+          "Value": "notifications"
+        }
+      ],
+      "TpmSupport": null,
+      "UsageOperation": "RunInstances",
+      "UsageOperationUpdateTime": "2022-04-07T01:07:32-07:00",
+      "VirtualizationType": {
+        "Value": "hvm"
+      },
+      "VpcId": "vpc-132ba874"
+    }
+  ]
+}
