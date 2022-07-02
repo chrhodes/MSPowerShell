@@ -261,7 +261,7 @@ foreach ($region in $Regions)
 
 #endregion ECS Cluster Containers
 
-#region ECS EC2 Instance
+#region #################### ECS EC2 Instance ####################
 
 getEC2Instances $ClusterArray[0] $Regions[0]
 getEC2Instances_FromClusters $ClusterArray $Regions[0]
@@ -287,9 +287,9 @@ foreach ($region in $Regions)
     getECSContainerEC2InstanceInfo_FromClusters $clusters $region > "ECS_ContainerEC2InstanceInfo_$($region).csv"
 }
 
-#endregion ECS EC2
+#endregion #################### ECS EC2 ####################
 
-#region EC2 Instance
+#region #################### EC2 Instance ####################
 
 $InstanceArray = @(getEC2Instances "eu-west-1")
 $InstanceArray = @(getEC2Instances "eu-central-1")
@@ -334,7 +334,7 @@ foreach ($region in $Regions)
     getEC2InstanceTypes $region >> "EC2_InstanceTypes_$($region).csv"
 }
 
-#endregion EC2 Instance
+#endregion #################### EC2 Instance ####################
 
 ################################################################################
 #
