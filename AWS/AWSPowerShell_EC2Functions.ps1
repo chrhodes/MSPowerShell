@@ -94,7 +94,6 @@ function getTags_FromEC2Instances([string[]]$instanceArray, [string]$region)
         $ec2i = Get-EC2Instance -InstanceID $ec2 -Region $region |
             Select-Object -ExpandProperty Instances
 
-
         foreach($tag in $ec2i.Tags)
         {
             "$region,$($ec2i.InstanceId),$($tag.Key),$($tag.Value)"
@@ -108,8 +107,7 @@ function getTags_FromClusters([string[]]$clusterArray, [string]$region)
 
     foreach($cluster in $clusterArray)
     {
-        $json = Get-ECSClusterDetail -Cluster $cluster -Region $region -Include TAGS | 
-            ConvertTo-Json -Depth 5 | ConvertFrom-Json
+        $json = Get-ECSClusterDetail -Cluster $cluster -Region $region -Include TAGS 
 
         $clusters = $json | Select-Object -Expand Clusters
         $tags = $clusters | Select-Object -Expand Tags
@@ -141,6 +139,7 @@ function getEC2InstanceTypes([string]$region)
     }
 }
 
+################################################################################
 #
 # End AWSPowerShell_EC2Functions.ps1
 #

@@ -52,8 +52,7 @@ function getClusters([String]$region)
 
 function getECSClusterInfo([string]$cluster, [string]$region)
 {
-    $json = Get-ECSClusterDetail -Cluster $cluster -Region $region | 
-        ConvertTo-Json -Depth 5 | ConvertFrom-Json
+    $json = Get-ECSClusterDetail -Cluster $cluster -Region $region  
 
     $cls = $json | Select-Object -Expand Clusters
 
@@ -87,8 +86,7 @@ function getTags_FromClusters([string[]]$clusterArray, [string]$region)
 
     foreach($cluster in $clusterArray)
     {
-        $json = Get-ECSClusterDetail -Cluster $cluster -Region $region -Include TAGS | 
-            ConvertTo-Json -Depth 5 | ConvertFrom-Json
+        $json = Get-ECSClusterDetail -Cluster $cluster -Region $region -Include TAGS  
 
         $clusters = $json | Select-Object -Expand Clusters
         $tags = $clusters | Select-Object -Expand Tags
@@ -318,11 +316,18 @@ function getServicesTags_FromClusters($clusterArray, $region)
 # [<CommonParameters>]
 #
 
-
-
 function getECSTasks($cluster, $region)
 {
     @(Get-ECSTaskList -Cluster $cluster -Region $region)
+
+    # TODO(crhodes)
+    # Throws error for some $cluster ??
+
+    # Line |
+    # 321 |      @(Get-ECSTaskList -Cluster $cluster -Region $region)
+    #     |        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     | No region specified or obtained from persisted/shell defaults.    
+
 }
 
 function getECSTasks_FromClusters($clusterArray, $region)
@@ -394,8 +399,7 @@ function getECSTaskContainerInfo([String]$cluster, $region)
     {
         $task = getTaskName $taskArn
 
-        $json = Get-ECSTaskDetail -Cluster $cluster -Task $task -Region $region | 
-            ConvertTo-Json -Depth 10 | ConvertFrom-Json
+        $json = Get-ECSTaskDetail -Cluster $cluster -Task $task -Region $region 
 
         $tsk = $json | Select-Object -Expand Tasks
         $cntr = $tsk | Select-Object -Expand Containers
@@ -439,8 +443,7 @@ function getTasksTags_FromClusters($clusterArray, $region)
         {
             $task = getTaskName($taskArn)
 
-            $json = Get-ECSTaskDetail -Cluster $cluster -Task $task -Region $region -Include TAGS | 
-                ConvertTo-Json -Depth 10 | ConvertFrom-Json
+            $json = Get-ECSTaskDetail -Cluster $cluster -Task $task -Region $region -Include TAGS
     
             $tsk = $json | Select-Object -Expand Tasks
 
@@ -684,7 +687,7 @@ function getECSContainerInstanceInfo_FromClusters($clusterArray, $region)
     $output += ",Ec2InstanceId"
     $output += ",PendingTasksCount,RunningTasksCount"
     $output += ",Status,Version"
-    $output += ",Registered CPU,Rememaining CPU,Registered Memory,Remaining Memory"
+    $output += ",Registered CPU,Remaining CPU,Registered Memory,Remaining Memory"
 
     $output
 
@@ -698,43 +701,12 @@ function getECSContainerInstanceInfo_FromClusters($clusterArray, $region)
 
 #region #################### ECS Cluster <-> EC2 Instance ####################
 
-function getEC2Instances([String]$cluster, $region)
-{
-    foreach($containerArn in (getECSContainerInstances $cluster $region))
-    {
-        $container = getContainerInstanceName($containerArn)
-
-        $json = Get-ECSContainerInstanceDetail -Cluster $cluster -ContainerInstance $container -Region $region |
-            ConvertTo-Json -Depth 10 | ConvertFrom-Json
-
-        $cni = $json | Select-Object -ExpandProperty ContainerInstances
-
-        "$region,$cluster,$container,$($cni.Ec2InstanceId)"
-    }
-}
-
-function getEC2Instances_FromClusters($clusterArray, $region)
-{
-    # Establish Column Headers
-    # This needs to be in same order as field display in getEC2Instances
-
-    $output = "Region,Cluster,ContainerInstance,Ec2InstanceID"
-
-    $output
-
-    foreach($cluster in $clusterArray)
-    {
-        getEC2Instances $cluster $region
-    }
-}
-
 function getECSContainerEC2InstanceInfo([String]$cluster, $region)
 {
     foreach($containerArn in (getECSContainerInstances $cluster $region))
     {
         $containerInstance = getContainerInstanceName($containerArn)
-        $json = Get-ECSContainerInstanceDetail -Cluster $cluster -ContainerInstance $containerInstance -Region $region |
-            ConvertTo-Json -Depth 10 | ConvertFrom-Json
+        $json = Get-ECSContainerInstanceDetail -Cluster $cluster -ContainerInstance $containerInstance -Region $region
 
         $cntr = $json | Select-Object -ExpandProperty ContainerInstances
 

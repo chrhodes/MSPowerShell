@@ -65,6 +65,7 @@ foreach ($region in $Regions)
 
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $clusters = @(getClusters $region)
@@ -74,6 +75,7 @@ foreach ($region in $Regions)
 
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $clusters = @(getClusters $region)
@@ -109,6 +111,7 @@ getECSClusterServicesInfo_FromClusters $ClusterArray $Regions[0]
 
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
    
     $clusters = @(getClusters $region)
@@ -117,6 +120,7 @@ foreach ($region in $Regions)
 
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
     
     $clusters = @(getClusters $region)
@@ -130,6 +134,7 @@ foreach ($region in $Regions)
 
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $header = "Region, TaskDefinitionFamily"
@@ -141,17 +146,7 @@ foreach ($region in $Regions)
 
 foreach ($region in $Regions)
 {
-    "---------- Processing $region ----------"
-
-    $header = "Region, TaskDefinitionFamily"
-
-    $header > "ECS_TaskDefinitionFamilies_$($region).csv"
-
-    getECSTaskDefinitionFamilyList $region >> "ECS_TaskDefinitionFamilies_$($region).csv"
-}
-
-foreach ($region in $Regions)
-{
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $header = "Region, TaskDefinitionArn"
@@ -160,7 +155,6 @@ foreach ($region in $Regions)
 
     getECSTaskDefinitionList $region >> "ECS_TaskDefinition_$($region).csv"
 }
-
 
 #endregion
 
@@ -178,6 +172,7 @@ getECSTaskInfo_FromClusters $ClusterArray $Regions[0]
 
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $clusters = @(getClusters $region)
@@ -190,8 +185,12 @@ foreach ($region in $Regions)
 getECSTaskContainerInfo $ClusterArray[0] $Regions[0]
 getECSTaskContainerInfo_FromClusters $ClusterArray $Regions[0]
 
+# TODO(crhodes)
+# This has problems.  Investigate.  Skip for now.
+
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $clusters = @(getClusters $region)
@@ -205,6 +204,7 @@ foreach ($region in $Regions)
 
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $clusters = @(getClusters $region)
@@ -221,6 +221,7 @@ get
 getECSTaskDefinitionInfo $taskDefinition $region
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $taskDefinitions = @(getECSTaskDefinitionList $region)
@@ -252,6 +253,7 @@ getECSContainerInstanceInfo_FromClusters $ClusterArray $Regions[0]
 
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $clusters = @(getClusters $region)
@@ -263,11 +265,14 @@ foreach ($region in $Regions)
 
 #region #################### ECS EC2 Instance ####################
 
+# NOTE(crhodes)
+# Decide if we need this now that doing more work in PowerQuery
 getEC2Instances $ClusterArray[0] $Regions[0]
 getEC2Instances_FromClusters $ClusterArray $Regions[0]
 
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $clusters = @(getClusters $region)
@@ -280,6 +285,7 @@ getECSContainerEC2InstanceInfo_FromClusters $ClusterArray $Regions[0]
 
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $clusters = @(getClusters $region)
@@ -304,6 +310,7 @@ $Regions = @("us-east-2", "eu-west-1")
 
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $instances = @(getEC2Instances $region)
@@ -313,6 +320,7 @@ foreach ($region in $Regions)
 
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $instances = @(getEC2Instances $region)
@@ -320,8 +328,12 @@ foreach ($region in $Regions)
     getTags_FromEC2Instances $instances $region > "EC2_Tags_Instance_$($region).csv"
 }
 
+# NOTE(crhodes)
+# Only need to run this if InstanceTypes change
+
 foreach ($region in $Regions)
 {
+    Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $header = "Region,InstanceType"
