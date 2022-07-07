@@ -318,6 +318,10 @@ foreach ($region in $Regions)
     getEC2InstanceInfo_FromInstances $instances $region > "EC2_InstanceInfo_$($region).csv"
 }
 
+$region = "us-west-2"
+$testInstances = @($instances[0..5])
+getTags_FromEC2Instances $testInstances $region
+
 foreach ($region in $Regions)
 {
     Set-Location $outputDir
@@ -331,15 +335,33 @@ foreach ($region in $Regions)
 # NOTE(crhodes)
 # Only need to run this if InstanceTypes change
 
+$json = Get-EC2InstanceType -Region $Regions[0] -InstanceType "m1.large" | ConvertTo-Json -Depth 10
+getEC2InstanceTypes $Regions[0]
+
 foreach ($region in $Regions)
 {
     Set-Location $outputDir
     "---------- Processing $region ----------"
 
     $header = "Region,InstanceType"
+    $header += ",CurrentGeneration"
+    $header += ",BareMetal"
+
     $header += ",SustainedClockSpeedGhz"
-    $header += ",DefaultCores,DefaultThreadsPerCore,DefaultVCpus"
-    $header += ",Memory (MB)"
+    $header += ",DefaultCores"
+    $header += ",DefaultThreadsPerCore"
+    $header += ",DefaultVCpus"
+    $header += ",Memory (GB)"
+    $header += ",BurstablePerformanceSupported"
+
+    $header += ",EBS.EbsOptimizedSupport"
+    $header += ",EBS.EncryptionSupport"
+    $header += ",EBS.NvmeSupport"
+
+    $header += ",InstanceStorageSupported"
+    $header += ",IS.TotalSize (GB)"
+    $header += ",IS.EncryptionSupport"
+    $header += ",IS.NvmeSupport"    
 
     $header > "EC2_InstanceTypes_$($region).csv"
 

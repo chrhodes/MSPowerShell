@@ -25,6 +25,7 @@
 #   [-Credential <Amazon.Runtime.AWSCredentials>]
 #   [-NetworkCredential <System.Management.Automation.PSCredential>]
 #   [<CommonParameters>]
+#
 
 function getEC2Instances([String]$region)
 {
@@ -119,6 +120,29 @@ function getTags_FromClusters([string[]]$clusterArray, [string]$region)
     }
 }
 
+# Get-EC2InstanceType
+
+# SYNTAX
+#
+#  Get-EC2InstanceType 
+#   [-Filter <Amazon.EC2.Model.Filter[]>]
+#   [-InstanceType <System.String[]>]
+#   [-MaxResult <System.Int32>]     
+#   [-NextToken <System.String>]
+#   [-Select <System.String>]
+#   [-NoAutoIteration <System.Management.Automation.SwitchParameter>]    
+#   [-EndpointUrl <System.String>]
+#   [-Region <System.Object>]
+#   [-AccessKey <System.String>]
+#   [-SecretKey <System.String>]
+#   [-SessionToken <System.String>]
+#   [-ProfileName <System.String>]
+#   [-ProfileLocation <System.String>]
+#   [-Credential <Amazon.Runtime.AWSCredentials>]
+#   [-NetworkCredential <System.Management.Automation.PSCredential>]
+#   [<CommonParameters>]
+#
+
 function getEC2InstanceTypes([string]$region)
 {
     $instanceTypes = Get-EC2InstanceType -Region $region
@@ -129,11 +153,32 @@ function getEC2InstanceTypes([string]$region)
     {
         #$json = $instType | ConvertTo-Json -Depth 10
         $output = "$region,$($instType.InstanceType)"
+        $output += ",$($instType.CurrentGeneration)"
+        $output += ",$($instType.BareMetal)"  
+
         $output += ",$($instType.ProcessorInfo.SustainedClockSpeedInGhz)"
         $output += ",$($instType.VCpuInfo.DefaultCores)"
         $output += ",$($instType.VCpuInfo.DefaultThreadsPerCore)"
         $output += ",$($instType.VCpuInfo.DefaultVCpus)"
         $output += ",$($instType.MemoryInfo.SizeInMiB / 1024)"
+        $output += ",$($instType.BurstablePerformanceSupported)"        
+
+        $output += ",$($instType.EbsInfo.EbsOptimizedSupport)" 
+        $output += ",$($instType.EbsInfo.EncryptionSupport)" 
+        $output += ",$($instType.EbsInfo.NvmeSupport)" 
+
+        $output += ",$($instType.InstanceStorageSupported)" 
+
+        if($true -eq $instType.InstanceStorageSupported )
+        {
+            $output += ",$($instType.InstanceStorageInfo.TotalSizeInGB)"
+            $output += ",$($instType.InstanceStorageInfo.EncryptionSupport)"
+            $output += ",$($instType.InstanceStorageInfo.NvmeSupport)"            
+        }
+        else
+        {
+            $output += ",,,"
+        }
 
         $output
     }

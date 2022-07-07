@@ -1,104 +1,115 @@
 {
-    "AutoRecoverySupported": true,
+    "AutoRecoverySupported": false,
     "BareMetal": false,
     "BurstablePerformanceSupported": false,
-    "CurrentGeneration": true,
-    "DedicatedHostsSupported": true,
-"EbsInfo": {
-    "EbsOptimizedInfo": {
-        "BaselineBandwidthInMbps": 2375,
-        "BaselineIops": 10000,
-        "BaselineThroughputInMBps": 296.88,
-        "MaximumBandwidthInMbps": 9500,
-        "MaximumIops": 40000,
-        "MaximumThroughputInMBps": 1187.5
+    "CurrentGeneration": false,
+    "DedicatedHostsSupported": false,
+    "EbsInfo": {
+        "EbsOptimizedInfo": {
+            "BaselineBandwidthInMbps": 500,
+            "BaselineIops": 4000,
+            "BaselineThroughputInMBps": 62.5,
+            "MaximumBandwidthInMbps": 500,
+            "MaximumIops": 4000,
+            "MaximumThroughputInMBps": 62.5
+        },
+        "EbsOptimizedSupport": {
+            "Value": "supported"
+        },
+        "EncryptionSupport": {
+            "Value": "supported"
+        },
+        "NvmeSupport": {
+            "Value": "unsupported"
+        }
     },
-    "EbsOptimizedSupport": {
-        "Value": "default"
-    },
-    "EncryptionSupport": {
-        "Value": "supported"
-    },
-    "NvmeSupport": {
-        "Value": "required"
-    }
-},
     "FpgaInfo": null,
     "FreeTierEligible": false,
     "GpuInfo": null,
     "HibernationSupported": false,
-"Hypervisor": {
-    "Value": "nitro"
-},
-"InferenceAcceleratorInfo": null,
-"InstanceStorageInfo": null,
-"InstanceStorageSupported": false,
-"InstanceType": {
-    "Value": "c6gn.xlarge"
-},
-"MemoryInfo": {
-    "SizeInMiB": 8192
-},
-"NetworkInfo": {
-    "DefaultNetworkCardIndex": 0,
-    "EfaInfo": null,
-    "EfaSupported": false,
-    "EnaSupport": {
-        "Value": "required"
+    "Hypervisor": {
+        "Value": "xen"
     },
-    "EncryptionInTransitSupported": true,
-    "Ipv4AddressesPerInterface": 15,
-    "Ipv6AddressesPerInterface": 15,
-    "Ipv6Supported": true,
-    "MaximumNetworkCards": 1,
-    "MaximumNetworkInterfaces": 4,
-    "NetworkCards": [
-        {
-            "MaximumNetworkInterfaces": 4,
-            "NetworkCardIndex": 0,
-            "NetworkPerformance": "Up to 25 Gigabit"
-        }
+    "InferenceAcceleratorInfo": null,
+	"InstanceStorageInfo": {
+		"Disks": [
+			{
+				"Count": 2,
+				"SizeInGB": 420,
+				"Type": {
+					"Value": "hdd"
+				}
+			}
+		],
+		"EncryptionSupport": {
+			"Value": "unsupported"
+		},
+		"NvmeSupport": {
+			"Value": "unsupported"
+		},
+		"TotalSizeInGB": 840
+	},
+    "InstanceStorageSupported": true,
+    "InstanceType": {
+        "Value": "m1.large"
+    },
+    "MemoryInfo": {
+        "SizeInMiB": 7680
+    },
+    "NetworkInfo": {
+        "DefaultNetworkCardIndex": 0,
+        "EfaInfo": null,
+        "EfaSupported": false,
+        "EnaSupport": {
+            "Value": "unsupported"
+        },
+        "EncryptionInTransitSupported": false,
+        "Ipv4AddressesPerInterface": 10,
+        "Ipv6AddressesPerInterface": 0,
+        "Ipv6Supported": false,
+        "MaximumNetworkCards": 1,
+        "MaximumNetworkInterfaces": 3,
+        "NetworkCards": [
+            {
+                "MaximumNetworkInterfaces": 3,
+                "NetworkCardIndex": 0,
+                "NetworkPerformance": "Moderate"
+            }
+        ],
+        "NetworkPerformance": "Moderate"
+    },
+    "PlacementGroupInfo": {
+        "SupportedStrategies": [
+            "partition",
+            "spread"
+        ]
+    },
+    "ProcessorInfo": {
+        "SupportedArchitectures": [
+            "x86_64"
+        ],
+        "SustainedClockSpeedInGhz": 0.0
+    },
+    "SupportedBootModes": [
+        "legacy-bios"
     ],
-    "NetworkPerformance": "Up to 25 Gigabit"
-},
-"PlacementGroupInfo": {
-    "SupportedStrategies": [
-        "cluster",
-        "partition",
-        "spread"
-    ]
-},
-"ProcessorInfo": {
-    "SupportedArchitectures": [
-        "arm64"
+    "SupportedRootDeviceTypes": [
+        "ebs",
+        "instance-store"
     ],
-    "SustainedClockSpeedInGhz": 2.5
-},
-"SupportedBootModes": [
-    "uefi"
-],
-"SupportedRootDeviceTypes": [
-    "ebs"
-],
-"SupportedUsageClasses": [
-    "on-demand",
-    "spot"
-],
-"SupportedVirtualizationTypes": [
-    "hvm"
-],
-"VCpuInfo": {
-    "DefaultCores": 4,
-    "DefaultThreadsPerCore": 1,
-    "DefaultVCpus": 4,
-    "ValidCores": [
-        1,
-        2,
-        3,
-        4
+    "SupportedUsageClasses": [
+        "on-demand",
+        "spot"
     ],
-    "ValidThreadsPerCore": [
-        1
-    ]
-}
+    "SupportedVirtualizationTypes": [
+        "hvm",
+        "paravirtual"
+    ],
+    "VCpuInfo": {
+        "DefaultCores": 2,
+        "DefaultThreadsPerCore": 1,
+        "DefaultVCpus": 2,
+        "ValidCores": [],
+        "ValidThreadsPerCore": []
+    }
 }

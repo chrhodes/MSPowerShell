@@ -91,9 +91,18 @@ function getTags_FromClusters([string[]]$clusterArray, [string]$region)
         $clusters = $json | Select-Object -Expand Clusters
         $tags = $clusters | Select-Object -Expand Tags
 
-        foreach($tag in $tags)
+
+        if ($null -eq $tags) 
         {
-            "$region,$cluster,$($tag.Key),$($tag.Value)"
+            # Always output $region, $cluster even if no $tags
+            "$region,$cluster,,"
+        }
+        else
+        {
+            foreach($tag in $tags)
+            {
+                "$region,$cluster,$($tag.Key),$($tag.Value)"
+            }
         }
     }
 }
