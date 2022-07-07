@@ -58,6 +58,23 @@ $ClusterArray = @(getClusters "eu-central-1")
 getECSClusterInfo $ClusterArray[0] $Regions[0]
 getECSClusterInfo_FromClusters $ClusterArray $Regions[0]
 
+getECSClusterCapacityProviderInfo_FromClusters $ClusterArray $Regions[0]
+
+getECSClusterDefaultCapacityProviderStrategyInfo_FromClusters $ClusterArray $Regions[0]
+
+$cluster = "daco-prod02"
+$cls = Get-ECSClusterDetail -Cluster $cluster -Region $region 
+| Select-Object -Expand Clusters
+$cls | Get-Member
+$cls.DefaultCapacityProviderStrategy.Count
+$cls.CapacityProviders.Count
+$cls.DefaultCapacityProviderStrategy.Count
+$cls.ClusterName
+
+$defaultCapacityProviderStrategy = $cls | Select-Object -ExpandProperty DefaultCapacityProviderStrategy
+    
+$cls.DefaultCapacityProviderStrategy | Get-Member
+
 foreach ($region in $Regions)
 {
     $region
@@ -82,6 +99,28 @@ foreach ($region in $Regions)
     $clusters = @(getClusters $region)
 
     getTags_FromClusters $clusters $region > "ECS_Tags_Cluster_$($region).csv"
+}
+
+foreach ($region in $Regions)
+{
+    Set-Location $outputDir
+    "---------- Processing $region ----------"
+
+    $clusters = @(getClusters $region)
+
+    getECSClusterCapacityProviderInfo_FromClusters $clusters $region `
+        > "ECS_ClusterCapacityProviderInfo_$($region).csv"
+}
+
+foreach ($region in $Regions)
+{
+    Set-Location $outputDir
+    "---------- Processing $region ----------"
+
+    $clusters = @(getClusters $region)
+
+    getECSClusterDefaultCapacityProviderStrategyInfo_FromClusters $clusters $region `
+        > "ECS_ClusterDefaultCapacityProviderStrategyInfo_$($region).csv"
 }
 
 #region ECS Tags
@@ -373,11 +412,22 @@ foreach ($region in $Regions)
 
 #region AS AutoScalingGroup
 
-getAutoScalingGroups $region
+$region = "us-west-2"
 $asGroup = "zin-prod-asg"
 $asInstance = "i-04be99315aebb9dd3"
 
 getAutoScalingGroupInfo $asGroup $region
+
+foreach ($region in $Regions)
+{
+    Set-Location $outputDir
+    "---------- Processing $region ----------"
+
+    $asGroups = @(getAutoScalingGroups $region)
+    
+    getAutoScalingGroupInfo_FromInstances $asGroups $region  `
+        > "AS_AutoScaling_Groups_$($region).csv"
+}
 
 Get-ASAutoScalingInstance -InstanceId $asGroup -Region $region
 Get-ASAutoScalingInstance -InstanceId $asInstance -Region $region
@@ -393,14 +443,13 @@ foreach ($region in $Regions)
     "---------- Processing $region ----------"
 
     $asInstances = @(getAutoScalingInstances $region)
-
-    # NOTE(crhodes)
-    # Getting Rate exceeded error
     
-    getASAutoScalingInstanceInfo_FromInstances $asInstances $region  > "ASAutoScaling_Instances_$($region).csv"
+    getASAutoScalingInstanceInfo_FromInstances $asInstances $region  `
+        > "AS_AutoScaling_Instances_$($region).csv"
 }
 
 #endregion
+
 ################################################################################
 #
 # Get-EC2_ECS_Info.ps1

@@ -86,7 +86,7 @@ function getAutoScalingGroupInfo($asGroup, $region)
 {
     $asg = Get-ASAutoScalingGroup -AutoScalingGroupName $asGroup -Region $region
 
-    $output = $asg.AutoScalingGroupName
+    $output = "$region,$($asg.AutoScalingGroupName)"
     $output += ",$($asg.DefaultCooldown)"
     $output += ",$($asg.DesiredCapacity)"
     $output += ",$($asg.MaxSize)"
@@ -98,6 +98,36 @@ function getAutoScalingGroupInfo($asGroup, $region)
     $output
 }
 
+function getAutoScalingGroupInfo_FromInstances($asInstances, $region)
+{
+    $header = "Region,AutoScalingGroupName"
+    $header += ",DefaultCooldown"
+    $header += ",DesiredCapacity"
+    $header += ",MaxSize"    
+    $header += ",MinSize"
+    $header += ",PredictedCapacity"
+    $header += ",WarmPoolSize"
+    $header += ",DefaultCooldown"
+
+    $header
+
+    $i = 0
+
+    foreach($asi in $asInstances)
+    {
+        getAutoScalingGroupInfo $asi $region
+
+        # Need to rate limit as Get-ASAutoScalingGroup returns errors (not seen)
+
+        if(0 -eq ++$i % 50)
+        {
+            Write-Error "Sleeping for 30 seconds.  Processed $i"
+            Start-Sleep -Seconds 30
+            Write-Error "Continuing"
+        }
+    }
+}
+
 function getAutoScalingInstances([String]$region)
 {
     # Get-ASAutoScalingGroup -Region $region | Get-Member
@@ -107,23 +137,32 @@ function getAutoScalingInstances([String]$region)
 
 function getASAutoScalingInstanceInfo($asInstance, $region)
 {
-    $asi = Get-ASAutoScalingInstance -InstanceId $asInstance -Region $region
+    try
+    {
+        $asi = Get-ASAutoScalingInstance -InstanceId $asInstance -Region $region
 
-    $output = $asi.AutoScalingGroupName
-    $output += ",$($asi.AvailabilityZone)"
-    $output += ",$($asi.HealthStatus)"
-    $output += ",$($asi.InstanceId)"
-    $output += ",$($asi.InstanceType)"
-    $output += ",$($asi.LifecycleState)"
-    $output += ",$($asi.ProtectedFromScaleIn)"
-    $output += ",$($asi.WeightedCapacity)"
-
-    $output
+        $output = "$region,$($asi.AutoScalingGroupName)"
+        $output += ",$($asi.AvailabilityZone)"
+        $output += ",$($asi.HealthStatus)"
+        $output += ",$($asi.InstanceId)"
+        $output += ",$($asi.InstanceType)"
+        $output += ",$($asi.LifecycleState)"
+        $output += ",$($asi.ProtectedFromScaleIn)"
+        $output += ",$($asi.WeightedCapacity)"
+    }
+    catch 
+    {
+        $output = "Error processing $asInstance"
+    }
+    finally
+    {
+        $output
+    }
 }
 
 function getASAutoScalingInstanceInfo_FromInstances($asInstances, $region)
 {
-    $header = "AutoScalingGroupName"
+    $header = "Region,AutoScalingGroupName"
     $header += ",AvailabilityZone"
     $header += ",HealthStatus"
     $header += ",InstanceId"    
@@ -134,12 +173,23 @@ function getASAutoScalingInstanceInfo_FromInstances($asInstances, $region)
 
     $header
 
+    $i = 0
+
     foreach($asi in $asInstances)
     {
         getASAutoScalingInstanceInfo $asi $region
+
+        # Need to rate limit as Get-ASAutoScalingInstance returns errors
+
+        if(0 -eq ++$i % 50)
+        {
+            Write-Error "Sleeping for 30 seconds.  Processed $i"
+            Start-Sleep -Seconds 30
+            Write-Error "Continuing"
+
+        }
     }
 }
-
 
 ################################################################################
 #

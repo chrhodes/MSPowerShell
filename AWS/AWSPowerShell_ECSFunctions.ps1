@@ -52,13 +52,17 @@ function getClusters([String]$region)
 
 function getECSClusterInfo([string]$cluster, [string]$region)
 {
-    $json = Get-ECSClusterDetail -Cluster $cluster -Region $region  
+    # $json = Get-ECSClusterDetail -Cluster $cluster -Region $region  
 
-    $cls = $json | Select-Object -Expand Clusters
+    $cls = Get-ECSClusterDetail -Cluster $cluster -Region $region 
+        | Select-Object -Expand Clusters
 
     $output = "$region,$($cls.ClusterName)"
-    $output += ",$($cls.RegisteredContainerInstancesCount),$($cls.ActiveServicesCount)"
-    $output += ",$($cls.PendingTasksCount),$($cls.RunningTasksCount),$($cls.Status)"
+    $output += ",$($cls.RegisteredContainerInstancesCount)"
+    $output += ",$($cls.ActiveServicesCount)"
+    $output += ",$($cls.PendingTasksCount)"
+    $output += ",$($cls.RunningTasksCount)"
+    $output += ",$($cls.Status)"
 
     $output
 }
@@ -69,14 +73,99 @@ function getECSClusterInfo_FromClusters([string[]]$clusterArray, [string]$region
     # This needs to be in same order as field display in getECSClusterInfo
 
     $output = "Region,Cluster"
-    $output += ",RegisteredContainerInstancesCount,ActiveServicesCount"
-    $output += ",PendingTasksCount,RunningTasksCount,Status"
+    $output += ",RegisteredContainerInstancesCount"
+    $output += ",ActiveServicesCount"
+    $output += ",PendingTasksCount"
+    $output += ",RunningTasksCount"
+    $output += ",Status"
 
     $output
 
     foreach($cluster in $clusterArray)
     {
         getECSClusterInfo $cluster $region
+    }
+}
+
+function getECSClusterCapacityProviderInfo([string]$cluster, [string]$region)
+{
+    $cls = Get-ECSClusterDetail -Cluster $cluster -Region $region 
+        | Select-Object -Expand Clusters
+
+    $capacityProviders = $cls | Select-Object -ExpandProperty CapacityProviders
+
+    if(0 -eq $cls.CapacityProviders.Count)
+    {
+        "$region,$($cls.ClusterName),"
+    }
+    else
+    {
+        foreach($cp in $capacityProviders)
+        {
+            $output = "$region,$($cls.ClusterName)"
+            $output += ",$($cp)"
+    
+            $output
+        }
+    }
+}
+
+function getECSClusterCapacityProviderInfo_FromClusters([string[]]$clusterArray, [string]$region)
+{
+    # Establish Column Headers
+    # This needs to be in same order as field display in getECSClusterCapacityProviderInfo
+
+    $output = "Region,Cluster"
+    $output += ",CapacityProvider"
+
+    $output
+
+    foreach($cluster in $clusterArray)
+    {
+        getECSClusterCapacityProviderInfo $cluster $region
+    }
+}
+
+function getECSClusterDefaultCapacityProviderStrategyInfo([string]$cluster, [string]$region)
+{
+    $cls = Get-ECSClusterDetail -Cluster $cluster -Region $region 
+        | Select-Object -Expand Clusters
+
+    $defaultCapacityProviderStrategy = $cls | Select-Object -ExpandProperty DefaultCapacityProviderStrategy
+    
+    if(0 -eq $cls.DefaultCapacityProviderStrategy.Count)
+    {
+        "$region,$($cls.ClusterName),,,"
+    }
+    else
+    {    
+        foreach($dcps in $defaultCapacityProviderStrategy)
+        {
+            $output = "$region,$($cls.ClusterName)"
+            $output += ",$($dcps.Base)"
+            $output += ",$($dcps.CapacityProvider)"
+            $output += ",$($dcps.Weight)"                
+    
+            $output
+        }
+    }
+}
+
+function getECSClusterDefaultCapacityProviderStrategyInfo_FromClusters([string[]]$clusterArray, [string]$region)
+{
+    # Establish Column Headers
+    # This needs to be in same order as field display in getECSClusterDefaultCapacityProviderStrategyInfo
+
+    $output = "Region,Cluster"
+    $output += ",Base"
+    $output += ",CapacityProvider"
+    $output += ",Weight"
+
+    $output
+
+    foreach($cluster in $clusterArray)
+    {
+        getECSClusterDefaultCapacityProviderStrategyInfo $cluster $region
     }
 }
 
