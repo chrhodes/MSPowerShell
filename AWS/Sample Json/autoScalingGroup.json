@@ -1,0 +1,142 @@
+[
+  {
+    "AutoScalingGroupARN": "arn:aws:autoscaling:us-west-2:049751716774:autoScalingGroup:4e2f0eb9-620d-4119-905e-3aad4d7c3db7:autoScalingGroupName/CF-AUW2-PRD02-Proxy-OutboundProxyASG-GLEL67XC118F",
+    "AutoScalingGroupName": "CF-AUW2-PRD02-Proxy-OutboundProxyASG-GLEL67XC118F",
+    "AvailabilityZones": [
+      "us-west-2a",
+      "us-west-2b",
+      "us-west-2c"
+    ],
+    "CapacityRebalance": false,
+    "Context": null,
+    "CreatedTime": "2019-09-20T15:13:02.86-07:00",
+    "DefaultCooldown": 120,
+    "DefaultInstanceWarmup": 0,
+    "DesiredCapacity": 3,
+    "DesiredCapacityType": null,
+    "EnabledMetrics": [],
+    "HealthCheckGracePeriod": 0,
+    "HealthCheckType": "EC2",
+"Instances": [
+  {
+    "AvailabilityZone": "us-west-2a",
+    "HealthStatus": "Healthy",
+    "InstanceId": "i-04be99315aebb9dd3",
+    "InstanceType": "m5.large",
+    "LaunchConfigurationName": "CF-AUW2-PRD02-Proxy-OutboundProxyLaunchConfig-10GKTAP5OLY5J",
+    "LaunchTemplate": null,
+    "LifecycleState": {
+      "Value": "InService"
+    },
+    "ProtectedFromScaleIn": false,
+    "WeightedCapacity": null
+  },
+  {
+    "AvailabilityZone": "us-west-2c",
+    "HealthStatus": "Healthy",
+    "InstanceId": "i-0a047146c5f6a7c41",
+    "InstanceType": "m5.large",
+    "LaunchConfigurationName": "CF-AUW2-PRD02-Proxy-OutboundProxyLaunchConfig-10GKTAP5OLY5J",
+    "LaunchTemplate": null,
+    "LifecycleState": {
+      "Value": "InService"
+    },
+    "ProtectedFromScaleIn": false,
+    "WeightedCapacity": null
+  },
+  {
+    "AvailabilityZone": "us-west-2b",
+    "HealthStatus": "Healthy",
+    "InstanceId": "i-0a2d1425591d0ede9",
+    "InstanceType": "m5.large",
+    "LaunchConfigurationName": "CF-AUW2-PRD02-Proxy-OutboundProxyLaunchConfig-10GKTAP5OLY5J",
+    "LaunchTemplate": null,
+    "LifecycleState": {
+      "Value": "InService"
+    },
+    "ProtectedFromScaleIn": false,
+    "WeightedCapacity": null
+  }
+],
+    "LaunchConfigurationName": "CF-AUW2-PRD02-Proxy-OutboundProxyLaunchConfig-10GKTAP5OLY5J",
+    "LaunchTemplate": null,
+    "LoadBalancerNames": [],
+    "MaxInstanceLifetime": 0,
+    "MaxSize": 6,
+    "MinSize": 3,
+    "MixedInstancesPolicy": null,
+    "NewInstancesProtectedFromScaleIn": false,
+    "PlacementGroup": null,
+    "PredictedCapacity": 0,
+    "ServiceLinkedRoleARN": "arn:aws:iam::049751716774:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling",
+    "Status": null,
+    "SuspendedProcesses": [],
+    "Tags": [
+      {
+        "Key": "AppVersion",
+        "PropagateAtLaunch": true,
+        "ResourceId": "CF-AUW2-PRD02-Proxy-OutboundProxyASG-GLEL67XC118F",
+        "ResourceType": "auto-scaling-group",
+        "Value": "1.0.0"
+      },
+      {
+        "Key": "ApplicationID",
+        "PropagateAtLaunch": true,
+        "ResourceId": "CF-AUW2-PRD02-Proxy-OutboundProxyASG-GLEL67XC118F",
+        "ResourceType": "auto-scaling-group",
+        "Value": "outbound-proxy"
+      },
+      {
+        "Key": "Name",
+        "PropagateAtLaunch": true,
+        "ResourceId": "CF-AUW2-PRD02-Proxy-OutboundProxyASG-GLEL67XC118F",
+        "ResourceType": "auto-scaling-group",
+        "Value": "outbound-proxy"
+      },
+      {
+        "Key": "aws:cloudformation:logical-id",
+        "PropagateAtLaunch": true,
+        "ResourceId": "CF-AUW2-PRD02-Proxy-OutboundProxyASG-GLEL67XC118F",
+        "ResourceType": "auto-scaling-group",
+        "Value": "OutboundProxyASG"
+      },
+      {
+        "Key": "aws:cloudformation:stack-id",
+        "PropagateAtLaunch": true,
+        "ResourceId": "CF-AUW2-PRD02-Proxy-OutboundProxyASG-GLEL67XC118F",
+        "ResourceType": "auto-scaling-group",
+        "Value": "arn:aws:cloudformation:us-west-2:049751716774:stack/CF-AUW2-PRD02-Proxy/761786e0-dbf3-11e9-8edd-021df5e6d67a"
+      },
+      {
+        "Key": "aws:cloudformation:stack-name",
+        "PropagateAtLaunch": true,
+        "ResourceId": "CF-AUW2-PRD02-Proxy-OutboundProxyASG-GLEL67XC118F",
+        "ResourceType": "auto-scaling-group",
+        "Value": "CF-AUW2-PRD02-Proxy"
+      },
+      {
+        "Key": "project",
+        "PropagateAtLaunch": true,
+        "ResourceId": "CF-AUW2-PRD02-Proxy-OutboundProxyASG-GLEL67XC118F",
+        "ResourceType": "auto-scaling-group",
+        "Value": "techops"
+      },
+      {
+        "Key": "service_component",
+        "PropagateAtLaunch": true,
+        "ResourceId": "CF-AUW2-PRD02-Proxy-OutboundProxyASG-GLEL67XC118F",
+        "ResourceType": "auto-scaling-group",
+        "Value": "sec-scanner"
+      }
+    ],
+    "TargetGroupARNs": [
+      "arn:aws:elasticloadbalancing:us-west-2:049751716774:targetgroup/CF-AUW2-PRD02-Proxy-TG/b8ebddac11f551d3"
+    ],
+    "TerminationPolicies": [
+      "OldestInstance"
+    ],
+    "VPCZoneIdentifier": "subnet-fd93b1a5,subnet-4a73d12d,subnet-73e3273a",
+    "WarmPoolConfiguration": null,
+    "WarmPoolSize": 0
+  }
+]
