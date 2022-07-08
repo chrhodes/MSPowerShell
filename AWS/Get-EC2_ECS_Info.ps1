@@ -372,6 +372,24 @@ foreach ($region in $Regions)
     getTags_FromEC2Instances $instances $region > "EC2_Tags_Instance_$($region).csv"
 }
 
+# Utilization
+
+foreach ($region in $Regions)
+{
+    Set-Location $outputDir
+    "---------- Processing $region ----------"
+
+    $instances = @(getEC2Instances $region)
+
+    foreach($ec2InstanceId in $instances)
+    {
+        "Gathering CPU Utilization for $regionn $ec2InstanceId"
+
+        getCWMetricsStatistics $ec2InstanceId $region | 
+            ConvertTo-Csv > "CPU_Util_$($ec2InstanceId)_$($region).csv"
+    }
+}
+
 # NOTE(crhodes)
 # Only need to run this if InstanceTypes change
 
