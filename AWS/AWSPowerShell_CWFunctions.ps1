@@ -332,7 +332,7 @@ $outputAll.Datapoints | sort-object -Property Timestamp |
 
 function getCWMetricsStatistics([string]$ec2InstanceId, [string]$region)
 {
-    $utcStartTime=[System.DateTime]::UtcNow.AddDays(-30)
+    $utcStartTime=[System.DateTime]::UtcNow.AddDays(-40)
     $utcEndTime=[System.DateTime]::UtcNow
 
     $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()

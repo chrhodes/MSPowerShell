@@ -376,14 +376,14 @@ foreach ($region in $Regions)
 
 foreach ($region in $Regions)
 {
-    Set-Location $outputDir
+    Set-Location "$outputDir\CPU Utilization"
     "---------- Processing $region ----------"
 
     $instances = @(getEC2Instances $region)
 
     foreach($ec2InstanceId in $instances)
     {
-        "Gathering CPU Utilization for $regionn $ec2InstanceId"
+        "Gathering CPU Utilization for $region $ec2InstanceId"
 
         getCWMetricsStatistics $ec2InstanceId $region | 
             ConvertTo-Csv > "CPU_Util_$($ec2InstanceId)_$($region).csv"
