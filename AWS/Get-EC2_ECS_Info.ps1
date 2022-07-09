@@ -372,23 +372,7 @@ foreach ($region in $Regions)
     getTags_FromEC2Instances $instances $region > "EC2_Tags_Instance_$($region).csv"
 }
 
-# Utilization
 
-foreach ($region in $Regions)
-{
-    Set-Location "$outputDir\CPU Utilization"
-    "---------- Processing $region ----------"
-
-    $instances = @(getEC2Instances $region)
-
-    foreach($ec2InstanceId in $instances)
-    {
-        "Gathering CPU Utilization for $region $ec2InstanceId"
-
-        getCWMetricsStatistics $ec2InstanceId $region | 
-            ConvertTo-Csv > "CPU_Util_$($ec2InstanceId)_$($region).csv"
-    }
-}
 
 # NOTE(crhodes)
 # Only need to run this if InstanceTypes change
@@ -427,6 +411,49 @@ foreach ($region in $Regions)
 }
 
 #endregion #################### EC2 Instance ####################
+
+#region #################### EC2 Utilization ####################
+
+# Utilization
+
+$region = "us-west-2"
+
+$ec2InstanceId = "i-57542c92"
+getEC2InstanceInfo $ec2InstanceId $region
+
+$startTime.ToUniversalTime()
+$endTime.ToUniversalTime()
+
+getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime
+
+foreach ($region in $Regions)
+{
+    $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
+    $endTime = Get-Date -Date "2022-06-30 23:59:59Z"
+
+    Set-Location "$outputDir\CPU Utilization"
+    "---------- Processing $region ----------"
+
+    $instances = @(getEC2Instances $region)
+
+    foreach($ec2InstanceId in $instances)
+    {
+        $outputFile = "CPU_$($ec2InstanceId)_$($region).csv"
+
+        getEC2InstanceInfo $ec2Instance $region > $outputFile
+
+        $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
+        $header >> $outputFile
+
+        "Gathering CPU Utilization for $region $ec2InstanceId"
+
+        getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime `
+            >> $outputFile
+            # ConvertTo-Csv >> "CPU_$($ec2InstanceId)_$($region).csv"
+    }
+}
+
+#endregion #################### EC2 Utilization ####################
 
 #region AS AutoScalingGroup
 

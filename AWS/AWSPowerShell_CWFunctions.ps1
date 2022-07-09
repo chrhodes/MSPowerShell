@@ -330,10 +330,10 @@ $outputAll.Datapoints | sort-object -Property Timestamp |
      Select-Object -Property @("TimeStamp", "Minimum", "Average", "Maximum") | 
      ConvertTo-Csv > i-57542c92.csv
 
-function getCWMetricsStatistics([string]$ec2InstanceId, [string]$region)
+function getCW_EC2_CPUUtilization([string]$ec2InstanceId, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
 {
-    $utcStartTime=[System.DateTime]::UtcNow.AddDays(-40)
-    $utcEndTime=[System.DateTime]::UtcNow
+    # $utcStartTime=[System.DateTime]::UtcNow.AddDays(-40)
+    # $utcEndTime=[System.DateTime]::UtcNow
 
     $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
     $dimFilter.Name="InstanceId"
@@ -348,8 +348,18 @@ function getCWMetricsStatistics([string]$ec2InstanceId, [string]$region)
     -Statistic @("Minimum","Average","Maximum") `
     -Region $region 
 
-    $outputAll.Datapoints | sort-object -Property Timestamp |
-        Select-Object -Property @("TimeStamp", "Minimum", "Average", "Maximum")     
+    $dataPoints = $outputAll.Datapoints | sort-object -Property Timestamp 
+
+    foreach($dp in $dataPoints)
+    {
+        $output = "$region,$($ec2InstanceId)"
+        $output += ",$($dp.TimeStamp.ToUniversalTime()),$($dp.Minimum),$($dp.Average),$($dp.Maximum)"
+
+        $output
+    }
+
+    # |
+    #     Select-Object -Property @("TimeStamp", "Minimum", "Average", "Maximum")     
 }
 
 # Get-CWMetricStream
