@@ -362,6 +362,93 @@ function getCW_EC2_CPUUtilization([string]$ec2InstanceId, [string]$region, [Syst
     #     Select-Object -Property @("TimeStamp", "Minimum", "Average", "Maximum")     
 }
 
+function getCW_ECS_Cluster_CPUUtilization([string]$cluster, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+{
+    $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
+    $dimFilter.Name="ClusterName"
+    $dimFilter.Value=$cluster  
+   
+    $outputALL = Get-CWMetricStatistics `
+    -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
+    -MetricName "CPUUtilization" `
+    -Dimension $dimFilter `
+    -Namespace "AWS/ECS" `
+    -Period 3600 `
+    -Statistic @("Minimum","Average","Maximum") `
+    -Region $region 
+
+    $dataPoints = $outputAll.Datapoints | sort-object -Property Timestamp 
+
+    foreach($dp in $dataPoints)
+    {
+        $output = "$region,$($cluster)"
+        $output += ",$($dp.TimeStamp.ToUniversalTime()),$($dp.Minimum),$($dp.Average),$($dp.Maximum)"
+
+        $output
+    }    
+}
+
+function getCW_ECS_Service_CPUUtilization([string]$cluster, [string]$service, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+{
+    $clusterFilter=[Amazon.CloudWatch.Model.Dimension]::new()
+    $clusterFilter.Name="ClusterName"
+    $clusterFilter.Value=$cluster  
+
+    # $clusterFilter
+
+    $serviceFilter=[Amazon.CloudWatch.Model.Dimension]::new()
+    $serviceFilter.Name="ServiceName"
+    $serviceFilter.Value=$service
+
+    # $serviceFilter
+
+    $dimFilter = @($clusterFilter, $serviceFilter)
+
+#     $dimFilter.Count
+#     $dimFilter | Get-Member
+#     $dimFilter | Format-Table
+
+#     $dimFilter[0]
+
+#     $dimFilter[1]
+
+# $dimFilter | % {$_.Name.Value}
+    # $filter1 = @{ClusterName=$cluster}
+
+    # $dimFilter     ($filter1
+
+    # $dimFilter | get-member
+
+    # $dimFilter.Name="ClusterName"
+    # $dimFilter.Value=$cluster
+    # $dimFilter.Add "ServiceName", $service
+
+    # $dimFilter = @{}
+    # $dimFilter.Add("ClusterName", $cluster)
+    # $dimFilter.Add("ServiceName", $service)
+
+    # $dimFilter
+   
+    $outputALL = Get-CWMetricStatistics `
+    -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
+    -MetricName "CPUUtilization" `
+    -Dimension $dimFilter `
+    -Namespace "AWS/ECS" `
+    -Period 3600 `
+    -Statistic @("Minimum","Average","Maximum") `
+    -Region $region 
+
+    $dataPoints = $outputAll.Datapoints | sort-object -Property Timestamp 
+
+    foreach($dp in $dataPoints)
+    {
+        $output = "$region,$($service)"
+        $output += ",$($dp.TimeStamp.ToUniversalTime()),$($dp.Minimum),$($dp.Average),$($dp.Maximum)"
+
+        $output
+    }  
+}
+
 # Get-CWMetricStream
 # Get-CWMetricStreamList
 # Get-CWMetricWidgetImage

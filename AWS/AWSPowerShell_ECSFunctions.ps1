@@ -245,7 +245,7 @@ function getTags_FromClusters([string[]]$clusterArray, [string]$region)
 #   [<CommonParameters>]
 #
 
-function getECSClusterServices([String]$cluster, $region)
+function getECSClusterServices([String]$cluster, [String]$region)
 {
     @(Get-ECSClusterService -Cluster $cluster -Region $region)
 }
@@ -260,7 +260,7 @@ function getECSClusterServices_FromClusters($clusterArray, $region)
     }
 }
 
-function getECSClusterServicesInfo([String]$cluster, [string]$region)
+function getECSClusterServicesInfo([String]$cluster, [String]$region)
 {
     foreach($serviceArn in (getECSClusterServices $cluster $region))
     {
