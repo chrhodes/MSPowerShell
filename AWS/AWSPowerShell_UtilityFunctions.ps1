@@ -112,4 +112,24 @@ function getTaskDefinitionFullName([string]$line)
     $line.Substring($start, $length)
 }
 
+function getRegionAbbreviation([string] $region)
+{
+    switch ($region)
+    {
+        "us-west-2" { "usw2" }
+        "us-east-2" { "use2" }
+        "eu-west-1" { "euw1" }
+        "eu-central-1" { "euc1" }
+        default { "XXX" }
+    }
+}
+
+getRegionAbbreviation "us-west-2"
+
 # getTaskDefinitionName $tdn
+
+################################################################################
+#
+# End AWSPowerShell_UtilityFunctions.ps1
+#
+################################################################################

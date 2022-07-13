@@ -40,37 +40,37 @@
 #   [<CommonParameters>]
 #
 
-$startTime = (Get-Date).AddDays(-1)
-$endTime = Get-Date
+# $startTime = (Get-Date).AddDays(-1)
+# $endTime = Get-Date
 
-$startDate
-$endDate
+# $startDate
+# $endDate
 
-$utcStartTime=[System.DateTime]::UtcNow.AddDays(-1)
-$utcEndTime=[System.DateTime]::UtcNow
+# $utcStartTime=[System.DateTime]::UtcNow.AddDays(-1)
+# $utcEndTime=[System.DateTime]::UtcNow
 
-$utcStartTime
-$utcEndTime
+# $utcStartTime
+# $utcEndTime
 
-$dimFilter2 = [PSCustomObject]@{
-    Name = "ClusterName"
-    Value = "daco-prod02"
-}
+# $dimFilter2 = [PSCustomObject]@{
+#     Name = "ClusterName"
+#     Value = "daco-prod02"
+# }
 
 
-$dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
-$dim.Name="ClusterName"
-$dim.Value="daco-prod02"
+# $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
+# $dim.Name="ClusterName"
+# $dim.Value="daco-prod02"
 
-Get-CWMetricData -Region $region -UtcStartTime $startDate -UtcEndTime $endDate | more
+# Get-CWMetricData -Region $region -UtcStartTime $startDate -UtcEndTime $endDate | more
 
-Get-CWMetricStatistics
-    -Region $region -UtcStartTime $startDate -UtcEndTime $endDate
-    -MetricName "CPUUtilization" 
-    -Dimension $dimFilter
-    -Namespace "AWS/ECS"
-    -Period 60
-    -Statistic "Average"
+# Get-CWMetricStatistics
+#     -Region $region -UtcStartTime $startDate -UtcEndTime $endDate
+#     -MetricName "CPUUtilization" 
+#     -Dimension $dimFilter
+#     -Namespace "AWS/ECS"
+#     -Period 60
+#     -Statistic "Average"
 
 # Get-CWMetricList
 #
@@ -99,9 +99,9 @@ Get-CWMetricStatistics
 
 # NB. Super long list
 
-Get-CWMetricList -Region $region
+# Get-CWMetricList -Region $region
 
-Get-CWMetricList -Region $region -Namespace "AWS/EC2" | Select-Object * -Unique | more
+# Get-CWMetricList -Region $region -Namespace "AWS/EC2" | Select-Object * -Unique | more
 
 # Dimensions   MetricName                 Namespace
 # ----------   ----------                 ---------
@@ -141,7 +141,7 @@ Get-CWMetricList -Region $region -Namespace "AWS/EC2" | Select-Object * -Unique 
 # {}           DiskWriteBytes             AWS/EC2
 # {}           DiskWriteOps               AWS/EC2
 
-Get-CWMetricList -Region $region -Namespace "AWS/ECS" | Select-Object * -Unique | more
+# Get-CWMetricList -Region $region -Namespace "AWS/ECS" | Select-Object * -Unique | more
 
 # Dimensions                 MetricName        Namespace
 # ----------                 ----------        ---------
@@ -152,31 +152,31 @@ Get-CWMetricList -Region $region -Namespace "AWS/ECS" | Select-Object * -Unique 
 # {ClusterName}              MemoryReservation AWS/ECS
 # {ClusterName}              CPUUtilization    AWS/ECS
 
-Get-CWMetricList -Region $region -Namespace "AWS/ECS" `
-    -MetricName "CPUUtilization" | more
+# Get-CWMetricList -Region $region -Namespace "AWS/ECS" `
+#     -MetricName "CPUUtilization" | more
 
-Get-CWMetricList -Region $region -Namespace "AWS/ECS" `
-    -MetricName "CPUUtilization" | Select-Object -Expand Dimensions | more
-$dimFilter = @{}
-$dimFilter.Add("ClusterName", "daco-prod02")
-$dimFilter | Get-Type
-$dimFilter | Get-Member
-$dimFilter
+# Get-CWMetricList -Region $region -Namespace "AWS/ECS" `
+#     -MetricName "CPUUtilization" | Select-Object -Expand Dimensions | more
+# $dimFilter = @{}
+# $dimFilter.Add("ClusterName", "daco-prod02")
+# $dimFilter | Get-Type
+# $dimFilter | Get-Member
+# $dimFilter
 
-$dimFilter2 = [PSCustomObject]@{
-    Name = "ClusterName"
-    Value = "daco-prod02"
-}
+# $dimFilter2 = [PSCustomObject]@{
+#     Name = "ClusterName"
+#     Value = "daco-prod02"
+# }
 
-$dimFilter2
+# $dimFilter2
 
-Get-CWMetricList -Region $region -Namespace "AWS/ECS" `
-    -MetricName "CPUUtilization" -Dimension $dimFilter2 |
-    Select-Object -Expand Dimensions | more
+# Get-CWMetricList -Region $region -Namespace "AWS/ECS" `
+#     -MetricName "CPUUtilization" -Dimension $dimFilter2 |
+#     Select-Object -Expand Dimensions | more
 
-    Get-CWMetricList -Region $region -Namespace "AWS/ECS" `
-     -Dimension $dimFilter2 |
-    Select-Object -Expand Dimensions | more    
+#     Get-CWMetricList -Region $region -Namespace "AWS/ECS" `
+#      -Dimension $dimFilter2 |
+#     Select-Object -Expand Dimensions | more    
 
 
 
@@ -262,73 +262,73 @@ Get-CWMetricList -Region $region -Namespace "AWS/ECS" `
 #     [-NetworkCredential <System.Management.Automation.PSCredential>]    
 #     [<CommonParameters>]
 
-$utcStartTime=[System.DateTime]::UtcNow.AddDays(-30)
-$utcEndTime=[System.DateTime]::UtcNow
-$utcStartTime=[System.DateTime]::UtcNow.AddDays(-30)
-$utcEndTime=[System.DateTime]::UtcNow
+# $utcStartTime=[System.DateTime]::UtcNow.AddDays(-30)
+# $utcEndTime=[System.DateTime]::UtcNow
+# $utcStartTime=[System.DateTime]::UtcNow.AddDays(-30)
+# $utcEndTime=[System.DateTime]::UtcNow
 
-$utcStartTime
-$utcEndTime
+# $utcStartTime
+# $utcEndTime
 
-$dimFilter2 = [PSCustomObject]@{
-    Name = "ClusterName"
-    Value = "daco-prod02"
-}
+# $dimFilter2 = [PSCustomObject]@{
+#     Name = "ClusterName"
+#     Value = "daco-prod02"
+# }
 
 
-$dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
-$dimFilter.Name="ClusterName"
-$dimFilter.Value="daco-prod02"
+# $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
+# $dimFilter.Name="ClusterName"
+# $dimFilter.Value="daco-prod02"
 
-$dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
-$dimFilter.Name="InstanceId"
-$dimFilter.Value="i-57542c92"
+# $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
+# $dimFilter.Name="InstanceId"
+# $dimFilter.Value="i-57542c92"
 
-Get-CWMetricData -Region $region -UtcStartTime $startDate -UtcEndTime $endDate | more
+# Get-CWMetricData -Region $region -UtcStartTime $startDate -UtcEndTime $endDate | more
 
-$outputMaximum = Get-CWMetricStatistics `
-    -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
-    -MetricName "CPUUtilization" `
-    -Dimension $dimFilter `
-    -Namespace "AWS/EC2" `
-    -Period 60 `
-    -Statistic "Maximum" `
-    -Region $region
+# $outputMaximum = Get-CWMetricStatistics `
+#     -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
+#     -MetricName "CPUUtilization" `
+#     -Dimension $dimFilter `
+#     -Namespace "AWS/EC2" `
+#     -Period 60 `
+#     -Statistic "Maximum" `
+#     -Region $region
 
-$outputAverage = Get-CWMetricStatistics `
-    -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
-    -MetricName "CPUUtilization" `
-    -Dimension $dimFilter `
-    -Namespace "AWS/EC2" `
-    -Period 60 `
-    -Statistic "Average" `
-    -Region $region   
+# $outputAverage = Get-CWMetricStatistics `
+#     -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
+#     -MetricName "CPUUtilization" `
+#     -Dimension $dimFilter `
+#     -Namespace "AWS/EC2" `
+#     -Period 60 `
+#     -Statistic "Average" `
+#     -Region $region   
     
-$outputMinimum = Get-CWMetricStatistics `
-    -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
-    -MetricName "CPUUtilization" `
-    -Dimension $dimFilter `
-    -Namespace "AWS/EC2" `
-    -Period 60 `
-    -Statistic "Minimum" `
-    -Region $region    
+# $outputMinimum = Get-CWMetricStatistics `
+#     -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
+#     -MetricName "CPUUtilization" `
+#     -Dimension $dimFilter `
+#     -Namespace "AWS/EC2" `
+#     -Period 60 `
+#     -Statistic "Minimum" `
+#     -Region $region    
     
-$outputALL = Get-CWMetricStatistics `
-    -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
-    -MetricName "CPUUtilization" `
-    -Dimension $dimFilter `
-    -Namespace "AWS/EC2" `
-    -Period 3600 `
-    -Statistic @("Minimum","Average","Maximum") `
-    -Region $region    
+# $outputALL = Get-CWMetricStatistics `
+#     -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
+#     -MetricName "CPUUtilization" `
+#     -Dimension $dimFilter `
+#     -Namespace "AWS/EC2" `
+#     -Period 3600 `
+#     -Statistic @("Minimum","Average","Maximum") `
+#     -Region $region    
 
-$outputMaximum.Datapoints | Select-Object -Property Maximum > maximum.txt
-$outputAverage.Datapoints | Select-Object -Property Average > average.txt
-$outputMinimum.Datapoints | Select-Object -Property Minimum > minimum.txt
+# $outputMaximum.Datapoints | Select-Object -Property Maximum > maximum.txt
+# $outputAverage.Datapoints | Select-Object -Property Average > average.txt
+# $outputMinimum.Datapoints | Select-Object -Property Minimum > minimum.txt
 
-$outputAll.Datapoints | sort-object -Property Timestamp |
-     Select-Object -Property @("TimeStamp", "Minimum", "Average", "Maximum") | 
-     ConvertTo-Csv > i-57542c92.csv
+# $outputAll.Datapoints | sort-object -Property Timestamp |
+#      Select-Object -Property @("TimeStamp", "Minimum", "Average", "Maximum") | 
+#      ConvertTo-Csv > i-57542c92.csv
 
 function getCW_EC2_CPUUtilization([string]$ec2InstanceId, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
 {
@@ -404,31 +404,7 @@ function getCW_ECS_Service_CPUUtilization([string]$cluster, [string]$service, [s
 
     $dimFilter = @($clusterFilter, $serviceFilter)
 
-#     $dimFilter.Count
-#     $dimFilter | Get-Member
-#     $dimFilter | Format-Table
-
-#     $dimFilter[0]
-
-#     $dimFilter[1]
-
-# $dimFilter | % {$_.Name.Value}
-    # $filter1 = @{ClusterName=$cluster}
-
-    # $dimFilter     ($filter1
-
-    # $dimFilter | get-member
-
-    # $dimFilter.Name="ClusterName"
-    # $dimFilter.Value=$cluster
-    # $dimFilter.Add "ServiceName", $service
-
-    # $dimFilter = @{}
-    # $dimFilter.Add("ClusterName", $cluster)
-    # $dimFilter.Add("ServiceName", $service)
-
-    # $dimFilter
-   
+  
     $outputALL = Get-CWMetricStatistics `
     -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
     -MetricName "CPUUtilization" `
@@ -453,9 +429,6 @@ function getCW_ECS_Service_CPUUtilization([string]$cluster, [string]$service, [s
 # Get-CWMetricStreamList
 # Get-CWMetricWidgetImage
 # Get-CWResourceTag
-
-
-
 
 ################################################################################
 #

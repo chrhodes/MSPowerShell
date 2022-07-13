@@ -135,7 +135,7 @@ function getECSClusterDefaultCapacityProviderStrategyInfo([string]$cluster, [str
     
     if(0 -eq $cls.DefaultCapacityProviderStrategy.Count)
     {
-        "$region,$($cls.ClusterName),,,"
+        22
     }
     else
     {    
