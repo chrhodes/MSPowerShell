@@ -464,6 +464,7 @@ function getECSTaskInfo([String]$cluster, $region)
         $output += ",$($tsk.AvailabilityZone),$($tsk.Cpu),$($tsk.Memory)"
         $output += ",$($tsk.DesiredStatus),$($tsk.LastStatus)"
         $output += "," + (getTaskName($($tsk.TaskArn)))
+        $output += "," + (getTaskDefinitionName($($tsk.TaskDefinitionArn)))
         $output += "," + (getTaskDefinitionFullName($($tsk.TaskDefinitionArn)))
         $output += ",$($tsk.Version)"
         $output += ",$($tsk.StartedAt)"
@@ -484,6 +485,7 @@ function getECSTaskInfo_FromClusters($clusterArray, $region)
     $output += ",DesiredStatus,LastStatus"
     $output += ",Task"
     $output += ",TaskDefinition"
+    $output += ",TaskDefinitionVersion"
     $output += ",Version"
     $output += ",StartedAt"
 
