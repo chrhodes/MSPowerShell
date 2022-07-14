@@ -55,106 +55,55 @@ $ClusterArray = @(getClusters "eu-central-1")
 
 #region #################### Big Refresh Data Loop ####################
 
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
+Set-Location $outputDir
+
+
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 
-refreshEC2_Data $regions
+refreshEC2_Data $Regions
 
-refreshECS_ClusterData $regions
+refreshECS_ClusterData $Regions
 
-refreshECS_ServiceData $regions
+refreshECS_ServiceData $Regions
 
-refreshECS_TaskData $regions
+refreshECS_TaskData $Regions
 
-refreshECS_ContainerInstanceData $regions
+refreshECS_ContainerInstanceData $Regions
 
-refreshECS_TaskDefinitionData $regions
+refreshECS_TaskDefinitionData $Regions
+
+refreshAS_Data $Regions
 
 #endregion
 
 #region #################### ECS Cluster ####################
 
-# getECSClusterInfo $ClusterArray[0] $Regions[0]
-# getECSClusterInfo_FromClusters $ClusterArray $Regions[0]
+getECSClusterInfo $ClusterArray[0] $Regions[0]
+getECSClusterInfo_FromClusters $ClusterArray $Regions[0]
 
-# getECSClusterCapacityProviderInfo_FromClusters $ClusterArray $Regions[0]
+getECSClusterCapacityProviderInfo_FromClusters $ClusterArray $Regions[0]
 
-# getECSClusterDefaultCapacityProviderStrategyInfo_FromClusters $ClusterArray $Regions[0]
+getECSClusterDefaultCapacityProviderStrategyInfo_FromClusters $ClusterArray $Regions[0]
 
-# $cluster = "daco-prod02"
-# $cls = Get-ECSClusterDetail -Cluster $cluster -Region $region 
-# | Select-Object -Expand Clusters
-# $cls | Get-Member
-# $cls.DefaultCapacityProviderStrategy.Count
-# $cls.CapacityProviders.Count
-# $cls.DefaultCapacityProviderStrategy.Count
-# $cls.ClusterName
+$cluster = "daco-prod02"
+$cls = Get-ECSClusterDetail -Cluster $cluster -Region $region 
+| Select-Object -Expand Clusters
+$cls | Get-Member
+$cls.DefaultCapacityProviderStrategy.Count
+$cls.CapacityProviders.Count
+$cls.DefaultCapacityProviderStrategy.Count
+$cls.ClusterName
 
-# $defaultCapacityProviderStrategy = $cls | Select-Object -ExpandProperty DefaultCapacityProviderStrategy
+$defaultCapacityProviderStrategy = $cls | Select-Object -ExpandProperty DefaultCapacityProviderStrategy
     
-# $cls.DefaultCapacityProviderStrategy | Get-Member
+$cls.DefaultCapacityProviderStrategy | Get-Member
 
 foreach ($region in $Regions)
 {
     $region
     "---------- $region begin ----------"
 }
-
-function refreshECS_ClusterData([string[]]$regions)
-{
-    ">>>>>>>>>> Gathering ECS_ClusterInfo <<<<<<<<<<"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
-
-        $clusters = @(getClusters $region)
-
-        getECSClusterInfo_FromClusters $clusters $region `
-            > "ECS_ClusterInfo_$(getRegionAbbreviation $region).csv"
-    }
-
-    ">>>>>>>>>> Gathering ECS_Tags_Cluster <<<<<<<<<<"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
-
-        $clusters = @(getClusters $region)
-
-        getTags_FromClusters $clusters $region `
-            > "ECS_Tags_Cluster_$(getRegionAbbreviation $region).csv"
-    }
-
-    ">>>>>>>>>> Gathering ECS_ClusterCapacityProviderInfo <<<<<<<<<<"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
-
-        $clusters = @(getClusters $region)
-
-        getECSClusterCapacityProviderInfo_FromClusters $clusters $region `
-            > "ECS_ClusterCapacityProviderInfo_$(getRegionAbbreviation $region).csv"
-    }
-
-    ">>>>>>>>>> Gathering ECS_ClusterDefaultCapacityProviderStrategyInfo <<<<<<<<<<"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
-
-        $clusters = @(getClusters $region)
-
-        getECSClusterDefaultCapacityProviderStrategyInfo_FromClusters $clusters $region `
-            > "ECS_ClusterDefaultCapacityProviderStrategyInfo_$(getRegionAbbreviation $region).csv"
-    }
-}
-
-#region ECS Tags
 
 # TODO(crhodes)
 #   Not having much luck here
@@ -170,80 +119,27 @@ Get-ECSTagsForResource -ResourceArn $clusterArn
 
 #region #################### ECS Cluster Service ####################
 
-# $cluster = $ClusterArray[0]
-# $region = $Regions[0]
-# $service = "arn:aws:ecs:us-west-2:049751716774:service/noae-sbx01/notification"
+$Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+$ClusterArray = @(getClusters "us-west-2")
+$cluster = $ClusterArray[0]
 
-# getECSClusterServices $ClusterArray[0] $Regions[0]
-# getECSClusterServices_FromClusters $ClusterArray $Regions[0]
+$region = $Regions[0]
+$region = "us-west-2"
+$cluster = "noae-sbx01"
+$service = "notification"
 
-# getECSClusterServicesInfo $ClusterArray[0] $Regions[0]
-# getECSClusterServicesInfo_FromClusters $ClusterArray $Regions[0]
+$service = "arn:aws:ecs:us-west-2:049751716774:service/noae-sbx01/notification"
 
-function refreshECS_ServiceData([string[]]$regions)
-{
-    ">>>>>>>>>> Gathering ECS_ServicesInfo <<<<<<<<<<"
+getECSClusterServicesInfo $cluster $region
+getECSClusterServices $ClusterArray[0] $Regions[0]
+getECSClusterServices_FromClusters $ClusterArray $Regions[0]
 
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
-       
-        $clusters = @(getClusters $region)
-        getECSClusterServicesInfo_FromClusters $clusters $region `
-            > "ECS_ServicesInfo_$(getRegionAbbreviation $region).csv"
-    }
-    
-    ">>>>>>>>>> Gathering ECS_Tags_Service <<<<<<<<<<"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
-        
-        $clusters = @(getClusters $region)
-    
-        getServicesTags_FromClusters $clusters $region `
-            > "ECS_Tags_Service_$(getRegionAbbreviation $region).csv"
-    }
-}
+getECSClusterServicesInfo $ClusterArray[0] $Regions[0]
+getECSClusterServicesInfo_FromClusters $ClusterArray $Regions[0]
 
 #endregion #################### ECS Cluster Sevice ####################
 
 #region #################### ECS Task Definition Families ####################
-
-function refreshECS_TaskDefinitionData([string[]]$regions)
-{
-    ">>>>>>>>>> Gathering ECS_TaskDefinitionFamilies <<<<<<<<<<"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
-
-        $header = "Region, TaskDefinitionFamily"
-
-        $header > "ECS_TaskDefinitionFamilies_$(getRegionAbbreviation $region).csv"
-
-        getECSTaskDefinitionFamilyList $region `
-            >> "ECS_TaskDefinitionFamilies_$(getRegionAbbreviation $region).csv"
-    }
-
-    ">>>>>>>>>> Gathering ECS_TaskDefinition <<<<<<<<<<"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
-
-        $header = "Region, TaskDefinitionArn"
-
-        $header > "ECS_TaskDefinition_$(getRegionAbbreviation $region).csv"
-
-        getECSTaskDefinitionList $region `
-            >> "ECS_TaskDefinition_$(getRegionAbbreviation $region).csv"
-    }
-}
 
 #endregion #################### ECS Task Definition Families ####################
 
@@ -259,76 +155,17 @@ getECSTasks_FromClusters $ClusterArray $Regions[0]
 getECSTaskInfo $ClusterArray[0] $Regions[0]
 getECSTaskInfo_FromClusters $ClusterArray $Regions[0]
 
-function refreshECS_TaskData([string[]]$regions)
-{
-    ">>>>>>>>>> Gathering ECS_TaskInfo <<<<<<<<<<"
+getECSTaskInfo_FromClusters $ClusterArray > ECSCLusters_ECSTaskInfo.csv
 
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
-
-        $clusters = @(getClusters $region)
-
-        getECSTaskInfo_FromClusters $clusters $region `
-            > "ECS_TaskInfo_$(getRegionAbbreviation $region).csv"
-    }
-
-    ">>>>>>>>>> Gathering ECS_Tags_Task <<<<<<<<<<"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
-    
-        # $taskDefinitions = @(getECSTaskDefinitionList $region)
-        $clusters = @(getClusters $region)
-    
-        getTasksTags_FromClusters $clusters $region `
-            > "ECS_Tags_Task_$(getRegionAbbreviation $region).csv"
-    }    
-
-    # TODO(crhodes)
-    # This has problems.  Investigate.  Skip for now.
-
-    # # getECSTaskContainerInfo_FromClusters $ClusterArray > ECSClusters_ECSTaskContainerInfo.csv
-
-    # foreach ($region in $Regions)
-    # {
-    #     Set-Location $outputDir
-    #     "---------- Processing $region ----------"
-
-    #     $clusters = @(getClusters $region)
-
-    #     getECSTaskContainerInfo_FromClusters $clusters $region > "ECS_TaskContainerInfo_$(getRegionAbbreviation $region).csv"
-    # }
-
-    # Doesn't seem like any Tasks have Tags.  Get someone to add a Tag so can test code
-
-    # foreach ($region in $Regions)
-    # {
-    #     Set-Location $outputDir
-    #     "---------- Processing $region ----------"
-
-    #     $clusters = @(getClusters $region)
-
-    #     getTasksTags_FromClusters $clusters $region > "ECS_Tags_Task_$(getRegionAbbreviation $region).csv"
-    # }
-}
-
-# getECSTaskInfo_FromClusters $ClusterArray > ECSCLusters_ECSTaskInfo.csv
-
-# getECSTaskContainerInfo $ClusterArray[0] $Regions[0]
-# getECSTaskContainerInfo_FromClusters $ClusterArray $Regions[0]
-
-
+getECSTaskContainerInfo $ClusterArray[0] $Regions[0]
+getECSTaskContainerInfo_FromClusters $ClusterArray $Regions[0]
 
 
 # TODO(crhodes)
 # Get a task that matches other examples
 
 $taskDefinitionArn = "arn:aws:ecs:us-west-2:049751716774:task-definition/api-event:4"
-get
+
 
 getECSTaskDefinitionInfo $taskDefinition $region
 
@@ -337,38 +174,22 @@ getECSTaskDefinitionInfo $taskDefinition $region
 
 #region #################### ECS Cluster Containers ####################
 
-# $cluster = $ClusterArray[0]
-# $region = $Regions[0]
-# $containerInstance = "arn:aws:ecs:us-west-2:049751716774:container-instance/noae-sbx01/84de27e814cd4ae39af06ed15965bf00"
+$cluster = $ClusterArray[0]
+$region = $Regions[0]
+$containerInstance = "arn:aws:ecs:us-west-2:049751716774:container-instance/noae-sbx01/84de27e814cd4ae39af06ed15965bf00"
 
-# $ci = Get-ECSContainerInstanceDetail -Region $region $cluster -ContainerInstance $containerInstance 
-# | Get-Member
+$ci = Get-ECSContainerInstanceDetail -Region $region $cluster -ContainerInstance $containerInstance 
+| Get-Member
 
-# $ciCntr = Get-ECSContainerInstanceDetail -Region $region $cluster -ContainerInstance $containerInstance | 
-# Select-Object -Expand ContainerInstances
-# $ciCntr | Get-Member
+$ciCntr = Get-ECSContainerInstanceDetail -Region $region $cluster -ContainerInstance $containerInstance | 
+Select-Object -Expand ContainerInstances
+$ciCntr | Get-Member
 
-# getECSContainerInstances $ClusterArray[0] $Regions[0]
-# getECSContainerInstances_FromClusters $ClusterArray $Regions[0]
+getECSContainerInstances $ClusterArray[0] $Regions[0]
+getECSContainerInstances_FromClusters $ClusterArray $Regions[0]
 
-# getECSContainerInstanceInfo $ClusterArray[0] $Regions[0]
-# getECSContainerInstanceInfo_FromClusters $ClusterArray $Regions[0]
-
-function refreshECS_ContainerInstanceData([string[]]$regions)
-{
-    ">>>>>>>>>> Gathering ECS_ContainerInstanceInfo <<<<<<<<<<"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
-
-        $clusters = @(getClusters $region)
-
-        getECSContainerInstanceInfo_FromClusters $clusters $region `
-            > "ECS_ContainerInstanceInfo_$(getRegionAbbreviation $region).csv"
-    }
-}
+getECSContainerInstanceInfo $ClusterArray[0] $Regions[0]
+getECSContainerInstanceInfo_FromClusters $ClusterArray $Regions[0]
 
 #endregion #################### ECS Cluster Containers ####################
 
@@ -380,136 +201,56 @@ function refreshECS_ContainerInstanceData([string[]]$regions)
 # getEC2Instances_FromClusters $ClusterArray $Regions[0]
 
 
-# foreach ($region in $Regions)
-# {
-#     Set-Location $outputDir
-#     "---------- Processing $region ----------"
-
-#     $clusters = @(getClusters $region)
-
-#     getEC2Instances_FromClusters $clusters $region > "ECS_EC2Instances_$(getRegionAbbreviation $region).csv"
-# }
-
-# getECSContainerEC2InstanceInfo $ClusterArray[0] $Regions[0]
-# getECSContainerEC2InstanceInfo_FromClusters $ClusterArray $Regions[0]
-
-function refreshEC2_Data([string[]]$regions)
+foreach ($region in $Regions)
 {
-    # "---------- Gathering ECS_ContainerEC2InstanceInfo for $region ----------"
+    Set-Location $outputDir
+    "---------- Processing $region ----------"
 
-    # foreach ($region in $Regions)
-    # {
-    #     Set-Location $outputDir
-    #     "---------- Processing $region ----------"
+    $clusters = @(getClusters $region)
 
-    #     $clusters = @(getClusters $region)
-
-    #     getECSContainerEC2InstanceInfo_FromClusters $clusters $region `
-    #         > "ECS_ContainerEC2InstanceInfo_$($region).csv"
-    # }
-
-    ">>>>>>>>>> Gathering EC2_InstanceInfo <<<<<<<<<<"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
-    
-        $instances = @(getEC2Instances $region)
-    
-        getEC2InstanceInfo_FromInstances $instances $region `
-            > "EC2_InstanceInfo_$(getRegionAbbreviation $region).csv"
-    }
-    
-    ">>>>>>>>>> Gathering EC2_Tags_Instance <<<<<<<<<<"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
-    
-        $instances = @(getEC2Instances $region)
-    
-        getTags_FromEC2Instances $instances $region `
-            > "EC2_Tags_Instance_$(getRegionAbbreviation $region).csv"
-    }    
+    getEC2Instances_FromClusters $clusters $region > "ECS_EC2Instances_$(getRegionAbbreviation $region).csv"
 }
+
+getECSContainerEC2InstanceInfo $ClusterArray[0] $Regions[0]
+getECSContainerEC2InstanceInfo_FromClusters $ClusterArray $Regions[0]
 
 #endregion #################### ECS EC2 Instance ####################
 
 #region #################### EC2 InstanceType ####################
 
-# $InstanceArray = @(getEC2Instances "eu-west-1")
-# $InstanceArray = @(getEC2Instances "eu-central-1")
-# $InstanceArray = @(getEC2Instances "us-east-2")
-# $InstanceArray = @(getEC2Instances "us-west-2")
+$InstanceArray = @(getEC2Instances "eu-west-1")
+$InstanceArray = @(getEC2Instances "eu-central-1")
+$InstanceArray = @(getEC2Instances "us-east-2")
+$InstanceArray = @(getEC2Instances "us-west-2")
 
-# $ec2Instance = "i-019eff05b5bc0c82a"
-# getEC2InstanceInfo $ec2Instance "us-east-2"
+$ec2Instance = "i-019eff05b5bc0c82a"
+getEC2InstanceInfo $ec2Instance "us-east-2"
 
-# $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
-# $Regions = @("us-east-2", "eu-west-1")
-
-# foreach ($region in $Regions)
-# {
-#     Set-Location $outputDir
-#     "---------- Processing $region ----------"
-
-#     $instances = @(getEC2Instances $region)
-
-#     getEC2InstanceInfo_FromInstances $instances $region > "EC2_InstanceInfo_$(getRegionAbbreviation $region).csv"
-# }
-
-# $region = "us-west-2"
-# $testInstances = @($instances[0..5])
-# getTags_FromEC2Instances $testInstances $region
-
-# foreach ($region in $Regions)
-# {
-#     Set-Location $outputDir
-#     "---------- Processing $region ----------"
-
-#     $instances = @(getEC2Instances $region)
-
-#     getTags_FromEC2Instances $instances $region > "EC2_Tags_Instance_$(getRegionAbbreviation $region).csv"
-# }
-
-# NOTE(crhodes)
-# Only need to run this if InstanceTypes change
-
-$json = Get-EC2InstanceType -Region $Regions[0] -InstanceType "m1.large" | ConvertTo-Json -Depth 10
-getEC2InstanceTypes $Regions[0]
-
-">>>>>>>>>> Gathering EC2_InstanceTypes <<<<<<<<<<"
+$Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+$Regions = @("us-east-2", "eu-west-1")
 
 foreach ($region in $Regions)
 {
     Set-Location $outputDir
     "---------- Processing $region ----------"
 
-    $header = "Region,InstanceType"
-    $header += ",CurrentGeneration"
-    $header += ",BareMetal"
+    $instances = @(getEC2Instances $region)
 
-    $header += ",SustainedClockSpeedGhz"
-    $header += ",DefaultCores"
-    $header += ",DefaultThreadsPerCore"
-    $header += ",DefaultVCpus"
-    $header += ",Memory (GB)"
-    $header += ",BurstablePerformanceSupported"
+    getEC2InstanceInfo_FromInstances $instances $region > "EC2_InstanceInfo_$(getRegionAbbreviation $region).csv"
+}
 
-    $header += ",EBS.EbsOptimizedSupport"
-    $header += ",EBS.EncryptionSupport"
-    $header += ",EBS.NvmeSupport"
+$region = "us-west-2"
+$testInstances = @($instances[0..5])
+getTags_FromEC2Instances $testInstances $region
 
-    $header += ",InstanceStorageSupported"
-    $header += ",IS.TotalSize (GB)"
-    $header += ",IS.EncryptionSupport"
-    $header += ",IS.NvmeSupport"    
+foreach ($region in $Regions)
+{
+    Set-Location $outputDir
+    "---------- Processing $region ----------"
 
-    $header > "EC2_InstanceTypes_$($region).csv"
+    $instances = @(getEC2Instances $region)
 
-    getEC2InstanceTypes $region >> "EC2_InstanceTypes_$($region).csv"
+    getTags_FromEC2Instances $instances $region > "EC2_Tags_Instance_$(getRegionAbbreviation $region).csv"
 }
 
 #endregion #################### EC2 InstanceType ####################
@@ -733,19 +474,6 @@ $asInstance = "i-04be99315aebb9dd3"
 
 getAutoScalingGroupInfo $asGroup $region
 
-">>>>>>>>>> Gathering AS_AutoScaling_Groups <<<<<<<<<<"
-
-foreach ($region in $Regions)
-{
-    Set-Location $outputDir
-    "---------- Processing $region ----------"
-
-    $asGroups = @(getAutoScalingGroups $region)
-    
-    getAutoScalingGroupInfo_FromInstances $asGroups $region  `
-        > "AS_AutoScaling_Groups_$(getRegionAbbreviation $region).csv"
-}
-
 Get-ASAutoScalingInstance -InstanceId $asGroup -Region $region
 Get-ASAutoScalingInstance -InstanceId $asInstance -Region $region
 
@@ -754,17 +482,33 @@ getASAutoScalingInstanceInfo_FromInstances $asInstances $region
 
 getASAutoScalingInstanceInfo $asInstance $region
 
-">>>>>>>>>> Gathering AS_AutoScaling_Instances <<<<<<<<<<"
-
-foreach ($region in $Regions)
+function refreshAS_Data([string[]]$Regions)
 {
-    Set-Location $outputDir
-    "---------- Processing $region ----------"
+    ">>>>>>>>>> Gathering AS_AutoScaling_Groups <<<<<<<<<<"
 
-    $asInstances = @(getAutoScalingInstances $region)
-    
-    getASAutoScalingInstanceInfo_FromInstances $asInstances $region  `
-        > "AS_AutoScaling_Instances_$(getRegionAbbreviation $region).csv"
+    foreach ($region in $Regions)
+    {
+        Set-Location $outputDir
+        "---------- Processing $region ----------"
+
+        $asGroups = @(getAutoScalingGroups $region)
+        
+        getAutoScalingGroupInfo_FromInstances $asGroups $region  `
+            > "AS_AutoScaling_Groups_$(getRegionAbbreviation $region).csv"
+    }
+
+    ">>>>>>>>>> Gathering AS_AutoScaling_Instances <<<<<<<<<<"
+
+    foreach ($region in $Regions)
+    {
+        Set-Location $outputDir
+        "---------- Processing $region ----------"
+
+        $asInstances = @(getAutoScalingInstances $region)
+        
+        getASAutoScalingInstanceInfo_FromInstances $asInstances $region  `
+            > "AS_AutoScaling_Instances_$(getRegionAbbreviation $region).csv"
+    }
 }
 
 #endregion #################### AS AutoScalingGroup ####################

@@ -82,7 +82,7 @@ function getAutoScalingGroups([String]$region)
     @(Get-ASAutoScalingGroup -Region $region) | ForEach-Object {$_.AutoScalingGroupName}
 }
 
-function getAutoScalingGroupInfo($asGroup, $region)
+function getAutoScalingGroupInfo([string]$asGroup, [string]$region)
 {
     $asg = Get-ASAutoScalingGroup -AutoScalingGroupName $asGroup -Region $region
 
@@ -98,7 +98,7 @@ function getAutoScalingGroupInfo($asGroup, $region)
     $output
 }
 
-function getAutoScalingGroupInfo_FromInstances($asInstances, $region)
+function getAutoScalingGroupInfo_FromInstances([string[]]$asInstances, [string]$region)
 {
     $header = "Region,AutoScalingGroupName"
     $header += ",DefaultCooldown"
@@ -135,7 +135,7 @@ function getAutoScalingInstances([String]$region)
     @(Get-ASAutoScalingInstance -Region $region) | ForEach-Object {$_.InstanceId}
 }
 
-function getASAutoScalingInstanceInfo($asInstance, $region)
+function getASAutoScalingInstanceInfo([string]$asInstance, [string]$region)
 {
     try
     {
@@ -160,7 +160,7 @@ function getASAutoScalingInstanceInfo($asInstance, $region)
     }
 }
 
-function getASAutoScalingInstanceInfo_FromInstances($asInstances, $region)
+function getASAutoScalingInstanceInfo_FromInstances([string[]]$asInstances, [string]$region)
 {
     $header = "Region,AutoScalingGroupName"
     $header += ",AvailabilityZone"

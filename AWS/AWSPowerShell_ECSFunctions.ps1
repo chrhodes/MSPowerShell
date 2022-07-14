@@ -274,13 +274,17 @@ function getECSClusterServicesInfo([String]$cluster, [String]$region)
 
         $csi = Get-ECSService -Cluster $cluster -Service $service -Region $region |
             Select-Object -Expand Services
+        
+        # $deployments = $csi | Select-Object -Expand Deployments
 
         $CreatedBy = $null -ne $csi.CreatedBy ? (getRoleName $csi.CreatedBy) : ""
 
         $output = "$region,$cluster"
         $output += ",$($csi.CreatedAt),$CreatedBy"
-        $output += ",$($csi.DesiredCount),$($csi.PendingCount)"
-        $output += ",$($csi.ServiceName),$($csi.Status)"
+        $output += ",$($csi.DesiredCount),$($csi.Deployments.Count),$($csi.PendingCount)"
+        $output += ",$(getServiceName $csi.ServiceArn),$($csi.ServiceName)"
+        $output += ",$($csi.Status)"
+        $output += ",$(getTaskDefinitionName $csi.TaskDefinition),$(getTaskDefinitionFullName $csi.TaskDefinition)"
 
         $output
     }
@@ -293,8 +297,10 @@ function getECSClusterServicesInfo_FromClusters($clusterArray, $region)
 
     $output = "Region,Cluster"
     $output += ",CreatedAt,CreatedBy"
-    $output += ",DesiredCount,PendingCount"
-    $output += ",ServiceName,Status"
+    $output += ",DesiredCount,DeploymentCount,PendingCount"
+    $output += ",ServiceArn,ServiceName"
+    $output += ",Status"
+    $output += ",TaskDefinition,TaskDefinitionVersion"
 
     $output
 
@@ -317,8 +323,6 @@ function getServicesTags_FromClusters($clusterArray, $region)
             $csi = Get-ECSService -Cluster $cluster -Service $service -Region $region -Include TAGS | 
                 Select-Object -Expand Services
     
-            $csi = $json | Select-Object -Expand Services
-
             $tags = $csi | Select-Object -Expand Tags
         
             if ($null -eq $tags) 
