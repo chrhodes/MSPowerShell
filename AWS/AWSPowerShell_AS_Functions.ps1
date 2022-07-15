@@ -1,9 +1,10 @@
 ################################################################################
 #
-# AWSPowerShell_AsFunctions.ps1
+# AWSPowerShell_As_Functions.ps1
 #
 ################################################################################
 
+Set-StrictMode -Version Latest
 
 # Get-ASAccountLimit
 # Get-ASAdjustmentType
@@ -193,6 +194,6 @@ function getASAutoScalingInstanceInfo_FromInstances([string[]]$asInstances, [str
 
 ################################################################################
 #
-# End AWSPowerShell_AsFunctions.ps1
+# End AWSPowerShell_AS_Functions.ps1
 #
 ################################################################################

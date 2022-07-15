@@ -1,8 +1,10 @@
 ################################################################################
 #
-# AWSPowerShell_CWFunctions.ps1
+# AWSPowerShell_CW_Functions.ps1
 #
 ################################################################################
+
+Set-StrictMode -Version Latest
 
 # Get-CWAlarm
 # Get-CWAlarmForMetric
@@ -432,6 +434,6 @@ function getCW_ECS_Service_CPUUtilization([string]$cluster, [string]$service, [s
 
 ################################################################################
 #
-# End AWSPowerShell_CWFunctions.ps1
+# End AWSPowerShell_CW_Functions.ps1
 #
 ################################################################################

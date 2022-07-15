@@ -1,8 +1,10 @@
 ################################################################################
 #
-# AWSPowerShell_UtilityFunctions.ps1
+# AWSPowerShell_Utility_Functions.ps1
 #
 ################################################################################
+
+Set-StrictMode -Version Latest
 
 #Extract the relevant name from the ARN
 
@@ -130,6 +132,6 @@ getRegionAbbreviation "us-west-2"
 
 ################################################################################
 #
-# End AWSPowerShell_UtilityFunctions.ps1
+# End AWSPowerShell_Utility_Functions.ps1
 #
 ################################################################################

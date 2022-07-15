@@ -1,8 +1,10 @@
 ################################################################################
 #
-# AWSPowerShell_ECSFunctions.ps1
+# AWSPowerShell_ECS_Functions.ps1
 #
 ################################################################################
+
+Set-StrictMode -Version Latest
 
 #region #################### ECS Cluster ####################
 
@@ -870,6 +872,6 @@ function getECSContainerEC2InstanceInfo_FromClusters($clusterArray, $region)
 
 ################################################################################
 #
-# End AWSPowerShell_ECSFunctions.ps1
+# End AWSPowerShell_ECS_Functions.ps1
 #
 ################################################################################

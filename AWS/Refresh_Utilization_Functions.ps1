@@ -18,6 +18,9 @@ $endTime.ToUniversalTime()
 
 getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime
 
+$Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+$Regions = @("us-east-2", "eu-west-1")
+
 foreach ($region in $Regions)
 {
     $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
@@ -83,6 +86,7 @@ GetClusterDataFiles $region $cluster $startTime $endTime
 $clusters = @(getClusters $region)
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+$Regions = @("us-east-2", "eu-west-1")
 
 foreach ($region in $Regions)
 {
@@ -92,125 +96,203 @@ foreach ($region in $Regions)
     # $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
     # $endTime = Get-Date -Date "2022-07-12 23:59:59Z"
 
-    $outputDirectory = "$outputDir\Cluster_Service_Utilization\"
-    "---------- Processing $region ----------"
-
-    $vbaCommands = "EXCEL_VBA_$($region).txt"
-
-    "Processing Region $region" > $vbaCommands
+    $regionOutputDirectory = "$outputDir\Cluster_Service_Utilization\2022-06\$region"
+    ">> Processing $region"
 
     $clusterArray = @(getClusters $region)
 
     foreach($cluster in $clusterArray)
     {
-        GetClusterDataFiles  $region $cluster $startTime $endTime $outputDirectory $vbaCommands
+        Set-Location $regionOutputDirectory
+
+        New-Item -Name $cluster -ItemType Directory
+
+        $outputDirectory = "$regionOutputDirectory\$cluster"
+
+        GetClusterUtilizationDataFiles $region $cluster $startTime $endTime $outputDirectory -IncludeCluster -IncludeService -GatherData
     }
 }
 
-function GetClusterDataFiles($region, [String]$cluster, $startTime, $endTime, $outputDir, $vbaCommands)
+# $region, [String]$cluster, $startTime, $endTime, $outputDir, [switch]$noData
+function GetClusterUtilizationDataFiles()
 {
+    [CmdletBinding()]
+    param (
+        [Parameter()]
+        [string] $region
+        , [String]$cluster
+        , $startTime
+        , $endTime
+        , $outputDir
+        , [switch]$IncludeCluster
+        , [switch]$IncludeService
+        , [switch]$IncludeTask
+        , [switch]$GatherData
+    )
+
     Set-Location $outputDir
 
-    # "---------- Processing Cluster $cluster in $region ----------"
+    if ($IncludeCluster)
+    {
+        if ($GatherData)
+        {
+            getClusterUtilizationData $region $cluster $startTime $endTime $outputDir -GatherData
+        }
+        else
+        {
+            getClusterUtilizationData $region $cluster $startTime $endTime $outputDir
+        }        
+    }
 
-    # "' Gather Utilization data for Cluster" >> $vbaCommands
+    if ($IncludeService)
+    {
+        if ($GatherData)
+        {
+            getServiceUtilizationData $region $cluster $startTime $endTime $outputDir -GatherData
+        }
+        else
+        {
+            getServiceUtilizationData $region $cluster $startTime $endTime $outputDir
+        }  
+    }    
+
+    if ($includeTask)
+    {
+        # "---------- Processing ContainerInstances for $cluster $region ---------- "
+
+        # foreach($containerInstanceArn in (getECSContainerInstances $cluster $region))
+        # {
+        #     $clsn = getContainerInstanceName $containerInstanceArn
+
+        #     $cntr = Get-ECSContainerInstanceDetail -Cluster $cluster -ContainerInstance $clsn -Region $region | 
+        #     Select-Object -ExpandProperty ContainerInstances
+
+        #     $ec2InstanceId = $cntr.Ec2InstanceId
+
+        #     $outputFile = "E-$($ec2InstanceId)_$(getRegionAbbreviation $region).csv"
+
+        #     $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
+        #     $header > $outputFile
+
+        # "---------- Processing $ec2InstanceId $region ----------"
+
+        #     getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime >> $outputFile
+    
+        # }
+    }
+}
+
+function getClusterUtilizationData()
+{
+    [CmdletBinding()]
+    param (
+        [Parameter()]
+        [string] $region
+        , [String]$cluster
+        , $startTime
+        , $endTime
+        , $outputDir
+        # , [switch]$IncludeCluster
+        # , [switch]$IncludeService
+        # , [switch]$IncludeTask
+        , [switch]$GatherData
+    )
+
+    ">>>> Processing Cluster $cluster in $region"
 
     # $outputFile = "C-$($cluster)_$(getRegionAbbreviation $region).csv" 
+    $outputFile = "C-$($cluster).csv" 
 
-    # $header = "Region,Cluster,TimeStamp,Minimum,Average,Maximum"
-    # $header > $outputFile
-    # getCW_ECS_Cluster_CPUUtilization $cluster $region $startTime $endTime >> $outputFile
+    if($GatherData)
+    {
+        $header = "Region,Cluster,TimeStamp,Minimum,Average,Maximum"
+        $header > $outputFile
 
-    # "" >> $vbaCommands
-    # "    AddCPUUtilizationWorksheet reportName, ""$outputFile""" >> $vbaCommands
+        getCW_ECS_Cluster_CPUUtilization $cluster $region $startTime $endTime >> $outputFile
+    }
+}
 
-    "---------- Processing Services for $cluster $region ---------- "
+function getServiceUtilizationData()
+{
+    [CmdletBinding()]
+    param (
+        [Parameter()]
+        [string] $region
+        , [String]$cluster
+        , $startTime
+        , $endTime
+        , $outputDir
+        # , [switch]$IncludeCluster
+        # , [switch]$IncludeService
+        # , [switch]$IncludeTask
+        , [switch]$GatherData
+    )
 
-    "" >> $vbaCommands
-    "' Gather Utilization data for Services in Cluster" >> $vbaCommands
-    "" >> $vbaCommands
+    ">>>>>> Processing Services for Cluster $cluster in $region "
 
     foreach($serviceArn in (getECSClusterServices $cluster $region))
     {
         $service = getServiceName($serviceArn)
 
+        "        Adding $region $cluster $service"
+        
         $csi = Get-ECSService -Cluster $cluster -Service $service -Region $region |
             Select-Object -Expand Services
 
         $serviceName = $csi.ServiceName
 
-        $outputFile = "S-$($serviceName)_$(getRegionAbbreviation $region).csv"
-  
-        "---------- Processing $cluster $serviceName $region ----------"
+        # $outputFile = "S-$($serviceName)_$(getRegionAbbreviation $region).csv"
+        $outputFile = "S-$($serviceName).csv"
+            
+        if ($GatherData)
+        {            
+            $header = "Region,Service,TimeStamp,Minimum,Average,Maximum"
+            $header > $outputFile    
 
-        $header = "Region,Service,TimeStamp,Minimum,Average,Maximum"
-        $header > $outputFile        
-
-        getCW_ECS_Service_CPUUtilization $cluster $serviceName $region $startTime $endTime >> $outputFile
-        
-        "    AddCPUUtilizationWorksheet reportName, ""$outputFile""" >> $vbaCommands
+            getCW_ECS_Service_CPUUtilization $cluster $serviceName $region $startTime $endTime >> $outputFile
+        }
     }
-
-    # "---------- Processing ContainerInstances for $cluster $region ---------- "
-
-    # "" >> $vbaCommands
-    # "' Gather Utilization data for ContainerInstances(Ec2Instance) in Cluster" >> $vbaCommands
-    # "" >> $vbaCommands
-
-    # foreach($containerInstanceArn in (getECSContainerInstances $cluster $region))
-    # {
-    #     $clsn = getContainerInstanceName $containerInstanceArn
-
-    #     $cntr = Get-ECSContainerInstanceDetail -Cluster $cluster -ContainerInstance $clsn -Region $region | 
-    #     Select-Object -ExpandProperty ContainerInstances
-
-    #     $ec2InstanceId = $cntr.Ec2InstanceId
-
-    #     $outputFile = "E-$($ec2InstanceId)_$(getRegionAbbreviation $region).csv"
-
-    #     $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
-    #     $header > $outputFile
-
-    # "---------- Processing $ec2InstanceId $region ----------"
-
-    #     getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime >> $outputFile
-
-    #     "    AddCPUUtilizationWorksheet reportName, ""$outputFile""" >> $vbaCommands        
-    # }
 }
 
+# $cluster = "zsystemcm-cnc00"
+# $region = "us-east-2"
+# $startTime
+# $endTime
+# $serviceName = "filebeat"
 
-$cluster
-$region
-$startTime
-$endTime
-
-$outputFile = "$($cluster)_$($region).csv"
-
-$header = "Region,Cluster,TimeStamp,Minimum,Average,Maximum"
-$header > $outputFile
-
-getCW_ECS_Cluster_CPUUtilization $cluster $region $startTime $endTime >> $outputFile
-
-
-$cluster = "noae-sbx01"
+# $cluster
+# $region
+# $startTime
+# $endTime
+# $serviceName
 
 
+# $outputFile = "$($cluster)_$($region).csv"
 
-$service = "notification"
+# $header = "Region,Cluster,TimeStamp,Minimum,Average,Maximum"
+# $header > $outputFile
 
-$cluster
-$service
-$region
-$startTime
-$endTime
+# getCW_ECS_Cluster_CPUUtilization $cluster $region $startTime $endTime >> $outputFile
 
-$outputFile = "$($cluster)_$($service)_$(getRegionAbbreviation $region).csv"
 
-$header = "Region,Service,TimeStamp,Minimum,Average,Maximum"
-$header > $outputFile
+# $cluster = "noae-sbx01"
 
-getCW_ECS_Service_CPUUtilization $cluster $service $region $startTime $endTime >> $outputFile
+
+
+# $service = "notification"
+
+# $cluster
+# $service
+# $region
+# $startTime
+# $endTime
+
+# $outputFile = "$($cluster)_$($service)_$(getRegionAbbreviation $region).csv"
+
+# $header = "Region,Service,TimeStamp,Minimum,Average,Maximum"
+# $header > $outputFile
+
+# getCW_ECS_Service_CPUUtilization $cluster $service $region $startTime $endTime >> $outputFile
 
 
 #endregion #################### EC2 Utilization ####################

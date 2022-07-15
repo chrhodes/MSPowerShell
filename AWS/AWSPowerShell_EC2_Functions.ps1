@@ -1,8 +1,10 @@
 ################################################################################
 #
-# AWSPowerShell_EC2Functions.ps1
+# AWSPowerShell_EC2_Functions.ps1
 #
 ################################################################################
+
+Set-StrictMode -Version Latest
 
 # Get-EC2Instance
 
@@ -186,6 +188,6 @@ function getEC2InstanceTypes([string]$region)
 
 ################################################################################
 #
-# End AWSPowerShell_EC2Functions.ps1
+# End AWSPowerShell_EC2_Functions.ps1
 #
 ################################################################################

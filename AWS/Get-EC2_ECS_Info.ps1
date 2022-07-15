@@ -9,6 +9,14 @@ Set-StrictMode -Version Latest
 # Go play somewhere
 #
 
+# Source the functions we use
+
+. '.\AWSPowerShell_AS_Functions.ps1'
+. '.\AWSPowerShell_CW_Functions.ps1'
+. '.\AWSPowerShell_EC2_Functions.ps1'
+. '.\AWSPowerShell_ECS_Functions.ps1'
+. '.\AWSPowerShell_Utility_Functions.ps1'
+
 $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
 Set-Location $outputDir
 
