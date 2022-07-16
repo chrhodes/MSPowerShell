@@ -35,10 +35,6 @@ foreach ($region in $Regions)
     {
         $outputFile = "CPU_$($ec2InstanceId)_$($region).csv"
 
-        # Don't need to add this as all data can be pulled using
-        # VLOOKUP to EC2 workbook
-        # getEC2InstanceInfo $ec2Instance $region > $outputFile
-
         $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
         $header > $outputFile
 
@@ -46,7 +42,6 @@ foreach ($region in $Regions)
 
         getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime `
             >> $outputFile
-            # ConvertTo-Csv >> "CPU_$($ec2InstanceId)_$($region).csv"
     }
 }
 
@@ -105,7 +100,7 @@ foreach ($region in $Regions)
     {
         Set-Location $regionOutputDirectory
 
-        New-Item -Name $cluster -ItemType Directory
+        if (!(Test-Path -Path $cluster)) { New-Item -Name $cluster -ItemType Directory }
 
         $outputDirectory = "$regionOutputDirectory\$cluster"
 
@@ -205,8 +200,12 @@ function getClusterUtilizationData()
 
     if($GatherData)
     {
-        $header = "Region,Cluster,TimeStamp,Minimum,Average,Maximum"
-        $header > $outputFile
+        "Region,$($region)" > $outputFile
+        "Cluster,$($cluster)" >> $outputFile
+        "" >> $outputFile
+        "StartTime,,$($startTime)" >> $outputFile
+        "EndTime,,$($endTime)" >> $outputFile        
+        "Region,Cluster,TimeStamp,Minimum,Average,Maximum" >> $outputFile
 
         getCW_ECS_Cluster_CPUUtilization $cluster $region $startTime $endTime >> $outputFile
     }
@@ -245,9 +244,13 @@ function getServiceUtilizationData()
         $outputFile = "S-$($serviceName).csv"
             
         if ($GatherData)
-        {            
-            $header = "Region,Service,TimeStamp,Minimum,Average,Maximum"
-            $header > $outputFile    
+        {
+            "Region,$($region)" > $outputFile
+            "Cluster,$($cluster)" >> $outputFile
+            "Service,$($service)" >> $outputFile
+            "StartTime,,$($startTime)" >> $outputFile
+            "EndTime,,$($endTime)" >> $outputFile  
+            "Region,Service,TimeStamp,Minimum,Average,Maximum" >> $outputFile            
 
             getCW_ECS_Service_CPUUtilization $cluster $serviceName $region $startTime $endTime >> $outputFile
         }

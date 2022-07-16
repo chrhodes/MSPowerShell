@@ -11,6 +11,9 @@ Set-StrictMode -Version Latest
 
 # Source the functions we use
 
+$codeOutputDir = "C:\VNC\git\chrhodes\MSPowerShell\AWS"
+Set-Location $codeOutputDir
+
 . '.\AWSPowerShell_AS_Functions.ps1'
 . '.\AWSPowerShell_CW_Functions.ps1'
 . '.\AWSPowerShell_EC2_Functions.ps1'
@@ -20,8 +23,7 @@ Set-StrictMode -Version Latest
 $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
 Set-Location $outputDir
 
-$codeOutputDir = "C:\VNC\git\chrhodes\MSPowerShell\AWS"
-Set-Location $codeOutputDir
+
 
 #
 # If in VS Code, import module
