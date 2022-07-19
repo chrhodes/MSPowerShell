@@ -41,30 +41,43 @@ function getEC2InstanceInfo($ec2InstanceId, $region)
     $ec2ie = $ec2i | Select-Object -Expand Instances
     $ec2rie = $ec2i | Select-Object -Expand RunningInstance
 
-    # $ec2ie.Architecture
-    # $ec2ie.CpuOptions.CoreCount
-    # $ec2ie.CpuOptions.ThreadsPerCore
-    $hypervisor = $ec2ie.Hypervisor.Value
-    # $ec2ie.InstanceType.Value
-    # $ec2ie.Placement.AvailabilityZone
-    $rootDeviceType = $ec2ie.RootDeviceType.Value
-    $state = $ec2ie.State.Name.Value
-    $virtualizationType = $ec2ie.VirtualizationType.Value
-
     $output = "$region,$ec2InstanceId"
 
-    $output += ",$($ec2i.OwnerId),$($ec2i.RequesterId),$($ec2i.ReservationId)"
+    try
+    {
+        # $ec2ie.Architecture
+        # $ec2ie.CpuOptions.CoreCount
+        # $ec2ie.CpuOptions.ThreadsPerCore
+        $hypervisor = $ec2ie.Hypervisor.Value
+        # $ec2ie.InstanceType.Value
+        # $ec2ie.Placement.AvailabilityZone
+        $rootDeviceType = $ec2ie.RootDeviceType.Value
+        $state = $ec2ie.State.Name.Value
+        $virtualizationType = $ec2ie.VirtualizationType.Value
 
-    $output += ",$($ec2ie.InstanceType.Value),$($ec2ie.CpuOptions.CoreCount),$($ec2ie.CpuOptions.ThreadsPerCore)"
-    $output += ",$($ec2ie.Placement.AvailabilityZone)"
-    #$output += ",$($ec2ei.RootDeviceType.Value)"
-    $output += ",$rootDeviceType"
-    # $output += ",$($ec2ei.Hypervisor.Value),$($ec2ei.VirtualizationType.Value)"
-    $output += ",$hypervisor,$virtualizationType"
-    # $output += ",$($ec2ei.State.Name.Value)"
-    $output += ",$state"
+        $output += ",$($ec2i.OwnerId),$($ec2i.RequesterId),$($ec2i.ReservationId)"
 
-    $output
+        $output += ",$($ec2ie.InstanceType.Value),$($ec2ie.CpuOptions.CoreCount),$($ec2ie.CpuOptions.ThreadsPerCore)"
+        $output += ",$($ec2ie.Placement.AvailabilityZone)"
+        #$output += ",$($ec2ei.RootDeviceType.Value)"
+        $output += ",$rootDeviceType"
+        # $output += ",$($ec2ei.Hypervisor.Value),$($ec2ei.VirtualizationType.Value)"
+        $output += ",$hypervisor,$virtualizationType"
+        # $output += ",$($ec2ei.State.Name.Value)"
+        $output += ",$state"
+        
+        $output
+    }
+    catch
+    {
+        <#Do this if a terminating exception happens#>
+        Write-Error "getEC2InstanceInfo $output"
+    }
+    finally
+    {
+        <#Do this after the try block regardless of whether an exception occurred or not#>
+        # $output
+    }
 }
 
 function getEC2InstanceInfo_FromInstances($instanceArray, $region)
@@ -87,7 +100,6 @@ function getEC2InstanceInfo_FromInstances($instanceArray, $region)
         getEC2InstanceInfo $ec2Instance $region
     }
 }
-
 function getTags_FromEC2Instances([string[]]$instanceArray, [string]$region)
 {
     Write-Output "Region,InstanceId,Key,Value"
@@ -97,10 +109,22 @@ function getTags_FromEC2Instances([string[]]$instanceArray, [string]$region)
         $ec2i = Get-EC2Instance -InstanceID $ec2 -Region $region |
             Select-Object -ExpandProperty Instances
 
-        foreach($tag in $ec2i.Tags)
+        try
         {
-            "$region,$($ec2i.InstanceId),$($tag.Key),$($tag.Value)"
+            foreach($tag in $ec2i.Tags)
+            {
+                "$region,$($ec2i.InstanceId),$($tag.Key),$($tag.Value)"
+            }                
         }
+        catch
+        {
+            Write-Error "getTags_FromEC2Instances $region $ec2"
+        }
+        finally
+        {
+            <#Do this after the try block regardless of whether an exception occurred or not#>
+        }
+
     }
 }
 
@@ -144,7 +168,6 @@ function getTags_FromClusters([string[]]$clusterArray, [string]$region)
 #   [-NetworkCredential <System.Management.Automation.PSCredential>]
 #   [<CommonParameters>]
 #
-
 function getEC2InstanceTypes([string]$region)
 {
     $instanceTypes = Get-EC2InstanceType -Region $region

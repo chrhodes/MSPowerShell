@@ -45,43 +45,43 @@ foreach ($region in $Regions)
     }
 }
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\CPU Utilization Explore"
-Set-Location $outputDir
+# $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\CPU Utilization Explore"
+# Set-Location $outputDir
 
-$startTime = Get-Date -Date "2022-07-01 00:00:00Z"
-$endTime = Get-Date -Date "2022-07-12 23:59:59Z"
+# $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
+# $endTime = Get-Date -Date "2022-07-12 23:59:59Z"
 
-$region = "us-west-2"
+# $region = "us-west-2"
 
-$ec2InstanceId = "i-0f65358267fb8074d"
+# $ec2InstanceId = "i-0f65358267fb8074d"
 
-$outputFile = "$($ec2InstanceId)_$(getRegionAbbreviation $region).csv"
+# $outputFile = "$($ec2InstanceId)_$(getRegionAbbreviation $region).csv"
 
-$header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
-$header > $outputFile
+# $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
+# $header > $outputFile
 
-$ec2InstanceId
-$region
-$startTime
-$endTime
+# $ec2InstanceId
+# $region
+# $startTime
+# $endTime
 
-getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime >> $outputFile
+# getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime >> $outputFile
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
-Set-Location $outputDir
+# $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
+# Set-Location $outputDir
 
-$startTime = Get-Date -Date "2022-07-01 00:00:00Z"
-$endTime = Get-Date -Date "2022-07-12 23:59:59Z"
+# $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
+# $endTime = Get-Date -Date "2022-07-12 23:59:59Z"
 
-$region = "us-west-2"
-$cluster = "noae-sbx01"
+# $region = "us-west-2"
+# $cluster = "noae-sbx01"
 
-GetClusterDataFiles $region $cluster $startTime $endTime
+# GetClusterDataFiles $region $cluster $startTime $endTime
 
-$clusters = @(getClusters $region)
+# $clusters = @(getClusters $region)
 
-$Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
-$Regions = @("us-east-2", "eu-west-1")
+# $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+# $Regions = @("us-east-2", "eu-west-1")
 
 foreach ($region in $Regions)
 {
@@ -176,7 +176,6 @@ function GetClusterUtilizationDataFiles()
         # }
     }
 }
-
 function getClusterUtilizationData()
 {
     [CmdletBinding()]

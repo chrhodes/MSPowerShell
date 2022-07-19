@@ -51,7 +51,6 @@ function getClusters([String]$region)
 {
     @(Get-ECSClusterList -Region $region) | ForEach-Object {getClusterName $_}
 }
-
 function getECSClusterInfo([string]$cluster, [string]$region)
 {
     # $json = Get-ECSClusterDetail -Cluster $cluster -Region $region  
@@ -111,7 +110,6 @@ function getECSClusterCapacityProviderInfo([string]$cluster, [string]$region)
         }
     }
 }
-
 function getECSClusterCapacityProviderInfo_FromClusters([string[]]$clusterArray, [string]$region)
 {
     # Establish Column Headers
@@ -152,7 +150,6 @@ function getECSClusterDefaultCapacityProviderStrategyInfo([string]$cluster, [str
         }
     }
 }
-
 function getECSClusterDefaultCapacityProviderStrategyInfo_FromClusters([string[]]$clusterArray, [string]$region)
 {
     # Establish Column Headers
@@ -170,7 +167,6 @@ function getECSClusterDefaultCapacityProviderStrategyInfo_FromClusters([string[]
         getECSClusterDefaultCapacityProviderStrategyInfo $cluster $region
     }
 }
-
 function getTags_FromClusters([string[]]$clusterArray, [string]$region)
 {
     Write-Output "Region,Cluster,Key,Value"
@@ -246,7 +242,6 @@ function getTags_FromClusters([string[]]$clusterArray, [string]$region)
 #   [-NetworkCredential <System.Management.Automation.PSCredential>]
 #   [<CommonParameters>]
 #
-
 function getECSClusterServices([String]$cluster, [String]$region)
 {
     @(Get-ECSClusterService -Cluster $cluster -Region $region)
@@ -291,7 +286,6 @@ function getECSClusterServicesInfo([String]$cluster, [String]$region)
         $output
     }
 }
-
 function getECSClusterServicesInfo_FromClusters($clusterArray, $region)
 {
     # Output Column Headers
@@ -469,7 +463,9 @@ function getECSTaskInfo([String]$cluster, $region)
         $output += "," + (getTaskDefinitionName($($tsk.TaskDefinitionArn)))
         $output += "," + (getTaskDefinitionFullName($($tsk.TaskDefinitionArn)))
         $output += ",$($tsk.Version)"
-        $output += ",$($tsk.StartedAt)"
+        $output += ",$($tsk.StartedAt),$($tsk.StoppedAt)"
+        $output += ",$($tsk.Group)"
+        $output += ",$($tsk.CapacityProviderName)"
 
         $output
     }
@@ -489,7 +485,9 @@ function getECSTaskInfo_FromClusters($clusterArray, $region)
     $output += ",TaskDefinition"
     $output += ",TaskDefinitionVersion"
     $output += ",Version"
-    $output += ",StartedAt"
+    $output += ",StartedAt,StoppedAt"
+    $output += ",Group"
+    $output += "CapacityProvider"
 
     $output
 
@@ -728,7 +726,6 @@ function getECSTaskDefinitionInfo([String]$taskDefinitionArn, $region)
 #   [-NetworkCredential <System.Management.Automation.PSCredential>]
 #   [<CommonParameters>]
 #
-
 function getECSContainerInstances($cluster, $region)
 {
     @(Get-ECSContainerInstanceList -Cluster $cluster -Region $region)
@@ -781,7 +778,6 @@ function getECSContainerInstanceInfo([String]$cluster, $region)
         $output
     }
 }
-
 function getECSContainerInstanceInfo_FromClusters($clusterArray, $region)
 {
     # Establish Column Headers
@@ -846,7 +842,6 @@ function getECSContainerEC2InstanceInfo([String]$cluster, $region)
         $output
     }
 }
-
 function getECSContainerEC2InstanceInfo_FromClusters($clusterArray, $region)
 {
     # Establish Column Headers

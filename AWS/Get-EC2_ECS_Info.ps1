@@ -14,16 +14,18 @@ Set-StrictMode -Version Latest
 $codeOutputDir = "C:\VNC\git\chrhodes\MSPowerShell\AWS"
 Set-Location $codeOutputDir
 
+. '.\AWSPowerShell_Utility_Functions.ps1'
+
 . '.\AWSPowerShell_AS_Functions.ps1'
 . '.\AWSPowerShell_CW_Functions.ps1'
 . '.\AWSPowerShell_EC2_Functions.ps1'
 . '.\AWSPowerShell_ECS_Functions.ps1'
-. '.\AWSPowerShell_Utility_Functions.ps1'
+
+. '.\Refresh_Data_Functions.ps1'
+# . '.\Refresh_Utilization_Functions.ps1'
 
 $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
 Set-Location $outputDir
-
-
 
 #
 # If in VS Code, import module
@@ -41,25 +43,25 @@ Set-AWSCredential -ProfileName PlatformCostsRO
 
 #region #################### Command Context ####################
 
-$Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
-$Regions = @("us-east-2", "eu-west-1")
-$region = $Regions[0]
+# $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+# $Regions = @("us-east-2", "eu-west-1")
+# $region = $Regions[0]
 
-# This is for developing and testing
+# # This is for developing and testing
 
-# us-west-2
-$ClusterArray = @("noae-sbx01", "daco-prod02")
-# us-east-2
-$ClusterArray = @("zsystemcm-cnc00", "kewtest2-cnc02")
+# # us-west-2
+# $ClusterArray = @("noae-sbx01", "daco-prod02")
+# # us-east-2
+# $ClusterArray = @("zsystemcm-cnc00", "kewtest2-cnc02")
 
-$cluster = $ClusterArray[0]
+# $cluster = $ClusterArray[0]
 
-# This is for full run against all clusters
+# # This is for full run against all clusters
 
-$ClusterArray = @(getClusters "us-west-2")
-$ClusterArray = @(getClusters "us-east-2")
-$ClusterArray = @(getClusters "eu-west-1")
-$ClusterArray = @(getClusters "eu-central-1")
+# $ClusterArray = @(getClusters "us-west-2")
+# $ClusterArray = @(getClusters "us-east-2")
+# $ClusterArray = @(getClusters "eu-west-1")
+# $ClusterArray = @(getClusters "eu-central-1")
 
 #endregion Commnand Context
 
@@ -71,21 +73,35 @@ Set-Location $outputDir
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 
+# Takes ~
+
 refreshEC2_Data $Regions
+
+# Takes ~ 4 minutes
 
 refreshECS_ClusterData $Regions
 
+# Takes ~ 8 minutes 30 seconds
+
 refreshECS_ServiceData $Regions
+
+# Takes ~ 13 minutes 57 seconds
 
 refreshECS_TaskData $Regions
 
+# Takes ~ 4 minutes 3 seconds
+
 refreshECS_ContainerInstanceData $Regions
+
+# Takes ~ 0 minutes 46 seconds
 
 refreshECS_TaskDefinitionData $Regions
 
+# Takes ~ minutes seconds - contains delay loops
+
 refreshAS_Data $Regions
 
-#endregion
+#endregion minutes seconds
 
 #region #################### ECS Cluster ####################
 

@@ -1,4 +1,4 @@
- ################################################################################
+################################################################################
 #
 # Refresh_Data_Functions.ps1
 #
@@ -10,12 +10,14 @@ Set-StrictMode -Version Latest
 
 function refreshECS_ClusterData([string[]]$regions)
 {
-    ">>>>>>>>>> Gathering ECS_ClusterInfo <<<<<<<<<<"
+    $startTime = Get-Date
+
+    ">>>>>>>>>> Gathering ECS_ClusterInfo"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
 
         $clusters = @(getClusters $region)
 
@@ -23,12 +25,12 @@ function refreshECS_ClusterData([string[]]$regions)
             > "ECS_ClusterInfo_$(getRegionAbbreviation $region).csv"
     }
 
-    ">>>>>>>>>> Gathering ECS_Tags_Cluster <<<<<<<<<<"
+    ">>>>>>>>>> Gathering ECS_Tags_Cluster"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
 
         $clusters = @(getClusters $region)
 
@@ -36,12 +38,12 @@ function refreshECS_ClusterData([string[]]$regions)
             > "ECS_Tags_Cluster_$(getRegionAbbreviation $region).csv"
     }
 
-    ">>>>>>>>>> Gathering ECS_ClusterCapacityProviderInfo <<<<<<<<<<"
+    ">>>>>>>>>> Gathering ECS_ClusterCapacityProviderInfo"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
 
         $clusters = @(getClusters $region)
 
@@ -49,18 +51,23 @@ function refreshECS_ClusterData([string[]]$regions)
             > "ECS_ClusterCapacityProviderInfo_$(getRegionAbbreviation $region).csv"
     }
 
-    ">>>>>>>>>> Gathering ECS_ClusterDefaultCapacityProviderStrategyInfo <<<<<<<<<<"
+    ">>>>>>>>>> Gathering ECS_ClusterDefaultCapacityProviderStrategyInfo"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
 
         $clusters = @(getClusters $region)
 
         getECSClusterDefaultCapacityProviderStrategyInfo_FromClusters $clusters $region `
             > "ECS_ClusterDefaultCapacityProviderStrategyInfo_$(getRegionAbbreviation $region).csv"
     }
+
+    $endTime = Get-Date
+
+    "Elapsed Time: "
+    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
 }
 
 #endregion #################### ECS Cluster ####################
@@ -69,30 +76,37 @@ function refreshECS_ClusterData([string[]]$regions)
 
 function refreshECS_ServiceData([string[]]$regions)
 {
-    ">>>>>>>>>> Gathering ECS_ServicesInfo <<<<<<<<<<"
+    $startTime = Get-Date
+
+    ">>>>>>>>>> Gathering ECS_ServicesInfo"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
        
         $clusters = @(getClusters $region)
         getECSClusterServicesInfo_FromClusters $clusters $region `
             > "ECS_ServicesInfo_$(getRegionAbbreviation $region).csv"
     }
     
-    ">>>>>>>>>> Gathering ECS_Tags_Service <<<<<<<<<<"
+    ">>>>>>>>>> Gathering ECS_Tags_Service"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
         
         $clusters = @(getClusters $region)
     
         getServicesTags_FromClusters $clusters $region `
             > "ECS_Tags_Service_$(getRegionAbbreviation $region).csv"
     }
+
+    $endTime = Get-Date
+
+    "Elapsed Time: "
+    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
 }
 
 #endregion #################### ECS Cluster Sevice ####################
@@ -101,12 +115,14 @@ function refreshECS_ServiceData([string[]]$regions)
 
 function refreshECS_TaskDefinitionData([string[]]$regions)
 {
-    ">>>>>>>>>> Gathering ECS_TaskDefinitionFamilies <<<<<<<<<<"
+    $startTime = Get-Date
+
+    ">>>>>>>>>> Gathering ECS_TaskDefinitionFamilies"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
 
         $header = "Region, TaskDefinitionFamily"
 
@@ -116,12 +132,12 @@ function refreshECS_TaskDefinitionData([string[]]$regions)
             >> "ECS_TaskDefinitionFamilies_$(getRegionAbbreviation $region).csv"
     }
 
-    ">>>>>>>>>> Gathering ECS_TaskDefinition <<<<<<<<<<"
+    ">>>>>>>>>> Gathering ECS_TaskDefinition"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
 
         $header = "Region, TaskDefinitionArn"
 
@@ -130,20 +146,26 @@ function refreshECS_TaskDefinitionData([string[]]$regions)
         getECSTaskDefinitionList $region `
             >> "ECS_TaskDefinition_$(getRegionAbbreviation $region).csv"
     }
+
+    $endTime = Get-Date
+
+    "Elapsed Time: "
+    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
 }
 
 #endregion #################### ECS Task Definition Families ####################
 
 #region #################### ECS Cluster Task ####################
-
 function refreshECS_TaskData([string[]]$regions)
 {
-    ">>>>>>>>>> Gathering ECS_TaskInfo <<<<<<<<<<"
+    $startTime = Get-Date
+
+    ">>>>>>>>>> Gathering ECS_TaskInfo"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
 
         $clusters = @(getClusters $region)
 
@@ -151,12 +173,12 @@ function refreshECS_TaskData([string[]]$regions)
             > "ECS_TaskInfo_$(getRegionAbbreviation $region).csv"
     }
 
-    ">>>>>>>>>> Gathering ECS_Tags_Task <<<<<<<<<<"
+    ">>>>>>>>>> Gathering ECS_Tags_Task"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
     
         # $taskDefinitions = @(getECSTaskDefinitionList $region)
         $clusters = @(getClusters $region)
@@ -173,7 +195,7 @@ function refreshECS_TaskData([string[]]$regions)
     # foreach ($region in $Regions)
     # {
     #     Set-Location $outputDir
-    #     "---------- Processing $region ----------"
+    #     "    ---- Processing $region ----------"
 
     #     $clusters = @(getClusters $region)
 
@@ -185,12 +207,17 @@ function refreshECS_TaskData([string[]]$regions)
     # foreach ($region in $Regions)
     # {
     #     Set-Location $outputDir
-    #     "---------- Processing $region ----------"
+    #     "    ---- Processing $region ----------"
 
     #     $clusters = @(getClusters $region)
 
     #     getTasksTags_FromClusters $clusters $region > "ECS_Tags_Task_$(getRegionAbbreviation $region).csv"
     # }
+
+    $endTime = Get-Date
+
+    "Elapsed Time: "
+    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
 }
 
 #endregion #################### ECS Cluster Task ####################
@@ -199,32 +226,40 @@ function refreshECS_TaskData([string[]]$regions)
 
 function refreshECS_ContainerInstanceData([string[]]$regions)
 {
-    ">>>>>>>>>> Gathering ECS_ContainerInstanceInfo <<<<<<<<<<"
+    $startTime = Get-Date
+
+    ">>>>>>>>>> Gathering ECS_ContainerInstanceInfo"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
 
         $clusters = @(getClusters $region)
 
         getECSContainerInstanceInfo_FromClusters $clusters $region `
             > "ECS_ContainerInstanceInfo_$(getRegionAbbreviation $region).csv"
     }
+
+    $endTime = Get-Date
+
+    "Elapsed Time: "
+    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
 }
 
 #endregion #################### ECS Cluster Containers ####################
 
 #region #################### ECS EC2 Instance ####################
-
 function refreshEC2_Data([string[]]$regions)
 {
+    $startTime = Get-Date
+
     # "---------- Gathering ECS_ContainerEC2InstanceInfo for $region ----------"
 
     # foreach ($region in $Regions)
     # {
     #     Set-Location $outputDir
-    #     "---------- Processing $region ----------"
+    #     "    ---- Processing $region ----------"
 
     #     $clusters = @(getClusters $region)
 
@@ -232,12 +267,12 @@ function refreshEC2_Data([string[]]$regions)
     #         > "ECS_ContainerEC2InstanceInfo_$($region).csv"
     # }
 
-    ">>>>>>>>>> Gathering EC2_InstanceInfo <<<<<<<<<<"
+    ">>>>>>>>>> Gathering EC2_InstanceInfo"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
     
         $instances = @(getEC2Instances $region)
     
@@ -245,18 +280,23 @@ function refreshEC2_Data([string[]]$regions)
             > "EC2_InstanceInfo_$(getRegionAbbreviation $region).csv"
     }
     
-    ">>>>>>>>>> Gathering EC2_Tags_Instance <<<<<<<<<<"
+    ">>>>>>>>>> Gathering EC2_Tags_Instance"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
     
         $instances = @(getEC2Instances $region)
     
         getTags_FromEC2Instances $instances $region `
             > "EC2_Tags_Instance_$(getRegionAbbreviation $region).csv"
-    }    
+    }   
+    
+    $endTime = Get-Date
+
+    "Elapsed Time: "
+    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
 }
 
 #endregion #################### ECS EC2 Instance ####################
@@ -265,12 +305,14 @@ function refreshEC2_Data([string[]]$regions)
 
 function refreshEC2_InstanceTypes([string[]]$regions)
 {
-    ">>>>>>>>>> Gathering EC2_InstanceTypes <<<<<<<<<<"
+    $startTime = Get-Date
+
+    ">>>>>>>>>> Gathering EC2_InstanceTypes"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
 
         $header = "Region,InstanceType"
         $header += ",CurrentGeneration"
@@ -296,6 +338,11 @@ function refreshEC2_InstanceTypes([string[]]$regions)
 
         getEC2InstanceTypes $region >> "EC2_InstanceTypes_$($region).csv"
     }
+
+    $endTime = Get-Date
+
+    "Elapsed Time: "
+    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
 }
 
 #endregion #################### EC2 InstanceType ####################
@@ -304,12 +351,14 @@ function refreshEC2_InstanceTypes([string[]]$regions)
 
 function refreshAS_Data([string[]]$Regions)
 {
-    ">>>>>>>>>> Gathering AS_AutoScaling_Groups <<<<<<<<<<"
+    $startTime = Get-Date
+
+    ">>>>>>>>>> Gathering AS_AutoScaling_Groups"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
 
         $asGroups = @(getAutoScalingGroups $region)
         
@@ -317,18 +366,23 @@ function refreshAS_Data([string[]]$Regions)
             > "AS_AutoScaling_Groups_$(getRegionAbbreviation $region).csv"
     }
 
-    ">>>>>>>>>> Gathering AS_AutoScaling_Instances <<<<<<<<<<"
+    ">>>>>>>>>> Gathering AS_AutoScaling_Instances"
 
     foreach ($region in $Regions)
     {
         Set-Location $outputDir
-        "---------- Processing $region ----------"
+        "    ---- Processing $region"
 
         $asInstances = @(getAutoScalingInstances $region)
         
         getASAutoScalingInstanceInfo_FromInstances $asInstances $region  `
             > "AS_AutoScaling_Instances_$(getRegionAbbreviation $region).csv"
     }
+
+    $endTime = Get-Date
+
+    "Elapsed Time: "
+    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
 }
 
 #endregion #################### AS AutoScalingGroup ####################

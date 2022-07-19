@@ -128,7 +128,6 @@ function getAutoScalingGroupInfo_FromInstances([string[]]$asInstances, [string]$
         }
     }
 }
-
 function getAutoScalingInstances([String]$region)
 {
     # Get-ASAutoScalingGroup -Region $region | Get-Member

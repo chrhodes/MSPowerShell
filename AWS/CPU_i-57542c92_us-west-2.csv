@@ -1,3 +1,0 @@
-us-west-2,i-57542c92,049751716774,,r-b300ab44,m4.xlarge,2,2,us-west-2a,ebs,xen,hvm,running
-Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum
-us-west-2,i-57542c92,06/30/2022 16:00:00,0.249999999990299,0.461779506653084,5.49999999999272

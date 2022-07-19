@@ -64,7 +64,6 @@ function getServiceName([string]$line)
     $length = $line.Length - $start
     $line.Substring($start, $length)
 }
-
 function getTaskName([string]$line)
 {
     $start = $line.LastIndexOf(":")
@@ -125,10 +124,6 @@ function getRegionAbbreviation([string] $region)
         default { "XXX" }
     }
 }
-
-getRegionAbbreviation "us-west-2"
-
-# getTaskDefinitionName $tdn
 
 ################################################################################
 #
