@@ -106,7 +106,10 @@ refreshAS_Data $Regions
 
 #region #################### ECS Cluster ####################
 
-getECSClusterInfo $ClusterArray[0] $Regions[0]
+$region = "us-west-2"
+$cluster = "noae-sbx01"
+
+getECSClusterInfo $cluster $region
 getECSClusterInfo_FromClusters $ClusterArray $Regions[0]
 
 getECSClusterCapacityProviderInfo_FromClusters $ClusterArray $Regions[0]
@@ -139,8 +142,6 @@ foreach ($region in $Regions)
 $clusterArn = Get-ECSClusterDetail -Cluster $ClusterArray[0] | Select-Object -Expand Clusters | Select-Object ClusterArn
 
 Get-ECSTagsForResource -ResourceArn $clusterArn
-
-#endregion ECS Tags
 
 #endregion #################### ECS Cluster ####################
 

@@ -245,7 +245,7 @@ function getServiceUtilizationData()
     {
         $service = getServiceName($serviceArn)
 
-        "        Adding $region $cluster $service"
+        "           Adding $region $cluster $service"
         
         $csi = Get-ECSService -Cluster $cluster -Service $service -Region $region |
             Select-Object -Expand Services

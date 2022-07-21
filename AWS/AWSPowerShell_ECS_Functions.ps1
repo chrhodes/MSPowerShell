@@ -74,7 +74,7 @@ function getECSClusterInfo_FromClusters([string[]]$clusterArray, [string]$region
     # Establish Column Headers
     # This needs to be in same order as field display in getECSClusterInfo
 
-    $output = "Region,ClusterName,ClusterArn"
+    $output = "Region,Cluster,ClusterArn"
     $output += ",RegisteredContainerInstancesCount"
     $output += ",ActiveServicesCount"
     $output += ",PendingTasksCount"
@@ -142,7 +142,7 @@ function getECSClusterDefaultCapacityProviderStrategyInfo([string]$cluster, [str
     {    
         foreach($dcps in $defaultCapacityProviderStrategy)
         {
-            $output = "$region,$($cls.ClusterName)"
+            $output = "$region,$($cls.ClusterName),$($cls.ClusterArn)"
             $output += ",$($dcps.Base)"
             $output += ",$($dcps.CapacityProvider)"
             $output += ",$($dcps.Weight)"                
@@ -156,7 +156,7 @@ function getECSClusterDefaultCapacityProviderStrategyInfo_FromClusters([string[]
     # Establish Column Headers
     # This needs to be in same order as field display in getECSClusterDefaultCapacityProviderStrategyInfo
 
-    $output = "Region,Cluster"
+    $output = "Region,Cluster,ClusterArn"
     $output += ",Base"
     $output += ",CapacityProvider"
     $output += ",Weight"
@@ -277,10 +277,10 @@ function getECSClusterServicesInfo([String]$cluster, [String]$region)
 
         $CreatedBy = $null -ne $csi.CreatedBy ? (getRoleName $csi.CreatedBy) : ""
 
-        $output = "$region,$cluster"
+        $output = "$region,$cluster,$($csi.ClusterArn)"
         $output += ",$($csi.CreatedAt),$CreatedBy"
         $output += ",$($csi.DesiredCount),$($csi.Deployments.Count),$($csi.PendingCount)"
-        $output += ",$(getServiceName $csi.ServiceArn),$($csi.ServiceName)"
+        $output += ",$($csi.ServiceName),$($csi.ServiceArn)"
         $output += ",$($csi.Status)"
         $output += ",$(getTaskDefinitionName $csi.TaskDefinition)"
         $output += ",$($csi.TaskDefinition)"
@@ -294,10 +294,10 @@ function getECSClusterServicesInfo_FromClusters($clusterArray, $region)
     # Output Column Headers
     # This needs to be in same order as field display in getECSClusterServicesInfo
 
-    $output = "Region,Cluster"
+    $output = "Region,Cluster,ClusterArn"
     $output += ",CreatedAt,CreatedBy"
     $output += ",DesiredCount,DeploymentCount,PendingCount"
-    $output += ",ServiceArn,ServiceName"
+    $output += ",Service,ServiceArn"
     $output += ",Status"
     $output += ",TaskDefinition"
     $output += ",TaskDefinitionArn"
@@ -460,7 +460,7 @@ function getECSTaskInfo([String]$cluster, $region)
         $tsk = Get-ECSTaskDetail -Cluster $cluster -Task $task -Region $region | 
             Select-Object -Expand Tasks     
 
-        $output = "$region," + (getClusterName $($tsk.ClusterArn))
+        $output = "$region,$($cluster),$($tsk.ClusterArn)"
 
         $output += ",$($tsk.ContainerInstanceArn)"
         $output += ",$($tsk.LaunchType.Value)"
@@ -495,7 +495,7 @@ function getECSTaskInfo_FromClusters($clusterArray, $region)
     # Establish Column Headers
     # This needs to be in same order as field display in getECSTaskInfo
 
-    $output = "Region,Cluster"
+    $output = "Region,Cluster,ClusterArn"
     $output += ",ContanerInstanceArn"
     $output += ",LaunchType"
     $output += ",AvailabilityZone"
