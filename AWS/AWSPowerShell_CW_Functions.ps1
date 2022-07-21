@@ -405,7 +405,6 @@ function getCW_ECS_Service_CPUUtilization([string]$cluster, [string]$service, [s
     # $serviceFilter
 
     $dimFilter = @($clusterFilter, $serviceFilter)
-
   
     $outputALL = Get-CWMetricStatistics `
     -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `

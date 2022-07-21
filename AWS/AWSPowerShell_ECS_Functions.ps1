@@ -59,7 +59,7 @@ function getECSClusterInfo([string]$cluster, [string]$region)
     $cls = Get-ECSClusterDetail -Cluster $cluster -Region $region 
         | Select-Object -Expand Clusters
 
-    $output = "$region,$($cls.ClusterName)"
+    $output = "$region,$($cls.ClusterName),$($cls.ClusterArn)"
     $output += ",$($cls.RegisteredContainerInstancesCount)"
     $output += ",$($cls.ActiveServicesCount)"
     $output += ",$($cls.PendingTasksCount)"
@@ -74,7 +74,7 @@ function getECSClusterInfo_FromClusters([string[]]$clusterArray, [string]$region
     # Establish Column Headers
     # This needs to be in same order as field display in getECSClusterInfo
 
-    $output = "Region,Cluster"
+    $output = "Region,ClusterName,ClusterArn"
     $output += ",RegisteredContainerInstancesCount"
     $output += ",ActiveServicesCount"
     $output += ",PendingTasksCount"
@@ -462,13 +462,14 @@ function getECSTaskInfo([String]$cluster, $region)
 
         $output = "$region," + (getClusterName $($tsk.ClusterArn))
 
-        $output += "," + (getContainerInstancename($($tsk.ContainerInstanceArn)))
+        $output += ",$($tsk.ContainerInstanceArn)"
         $output += ",$($tsk.LaunchType.Value)"
-        $output += ",$($tsk.AvailabilityZone),$($tsk.Cpu),$($tsk.Memory)"
+        $output += ",$($tsk.AvailabilityZone)"
+        $output += ",$($tsk.Cpu),$($tsk.Memory)"
         $output += ",$($tsk.DesiredStatus),$($tsk.LastStatus)"
         $output += "," + (getTaskName($($tsk.TaskArn)))
         $output += "," + (getTaskDefinitionName($($tsk.TaskDefinitionArn)))
-        $output += "," + (getTaskDefinitionFullName($($tsk.TaskDefinitionArn)))
+        $output += ",$($tsk.TaskDefinitionArn)"
         $output += ",$($tsk.Version)"
         $output += ",$($tsk.StartedAt),$($tsk.StoppedAt)"
         $output += ",$($tsk.Group)"
@@ -495,13 +496,14 @@ function getECSTaskInfo_FromClusters($clusterArray, $region)
     # This needs to be in same order as field display in getECSTaskInfo
 
     $output = "Region,Cluster"
-    $output += ",ContanerInstance"
+    $output += ",ContanerInstanceArn"
     $output += ",LaunchType"
-    $output += ",AvailabilityZone,Cpu,Memory"
+    $output += ",AvailabilityZone"
+    $output += ",Cpu,Memory"
     $output += ",DesiredStatus,LastStatus"
     $output += ",Task"
     $output += ",TaskDefinition"
-    $output += ",TaskDefinitionVersion"
+    $output += ",TaskDefinitionArn"
     $output += ",Version"
     $output += ",StartedAt,StoppedAt"
     $output += ",Group"
@@ -557,6 +559,7 @@ function getECSTaskContainerInfo_FromClusters($clusterArray, $region)
         getECSTaskContainerInfo $cluster $region
     }
 }
+
 function getTasksTags_FromClusters($clusterArray, $region)
 {
     Write-Output "Region,Cluster,Task,Key,Value"
@@ -808,7 +811,8 @@ function getECSContainerInstanceInfo([String]$cluster, $region)
 
         $output = "$region,$cluster"
         $output += ",$($cntr.CapacityProviderName)"
-        $output += "," + (getContainerInstancename($($cntr.ContainerInstanceArn)))
+        # $output += "," + (getContainerInstancename($($cntr.ContainerInstanceArn)))        
+        $output += ",$($cntr.ContainerInstanceArn)"
         $output += ",$($cntr.Ec2InstanceId)"
         $output += ",$($cntr.PendingTasksCount),$($cntr.RunningTasksCount)"
         $output += ",$($cntr.Status),$($cntr.Version)"
@@ -818,6 +822,7 @@ function getECSContainerInstanceInfo([String]$cluster, $region)
         $output
     }
 }
+
 function getECSContainerInstanceInfo_FromClusters($clusterArray, $region)
 {
     # Establish Column Headers
@@ -825,7 +830,7 @@ function getECSContainerInstanceInfo_FromClusters($clusterArray, $region)
 
     $output = "Region,Cluster"
     $output += ",CapacityProvider"
-    $output += ",ContainerInstance"
+    $output += ",ContainerInstanceArn"
     $output += ",Ec2InstanceId"
     $output += ",PendingTasksCount,RunningTasksCount"
     $output += ",Status,Version"

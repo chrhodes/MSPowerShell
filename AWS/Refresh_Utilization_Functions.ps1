@@ -89,7 +89,7 @@ foreach ($region in $Regions)
     $endTime = Get-Date -Date "2022-06-30 23:59:59Z"
 
     # $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
-    # $endTime = Get-Date -Date "2022-07-12 23:59:59Z"
+    # $endTime = Get-Date -Date "2022-07-20 23:59:59Z"
 
     $regionOutputDirectory = "$outputDir\Cluster_Service_Utilization\2022-06\$region"
     ">> Processing $region"
@@ -176,6 +176,7 @@ function GetClusterUtilizationDataFiles()
         # }
     }
 }
+
 function getClusterUtilizationData()
 {
     [CmdletBinding()]
@@ -197,10 +198,14 @@ function getClusterUtilizationData()
     # $outputFile = "C-$($cluster)_$(getRegionAbbreviation $region).csv" 
     $outputFile = "C-$($cluster).csv" 
 
+    $arn = Get-ECSClusterDetail -Cluster $cluster -Region $region | 
+        Select-Object -Expand Clusters | 
+        Select-Object -Property ClusterArn
+
     if($GatherData)
     {
         "Region,$($region)" > $outputFile
-        "Cluster,$($cluster)" >> $outputFile
+        "ClusterArn,$($arn.ClusterArn)" >> $outputFile
         "" >> $outputFile
         "StartTime,,$($startTime)" >> $outputFile
         "EndTime,,$($endTime)" >> $outputFile        
@@ -209,6 +214,8 @@ function getClusterUtilizationData()
         getCW_ECS_Cluster_CPUUtilization $cluster $region $startTime $endTime >> $outputFile
     }
 }
+
+# Get-ECSClusterDetail -Cluster $cluster -Region $region | Select-Object -Expand Clusters | Select-Object -Property ClusterArn
 
 function getServiceUtilizationData()
 {
@@ -226,7 +233,13 @@ function getServiceUtilizationData()
         , [switch]$GatherData
     )
 
-    ">>>>>> Processing Services for Cluster $cluster in $region "
+    $arn = Get-ECSClusterDetail -Cluster $cluster -Region $region | 
+        Select-Object -Expand Clusters | 
+        Select-Object -Property ClusterArn
+
+    $clusterArn = $arn.ClusterArn
+
+    "    >>>> Processing Services for Cluster $cluster in $region "
 
     foreach($serviceArn in (getECSClusterServices $cluster $region))
     {
@@ -245,8 +258,8 @@ function getServiceUtilizationData()
         if ($GatherData)
         {
             "Region,$($region)" > $outputFile
-            "Cluster,$($cluster)" >> $outputFile
-            "Service,$($service)" >> $outputFile
+            "ClusterArn,$($clusterArn)" >> $outputFile
+            "ServiceArn,$($serviceArn)" >> $outputFile
             "StartTime,,$($startTime)" >> $outputFile
             "EndTime,,$($endTime)" >> $outputFile  
             "Region,Service,TimeStamp,Minimum,Average,Maximum" >> $outputFile            

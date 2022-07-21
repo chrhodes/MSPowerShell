@@ -5,6 +5,7 @@
 ################################################################################
 
 Set-StrictMode -Version Latest
+
 #region #################### Intialization and Setup ####################
 # Go play somewhere
 #
@@ -224,10 +225,16 @@ $ciCntr = Get-ECSContainerInstanceDetail -Region $region $cluster -ContainerInst
 Select-Object -Expand ContainerInstances
 $ciCntr | Get-Member
 
+$region = "us-west-2"
+$cluster = "noae-sbx01"
+
 getECSContainerInstances $ClusterArray[0] $Regions[0]
 getECSContainerInstances_FromClusters $ClusterArray $Regions[0]
 
-getECSContainerInstanceInfo $ClusterArray[0] $Regions[0]
+$region = "us-west-2"
+$cluster = "noae-sbx01"
+
+getECSContainerInstanceInfo $cluster $region
 getECSContainerInstanceInfo_FromClusters $ClusterArray $Regions[0]
 
 #endregion #################### ECS Cluster Containers ####################
@@ -385,25 +392,19 @@ foreach ($region in $Regions)
     $outputDirectory = "$outputDir\Cluster_Service_Utilization\"
     "---------- Processing $region ----------"
 
-    $vbaCommands = "EXCEL_VBA_$($region).txt"
-
-    "Processing Region $region" > $vbaCommands
-
     $clusterArray = @(getClusters $region)
 
     foreach($cluster in $clusterArray)
     {
-        GetClusterDataFiles  $region $cluster $startTime $endTime $outputDirectory $vbaCommands
+        GetClusterDataFiles  $region $cluster $startTime $endTime $outputDirectory
     }
 }
 
-function GetClusterDataFiles($region, [String]$cluster, $startTime, $endTime, $outputDir, $vbaCommands)
+function GetClusterDataFiles($region, [String]$cluster, $startTime, $endTime, $outputDir)
 {
     Set-Location $outputDir
 
-    # "---------- Processing Cluster $cluster in $region ----------"
-
-    # "' Gather Utilization data for Cluster" >> $vbaCommands
+    "---------- Processing Cluster $cluster in $region"
 
     # $outputFile = "C-$($cluster)_$(getRegionAbbreviation $region).csv" 
 
@@ -411,14 +412,7 @@ function GetClusterDataFiles($region, [String]$cluster, $startTime, $endTime, $o
     # $header > $outputFile
     # getCW_ECS_Cluster_CPUUtilization $cluster $region $startTime $endTime >> $outputFile
 
-    # "" >> $vbaCommands
-    # "    AddCPUUtilizationWorksheet reportName, ""$outputFile""" >> $vbaCommands
-
-    "---------- Processing Services for $cluster $region ---------- "
-
-    "" >> $vbaCommands
-    "' Gather Utilization data for Services in Cluster" >> $vbaCommands
-    "" >> $vbaCommands
+    "---------- Processing Services for $cluster $region"
 
     foreach($serviceArn in (getECSClusterServices $cluster $region))
     {
@@ -437,15 +431,9 @@ function GetClusterDataFiles($region, [String]$cluster, $startTime, $endTime, $o
         $header > $outputFile        
 
         getCW_ECS_Service_CPUUtilization $cluster $serviceName $region $startTime $endTime >> $outputFile
-        
-        "    AddCPUUtilizationWorksheet reportName, ""$outputFile""" >> $vbaCommands
     }
 
     # "---------- Processing ContainerInstances for $cluster $region ---------- "
-
-    # "" >> $vbaCommands
-    # "' Gather Utilization data for ContainerInstances(Ec2Instance) in Cluster" >> $vbaCommands
-    # "" >> $vbaCommands
 
     # foreach($containerInstanceArn in (getECSContainerInstances $cluster $region))
     # {
@@ -484,9 +472,6 @@ getCW_ECS_Cluster_CPUUtilization $cluster $region $startTime $endTime >> $output
 
 
 $cluster = "noae-sbx01"
-
-
-
 $service = "notification"
 
 $cluster
