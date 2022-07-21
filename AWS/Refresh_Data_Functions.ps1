@@ -111,8 +111,7 @@ function refreshECS_ServiceData([string[]]$regions)
 
 #endregion #################### ECS Cluster Sevice ####################
 
-#region #################### ECS Task Definition Families ####################
-
+#region #################### ECS Task Definition ####################
 function refreshECS_TaskDefinitionData([string[]]$regions)
 {
     $startTime = Get-Date
@@ -145,6 +144,17 @@ function refreshECS_TaskDefinitionData([string[]]$regions)
 
         getECSTaskDefinitionList $region `
             >> "ECS_TaskDefinition_$(getRegionAbbreviation $region).csv"
+    }
+
+    ">>>>>>>>>> Gathering ECS_TaskDefinitionInfo"
+
+    foreach ($region in $Regions)
+    {
+        Set-Location $outputDir
+        "    ---- Processing $region"
+
+        getECSTaskDefinitionInfo_FromRegion $region `
+            > "ECS_TaskDefinitionInfo_$(getRegionAbbreviation $region).csv"
     }
 
     $endTime = Get-Date

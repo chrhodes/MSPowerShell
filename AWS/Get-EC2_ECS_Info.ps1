@@ -173,12 +173,16 @@ getECSClusterServicesInfo_FromClusters $ClusterArray $Regions[0]
 
 $cluster = $ClusterArray[0]
 $region = $Regions[0]
+
+$region = "us-west-2"
+$cluster = "daco-prod02"
+
 $taskArn = "arn:aws:ecs:us-west-2:049751716774:task/noae-sbx01/00b559e2e6e943b8a14726084a172043"
 $task = getTaskName($taskArn) 
 getECSTasks $ClusterArray[0] $Regions[0]
 getECSTasks_FromClusters $ClusterArray $Regions[0]
 
-getECSTaskInfo $ClusterArray[0] $Regions[0]
+getECSTaskInfo $cluster $region
 getECSTaskInfo_FromClusters $ClusterArray $Regions[0]
 
 getECSTaskInfo_FromClusters $ClusterArray > ECSCLusters_ECSTaskInfo.csv
@@ -193,7 +197,16 @@ getECSTaskContainerInfo_FromClusters $ClusterArray $Regions[0]
 $taskDefinitionArn = "arn:aws:ecs:us-west-2:049751716774:task-definition/api-event:4"
 
 
-getECSTaskDefinitionInfo $taskDefinition $region
+getECSTaskDefinitionInfo $taskDefinitionArn $region
+
+$taskDefinitions = Get-ECSTaskDefinitionList -Region $region
+
+$taskDefinitions.Count
+
+$taskDefinitions[1..9]
+
+$taskDefinitions[1..9] | ForEach-Object { getECSTaskDefinitionInfo $_ $region }
+ 
 
 
 #endregion #################### ECS Cluster Task ####################

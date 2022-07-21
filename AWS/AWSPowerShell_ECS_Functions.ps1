@@ -51,6 +51,7 @@ function getClusters([String]$region)
 {
     @(Get-ECSClusterList -Region $region) | ForEach-Object {getClusterName $_}
 }
+
 function getECSClusterInfo([string]$cluster, [string]$region)
 {
     # $json = Get-ECSClusterDetail -Cluster $cluster -Region $region  
@@ -281,11 +282,13 @@ function getECSClusterServicesInfo([String]$cluster, [String]$region)
         $output += ",$($csi.DesiredCount),$($csi.Deployments.Count),$($csi.PendingCount)"
         $output += ",$(getServiceName $csi.ServiceArn),$($csi.ServiceName)"
         $output += ",$($csi.Status)"
-        $output += ",$(getTaskDefinitionName $csi.TaskDefinition),$(getTaskDefinitionFullName $csi.TaskDefinition)"
+        $output += ",$(getTaskDefinitionName $csi.TaskDefinition)"
+        $output += ",$($csi.TaskDefinition)"
 
         $output
     }
 }
+
 function getECSClusterServicesInfo_FromClusters($clusterArray, $region)
 {
     # Output Column Headers
@@ -296,7 +299,8 @@ function getECSClusterServicesInfo_FromClusters($clusterArray, $region)
     $output += ",DesiredCount,DeploymentCount,PendingCount"
     $output += ",ServiceArn,ServiceName"
     $output += ",Status"
-    $output += ",TaskDefinition,TaskDefinitionVersion"
+    $output += ",TaskDefinition"
+    $output += ",TaskDefinitionArn"
 
     $output
 
@@ -444,6 +448,9 @@ function getECSTaskInfo([String]$cluster, $region)
     {
         $task = getTaskName($taskArn)
 
+        $containerCPU = 0
+        $containerMemory = 0
+
         # Get-ECSTaskDetail -Cluster $cluster -Task $task -Region $region 
         #     | Get-Member
 
@@ -466,6 +473,17 @@ function getECSTaskInfo([String]$cluster, $region)
         $output += ",$($tsk.StartedAt),$($tsk.StoppedAt)"
         $output += ",$($tsk.Group)"
         $output += ",$($tsk.CapacityProviderName)"
+        $output += ",$($tsk.Containers.Count)"
+
+        $taskContainers = $tsk | Select-Object -Expand Containers
+
+        foreach($container in $taskContainers)
+        {
+            $containerCPU += $container.CPU
+            $containerMemory += $container.Memory
+        }
+
+        $output += ",$($containerCPU),$($containerMemory)"
 
         $output
     }
@@ -487,7 +505,9 @@ function getECSTaskInfo_FromClusters($clusterArray, $region)
     $output += ",Version"
     $output += ",StartedAt,StoppedAt"
     $output += ",Group"
-    $output += "CapacityProvider"
+    $output += ",CapacityProvider"
+    $output += ",ContainerCount"
+    $output += ",ContainerCPU,ContainerMemory"
 
     $output
 
@@ -646,36 +666,56 @@ function getECSTaskDefinitionInfo([String]$taskDefinitionArn, $region)
 {
     $taskDefinition = getTaskDefinitionName($taskDefinitionArn)
 
+    $containerCPU = 0
+    $containerMemory = 0
+
     # Get-ECSTaskDefinitionDetail -TaskDefinition $taskDefinition -Region $region 
     #     | Get-Member
 
     # $json = Get-ECSTaskDefinitionDetail -TaskDefinition $taskDefinition -Region $region 
     #     | ConvertTo-Json -Depth 10
 
-    # $json = Get-ECSTaskDetail -Cluster $cluster -Task $task -Region $region |
-    #     ConvertTo-Json -Depth 10
-
-    $taskDef = Get-ECSTaskDefinitionDetail -TaskDefinition $taskDefinition -Region $region | 
+    $taskDef = Get-ECSTaskDefinitionDetail -TaskDefinition $taskDefinitionArn -Region $region | 
         Select-Object -Expand TaskDefinition
         
-    $taskDef | Get-Member
+    $output = "$region"
+    $output += ",$($taskDef.Cpu),$($taskDef.Memory)"
+    $output += ",$($taskDef.Revision)"
+    $output += ",$($taskDef.Status)"
+    $output += ",$($taskDef.TaskDefinitionArn)"
+    $output += ",$($taskDef.TaskRoleArn)"
+    $output += ",$($taskDef.ContainerDefinitions.Count)"
 
-    $containerDef = $taskDef | Select-Object -Expand ContainerDefinitions
+    $taskContainerDefinitions = $taskDef | Select-Object -Expand ContainerDefinitions
 
-    $containerDef | Get-Member
+    foreach($containerDef in $taskContainerDefinitions)
+    {
+        $containerCPU += $containerDef.CPU
+        $containerMemory += $containerDef.Memory
+    }
 
-    $output = "$region," + (getClusterName $($tsk.ClusterArn))
-
-    $output += "," + (getContainerInstancename($($tsk.ContainerInstanceArn)))
-    $output += ",$($tsk.LaunchType.Value)"
-    $output += ",$($tsk.AvailabilityZone),$($tsk.Cpu),$($tsk.Memory)"
-    $output += ",$($tsk.DesiredStatus),$($tsk.LastStatus)"
-    $output += "," + (getTaskName($($tsk.TaskArn)))
-    $output += ",$($tsk.TaskDefinitionArn)"
-    $output += ",$($tsk.Version)"
-    $output += ",$($tsk.StartedAt)"
+    $output += ",$($containerCPU),$($containerMemory)"    
 
     $output
+}
+
+function getECSTaskDefinitionInfo_FromRegion([String]$region)
+{
+    $header = "Region"
+    $header += ",CPU,Memory"
+    $header += ",Revision"
+    $header += ",Status"
+    $header += ",TaskDefinitionArn"
+    $header += ",TaskRoleArn"
+    $header += ",ContainerDefinitionCount"
+    $header += ",ContainerCPU,ContainerMemory"
+
+    $header
+
+    foreach($taskDef in (Get-ECSTaskDefinitionList -Region $region))
+    {
+        getECSTaskDefinitionInfo $taskDef $region
+    }
 }
 
 #endregion ECS Task Definition
