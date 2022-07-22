@@ -78,6 +78,8 @@ $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 
 refreshEC2_Data $Regions
 
+refreshEC2Volume_Data $Regions
+
 # Takes ~ 4 minutes
 
 refreshECS_ClusterData $Regions
@@ -108,9 +110,12 @@ refreshAS_Data $Regions
 
 $region = "us-west-2"
 $cluster = "noae-sbx01"
+$ClusterArray = @($cluster)
 
 getECSClusterInfo $cluster $region
 getECSClusterInfo_FromClusters $ClusterArray $Regions[0]
+
+getTags_FromClusters $ClusterArray $region
 
 getECSClusterCapacityProviderInfo_FromClusters $ClusterArray $Regions[0]
 
@@ -154,6 +159,7 @@ $cluster = $ClusterArray[0]
 $region = $Regions[0]
 $region = "us-west-2"
 $cluster = "noae-sbx01"
+$ClusterArray = @($cluster)
 $service = "notification"
 
 $service = "arn:aws:ecs:us-west-2:049751716774:service/noae-sbx01/notification"
@@ -164,6 +170,8 @@ getECSClusterServices_FromClusters $ClusterArray $Regions[0]
 
 getECSClusterServicesInfo $ClusterArray[0] $Regions[0]
 getECSClusterServicesInfo_FromClusters $ClusterArray $Regions[0]
+
+getServicesTags_FromClusters $ClusterArray $region
 
 #endregion #################### ECS Cluster Sevice ####################
 
@@ -178,6 +186,8 @@ $region = $Regions[0]
 
 $region = "us-west-2"
 $cluster = "daco-prod02"
+
+$ClusterArray = @($cluster)
 
 $taskArn = "arn:aws:ecs:us-west-2:049751716774:task/noae-sbx01/00b559e2e6e943b8a14726084a172043"
 $task = getTaskName($taskArn) 

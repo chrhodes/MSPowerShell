@@ -100,6 +100,7 @@ function getEC2InstanceInfo_FromInstances($instanceArray, $region)
         getEC2InstanceInfo $ec2Instance $region
     }
 }
+
 function getTags_FromEC2Instances([string[]]$instanceArray, [string]$region)
 {
     Write-Output "Region,InstanceId,Key,Value"
@@ -208,6 +209,125 @@ function getEC2InstanceTypes([string]$region)
         $output
     }
 }
+
+#region EC2 Volumes
+
+# Get-EC2Volume
+
+# SYNTAX
+#     Get-EC2Volume [[-Filter] <Amazon.EC2.Model.Filter[]>] [-MaxResult <System.Int32>] [-NextToken <System.String>]
+#     [-Select <System.String>] [-PassThru <System.Management.Automation.SwitchParameter>] [-NoAutoIteration
+#     <System.Management.Automation.SwitchParameter>] [-EndpointUrl <System.String>] [-Region <System.Object>]
+#     [-AccessKey <System.String>] [-SecretKey <System.String>] [-SessionToken <System.String>] [-ProfileName
+#     <System.String>] [-ProfileLocation <System.String>] [-Credential <Amazon.Runtime.AWSCredentials>]
+#     [-NetworkCredential <System.Management.Automation.PSCredential>] [<CommonParameters>]
+
+#     Get-EC2Volume [[-VolumeId] <System.String[]>] [-Select <System.String>] [-PassThru
+#     <System.Management.Automation.SwitchParameter>] [-NoAutoIteration <System.Management.Automation.SwitchParameter>]
+#     [-EndpointUrl <System.String>] [-Region <System.Object>] [-AccessKey <System.String>] [-SecretKey <System.String>]
+#     [-SessionToken <System.String>] [-ProfileName <System.String>] [-ProfileLocation <System.String>] [-Credential
+#     <Amazon.Runtime.AWSCredentials>] [-NetworkCredential <System.Management.Automation.PSCredential>]
+#     [<CommonParameters>]
+
+# $region = "us-east-2"
+# $volumeId = "vol-0630322b845eaa455"
+
+# $volumes = Get-EC2Volume -Region $region
+# $volumes | Get-Member
+# $volumes | ConvertTo-Json -Depth 10 > ec2Volumes.json
+
+# $volumes[0..2]
+
+# $ec2Volume = Get-EC2Volume -VolumeId $volumeId -Region $region
+
+function getEC2Volumes([String] $region)
+{
+    @(Get-EC2Volume -Region $region) | ForEach-Object {$_.VolumeId}
+}
+
+function getEC2VolumeInfo([String] $volumeId, [String] $region)
+{
+    $volume = Get-EC2Volume -VolumeId $volumeId -Region $region
+    $attachments = $volume | Select-Object -Expand Attachments
+    $attachment = $volume | Select-Object -Expand Attachment
+
+    $output = "$region,$volumeId"
+
+    try
+    {
+        $output += ",$($volume.AvailabilityZone)"
+        $output += ",$($volume.CreateTime)"
+        $output += ",$($volume.Encrypted)"
+        $output += ",$($volume.FastRestored)"
+        $output += ",$($volume.Iops)"
+        $output += ",$($volume.KmsKeyId)"
+        $output += ",$($volume.MultiAttachEnabled)"
+        $output += ",$($volume.OutpostArn)"
+        $output += ",$($volume.Size)"
+        $output += ",$($volume.SnapshotId)"
+        $output += ",$($volume.State.Value)"
+        $output += ",$($volume.Throughput)"
+        $output += ",$($volume.VolumeType.Value)"
+        $output += ",$($volume.Status.Value)"                 
+
+        if ($null -eq $attachments)
+        {
+            $output += ",0,0"
+        }
+        else
+        {
+            $output += ",$($attachments.Count),$($attachment.Count)"
+        }
+
+        $output
+    }
+    catch
+    {
+        $output
+        <#Do this if a terminating exception happens#>
+        Write-Error "getEC2VolumeInfo $output"
+    }
+    finally
+    {
+        <#Do this after the try block regardless of whether an exception occurred or not#>
+        # $output
+    }
+}
+
+function getEC2VolumeInfo_FromRegion([String] $region)
+{
+    # Establish Column Headers
+    # This needs to be in same order as field display in getEC2InstanceInfo
+
+    $output = "Region,VolumeId"
+    $output += ",AvailabilityZone"
+    $output += ",CreateTime"
+    $output += ",Encrypted"
+    $output += ",FastRestored"
+    $output += ",Iops"
+    $output += ",KmsKeyId"
+    $output += ",MultiAttachEnabled"
+    $output += ",OutpostArn"
+    $output += ",Size"
+    $output += ",SnapshotId"
+    $output += ",State"
+    $output += ",Throughput"
+    $output += ",VolumeType"
+    $output += ",Status"
+    $output += ",Attachments,Attachment"   
+
+    $output
+
+    foreach($volumeId in (getEC2Volumes $region))
+    {
+        getEC2VolumeInfo $volumeId $region
+    }
+}
+
+# getEC2VolumeInfo_FromRegion "us-east-2"
+# getEC2VolumeInfo_FromRegion "us-west-2"
+
+#endregion EC2 Volumes
 
 ################################################################################
 #

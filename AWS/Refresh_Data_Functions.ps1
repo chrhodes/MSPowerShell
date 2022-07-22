@@ -260,6 +260,7 @@ function refreshECS_ContainerInstanceData([string[]]$regions)
 #endregion #################### ECS Cluster Containers ####################
 
 #region #################### ECS EC2 Instance ####################
+
 function refreshEC2_Data([string[]]$regions)
 {
     $startTime = Get-Date
@@ -302,6 +303,40 @@ function refreshEC2_Data([string[]]$regions)
         getTags_FromEC2Instances $instances $region `
             > "EC2_Tags_Instance_$(getRegionAbbreviation $region).csv"
     }   
+    
+    $endTime = Get-Date
+
+    "Elapsed Time: "
+    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
+}
+
+function refreshEC2Volume_Data([string[]]$regions)
+{
+    $startTime = Get-Date
+
+    ">>>>>>>>>> Gathering EC2VolumeInfo"
+
+    foreach ($region in $Regions)
+    {
+        Set-Location $outputDir
+        "    ---- Processing $region"
+      
+        getEC2VolumeInfo_FromRegion $region `
+            > "EC2_VolumeInfo_$(getRegionAbbreviation $region).csv"
+    }
+    
+    # ">>>>>>>>>> Gathering EC2_Tags_Instance"
+
+    # foreach ($region in $Regions)
+    # {
+    #     Set-Location $outputDir
+    #     "    ---- Processing $region"
+    
+    #     $instances = @(getEC2Instances $region)
+    
+    #     getTags_FromEC2Instances $instances $region `
+    #         > "EC2_Tags_Instance_$(getRegionAbbreviation $region).csv"
+    # }   
     
     $endTime = Get-Date
 

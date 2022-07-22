@@ -1,0 +1,91 @@
+{
+  "Attachments": [
+    {
+      "AttachTime": "2019-07-12T14:10:53-07:00",
+      "DeleteOnTermination": true,
+      "Device": "/dev/sda1",
+      "InstanceId": "i-001c1e508be075211",
+      "State": {
+        "Value": "attached"
+      },
+      "VolumeId": "vol-0630322b845eaa455"
+    }
+  ],
+  "AvailabilityZone": "us-east-2c",
+  "CreateTime": "2019-07-12T14:10:53.583-07:00",
+  "Encrypted": true,
+  "FastRestored": false,
+  "Iops": 3000,
+  "KmsKeyId": "arn:aws:kms:us-east-2:049751716774:key/62e6d8eb-1ef8-499b-8f0d-2023c0a37082",
+  "MultiAttachEnabled": false,
+  "OutpostArn": null,
+  "Size": 200,
+  "SnapshotId": "snap-0824b4d7fe99560ee",
+  "State": {
+    "Value": "in-use"
+  },
+  "Tags": [
+    {
+      "Key": "termination_date",
+      "Value": "1111_11_11"
+    },
+    {
+      "Key": "project",
+      "Value": "techops"
+    },
+    {
+      "Key": "department",
+      "Value": "techops"
+    },
+    {
+      "Key": "service_name",
+      "Value": "jumpbox"
+    },
+    {
+      "Key": "owner",
+      "Value": "techops"
+    }
+  ],
+  "Throughput": 125,
+  "VolumeId": "vol-0630322b845eaa455",
+  "VolumeType": {
+    "Value": "gp3"
+  },
+  "Tag": [
+    {
+      "Key": "termination_date",
+      "Value": "1111_11_11"
+    },
+    {
+      "Key": "project",
+      "Value": "techops"
+    },
+    {
+      "Key": "department",
+      "Value": "techops"
+    },
+    {
+      "Key": "service_name",
+      "Value": "jumpbox"
+    },
+    {
+      "Key": "owner",
+      "Value": "techops"
+    }
+  ],
+  "Status": {
+    "Value": "in-use"
+  },
+  "Attachment": [
+    {
+      "AttachTime": "2019-07-12T14:10:53-07:00",
+      "DeleteOnTermination": true,
+      "Device": "/dev/sda1",
+      "InstanceId": "i-001c1e508be075211",
+      "State": {
+        "Value": "attached"
+      },
+      "VolumeId": "vol-0630322b845eaa455"
+    }
+  ]
+}

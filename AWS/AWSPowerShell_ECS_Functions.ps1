@@ -111,6 +111,7 @@ function getECSClusterCapacityProviderInfo([string]$cluster, [string]$region)
         }
     }
 }
+
 function getECSClusterCapacityProviderInfo_FromClusters([string[]]$clusterArray, [string]$region)
 {
     # Establish Column Headers
@@ -151,6 +152,7 @@ function getECSClusterDefaultCapacityProviderStrategyInfo([string]$cluster, [str
         }
     }
 }
+
 function getECSClusterDefaultCapacityProviderStrategyInfo_FromClusters([string[]]$clusterArray, [string]$region)
 {
     # Establish Column Headers
@@ -168,28 +170,28 @@ function getECSClusterDefaultCapacityProviderStrategyInfo_FromClusters([string[]
         getECSClusterDefaultCapacityProviderStrategyInfo $cluster $region
     }
 }
+
 function getTags_FromClusters([string[]]$clusterArray, [string]$region)
 {
-    Write-Output "Region,Cluster,Key,Value"
+    Write-Output "Region,Cluster,ClusterArn,Key,Value"
 
     foreach($cluster in $clusterArray)
     {
-        $json = Get-ECSClusterDetail -Cluster $cluster -Region $region -Include TAGS  
+        $clst = Get-ECSClusterDetail -Cluster $cluster -Region $region -Include TAGS |
+            Select-Object -Expand Clusters
 
-        $clusters = $json | Select-Object -Expand Clusters
-        $tags = $clusters | Select-Object -Expand Tags
-
+        $tags = $clst | Select-Object -Expand Tags
 
         if ($null -eq $tags) 
         {
             # Always output $region, $cluster even if no $tags
-            "$region,$cluster,,"
+            "$region,$cluster,$($clst.ClusterArn),"
         }
         else
         {
             foreach($tag in $tags)
             {
-                "$region,$cluster,$($tag.Key),$($tag.Value)"
+                "$region,$cluster,$($clst.ClusterArn),$($tag.Key),$($tag.Value)"
             }
         }
     }
@@ -312,7 +314,7 @@ function getECSClusterServicesInfo_FromClusters($clusterArray, $region)
 
 function getServicesTags_FromClusters($clusterArray, $region)
 {
-    Write-Output "Region,Cluster,Service,Key,Value"
+    Write-Output "Region,Cluster,Service,ServiceArn,Key,Value"
 
     foreach($cluster in $clusterArray)
     {
@@ -328,13 +330,13 @@ function getServicesTags_FromClusters($clusterArray, $region)
             if ($null -eq $tags) 
             {
                 # Always output $region, $cluster and $service even if no $tags
-                "$region,$cluster,$service,,"
+                "$region,$cluster,$service,$($csi.ServiceArn),"
             }
             else
             {
                 foreach($tag in $tags)
                 {
-                    "$region,$cluster,$service,$($tag.Key),$($tag.Value)"
+                    "$region,$cluster,$service,$($csi.ServiceArn),$($tag.Key),$($tag.Value)"
                 }
             }
         }
