@@ -249,7 +249,6 @@ function getEC2VolumeInfo([String] $volumeId, [String] $region)
 {
     $volume = Get-EC2Volume -VolumeId $volumeId -Region $region
     $attachments = $volume | Select-Object -Expand Attachments
-    $attachment = $volume | Select-Object -Expand Attachment
 
     $output = "$region,$volumeId"
 
@@ -270,20 +269,26 @@ function getEC2VolumeInfo([String] $volumeId, [String] $region)
         $output += ",$($volume.VolumeType.Value)"
         $output += ",$($volume.Status.Value)"                 
 
-        if ($null -eq $attachments)
+        if ($null -eq $attachments) { $output += ",0" }
+        else { $output += ",$($volume.Attachments.Count)" }
+
+        if (1 -eq $volume.Attachments.Count)
         {
-            $output += ",0,0"
+            $output += ",$($attachments[0].Device),$($attachments[0].InstanceId),$($attachments[0].State.Value)"
         }
         else
         {
-            $output += ",$($attachments.Count),$($attachment.Count)"
+            $output += ",???,???,???"
+            <# Action when all if and elseif conditions are false #>
         }
 
+        # if ($null -eq $attachment) { $output += ",0" }
+        # else { $output += ",$($attachment.Count)" }
+    
         $output
     }
     catch
     {
-        $output
         <#Do this if a terminating exception happens#>
         Write-Error "getEC2VolumeInfo $output"
     }
@@ -314,7 +319,8 @@ function getEC2VolumeInfo_FromRegion([String] $region)
     $output += ",Throughput"
     $output += ",VolumeType"
     $output += ",Status"
-    $output += ",Attachments,Attachment"   
+    $output += ",Attachments"
+    $output += ",Device,InstanceId,State" 
 
     $output
 
@@ -323,6 +329,18 @@ function getEC2VolumeInfo_FromRegion([String] $region)
         getEC2VolumeInfo $volumeId $region
     }
 }
+
+Import-Module AWSPowerShell.NetCore
+Set-AWSCredential -ProfileName PlatformCostsRO
+
+$region = "us-west-2"
+$volumeId = "vol-860f2b60"
+
+$volume = Get-EC2Volume -VolumeId $volumeId -Region $region
+getEC2VolumeInfo $volumeId $region
+
+$attachments = $volume | Select-Object -Expand Attachments
+$attachment = $volume | Select-Object -Expand Attachment
 
 # getEC2VolumeInfo_FromRegion "us-east-2"
 # getEC2VolumeInfo_FromRegion "us-west-2"
