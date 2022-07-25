@@ -157,6 +157,17 @@ function refreshECS_TaskDefinitionData([string[]]$regions)
             > "ECS_TaskDefinitionInfo_$(getRegionAbbreviation $region).csv"
     }
 
+    ">>>>>>>>>> Gathering ECS_TaskDefinitionContainerInfo"
+
+    foreach ($region in $Regions)
+    {
+        Set-Location $outputDir
+        "    ---- Processing $region"
+
+        getECSTaskDefinitionContainerInfo_FromRegion $region `
+            > "ECS_TaskDefContainerInfo_$(getRegionAbbreviation $region).csv"
+    }    
+
     $endTime = Get-Date
 
     "Elapsed Time: "

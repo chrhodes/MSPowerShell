@@ -96,7 +96,7 @@ refreshECS_TaskData $Regions
 
 refreshECS_ContainerInstanceData $Regions
 
-# Takes ~ 0 minutes 46 seconds
+# Takes ~ 29 minutes 4 seconds
 
 refreshECS_TaskDefinitionData $Regions
 
@@ -202,14 +202,16 @@ getECSTaskInfo_FromClusters $ClusterArray > ECSCLusters_ECSTaskInfo.csv
 getECSTaskContainerInfo $ClusterArray[0] $Regions[0]
 getECSTaskContainerInfo_FromClusters $ClusterArray $Regions[0]
 
-
 # TODO(crhodes)
 # Get a task that matches other examples
 
+$region = "us-west-2"
 $taskDefinitionArn = "arn:aws:ecs:us-west-2:049751716774:task-definition/api-event:4"
 
-
 getECSTaskDefinitionInfo $taskDefinitionArn $region
+
+$taskDefinitionArn = "arn:aws:ecs:us-west-2:049751716774:task-definition/fjord-auw2-prod8-lag-monitor-taskdef:1"
+getECSTaskDefinitionContainerInfo $taskDefinitionArn $region
 
 $taskDefinitions = Get-ECSTaskDefinitionList -Region $region
 
@@ -218,7 +220,6 @@ $taskDefinitions.Count
 $taskDefinitions[1..9]
 
 $taskDefinitions[1..9] | ForEach-Object { getECSTaskDefinitionInfo $_ $region }
- 
 
 
 #endregion #################### ECS Cluster Task ####################

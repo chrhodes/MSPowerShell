@@ -111,7 +111,6 @@ function getECSClusterCapacityProviderInfo([string]$cluster, [string]$region)
         }
     }
 }
-
 function getECSClusterCapacityProviderInfo_FromClusters([string[]]$clusterArray, [string]$region)
 {
     # Establish Column Headers
@@ -152,7 +151,6 @@ function getECSClusterDefaultCapacityProviderStrategyInfo([string]$cluster, [str
         }
     }
 }
-
 function getECSClusterDefaultCapacityProviderStrategyInfo_FromClusters([string[]]$clusterArray, [string]$region)
 {
     # Establish Column Headers
@@ -687,7 +685,7 @@ function getECSTaskDefinitionInfo([String]$taskDefinitionArn, $region)
     $output += ",$($taskDef.Cpu),$($taskDef.Memory)"
     $output += ",$($taskDef.Revision)"
     $output += ",$($taskDef.Status)"
-    $output += ",$($taskDef.TaskDefinitionArn)"
+    $output += ",$($taskDefinition),$($taskDef.TaskDefinitionArn)"
     $output += ",$($taskDef.TaskRoleArn)"
     $output += ",$($taskDef.ContainerDefinitions.Count)"
 
@@ -710,7 +708,7 @@ function getECSTaskDefinitionInfo_FromRegion([String]$region)
     $header += ",CPU,Memory"
     $header += ",Revision"
     $header += ",Status"
-    $header += ",TaskDefinitionArn"
+    $header += ",TaskDefinition,TaskDefinitionArn"
     $header += ",TaskRoleArn"
     $header += ",ContainerDefinitionCount"
     $header += ",ContainerCPU,ContainerMemory"
@@ -720,6 +718,58 @@ function getECSTaskDefinitionInfo_FromRegion([String]$region)
     foreach($taskDef in (Get-ECSTaskDefinitionList -Region $region))
     {
         getECSTaskDefinitionInfo $taskDef $region
+    }
+}
+
+function getECSTaskDefinitionContainerInfo([String]$taskDefinitionArn, $region)
+{
+    $taskDefinition = getTaskDefinitionName($taskDefinitionArn)
+
+    $containerCPU = 0
+    $containerMemory = 0
+
+    # Get-ECSTaskDefinitionDetail -TaskDefinition $taskDefinition -Region $region 
+    #     | Get-Member
+
+    # $json = Get-ECSTaskDefinitionDetail -TaskDefinition $taskDefinition -Region $region 
+    #     | ConvertTo-Json -Depth 10
+
+    $taskDef = Get-ECSTaskDefinitionDetail -TaskDefinition $taskDefinitionArn -Region $region | 
+        Select-Object -Expand TaskDefinition
+        
+    $taskContainerDefinitions = $taskDef | Select-Object -Expand ContainerDefinitions  
+
+    foreach($containerDef in $taskContainerDefinitions)
+    {        
+        $output = "$region"
+        $output += ",$($taskDef.Cpu),$($taskDef.Memory)"
+        $output += ",$($taskDef.Revision)"
+        $output += ",$($taskDef.Status)"
+        $output += ",$($taskDefinition),$($taskDef.TaskDefinitionArn)"
+        $output += ",$($taskDef.TaskRoleArn)"
+        $output += ",$($taskDef.ContainerDefinitions.Count)"
+        $output += ",$($containerDef.Name),$($containerDef.CPU),$($containerDef.Memory)" 
+
+        $output        
+    }
+}
+
+function getECSTaskDefinitionContainerInfo_FromRegion([String]$region)
+{
+    $header = "Region"
+    $header += ",CPU,Memory"
+    $header += ",Revision"
+    $header += ",Status"
+    $header += ",TaskDefinition,TaskDefinitionArn"
+    $header += ",TaskRoleArn"
+    $header += ",ContainerDefinitionCount"
+    $header += ",ContainerName,ContainerCPU,ContainerMemory"
+
+    $header
+
+    foreach($taskDef in (Get-ECSTaskDefinitionList -Region $region))
+    {
+        getECSTaskDefinitionContainerInfo $taskDef $region
     }
 }
 
