@@ -821,6 +821,7 @@ function getECSTaskDefinitionContainerInfo_FromRegion([String]$region)
 #   [-NetworkCredential <System.Management.Automation.PSCredential>]
 #   [<CommonParameters>]
 #
+
 function getECSContainerInstances($cluster, $region)
 {
     @(Get-ECSContainerInstanceList -Cluster $cluster -Region $region)
@@ -882,6 +883,7 @@ function getECSContainerInstanceInfo_FromClusters($clusterArray, $region)
 
     $output = "Region,Cluster"
     $output += ",CapacityProvider"
+    # $output += ",ContainerInstance"    
     $output += ",ContainerInstanceArn"
     $output += ",Ec2InstanceId"
     $output += ",PendingTasksCount,RunningTasksCount"

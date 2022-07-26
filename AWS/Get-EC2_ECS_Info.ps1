@@ -74,13 +74,15 @@ Set-Location $outputDir
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 
-# Takes ~
+# Takes ~ 26 minutes 4 seconds
 
 refreshEC2_Data $Regions
 
+# Takes ~ 19 minutes 55 seconds
+
 refreshEC2Volume_Data $Regions
 
-# Takes ~ 4 minutes
+# Takes ~ 4 minutes 10 seconds
 
 refreshECS_ClusterData $Regions
 
