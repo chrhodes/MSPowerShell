@@ -8,107 +8,10 @@ Set-StrictMode -Version Latest
 
 #region #################### EC2 Utilization ####################
 
-$region = "us-west-2"
+#endregion #################### EC2 Utilization ####################
 
-$ec2InstanceId = "i-57542c92"
-getEC2InstanceInfo $ec2InstanceId $region
+#region #################### ECS Utilization ####################
 
-$startTime.ToUniversalTime()
-$endTime.ToUniversalTime()
-
-getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime
-
-$Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
-$Regions = @("us-east-2", "eu-west-1")
-
-foreach ($region in $Regions)
-{
-    $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
-    $endTime = Get-Date -Date "2022-06-30 23:59:59Z"
-
-    Set-Location "$outputDir\EC2 CPU Utilization 2022.06\"
-    "---------- Processing $region ----------"
-
-    $instances = @(getEC2Instances $region)
-
-    foreach($ec2InstanceId in $instances)
-    {
-        $outputFile = "CPU_$($ec2InstanceId)_$($region).csv"
-
-        $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
-        $header > $outputFile
-
-        "Gathering CPU Utilization for $region $ec2InstanceId"
-
-        getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime `
-            >> $outputFile
-    }
-}
-
-# $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\CPU Utilization Explore"
-# Set-Location $outputDir
-
-# $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
-# $endTime = Get-Date -Date "2022-07-12 23:59:59Z"
-
-# $region = "us-west-2"
-
-# $ec2InstanceId = "i-0f65358267fb8074d"
-
-# $outputFile = "$($ec2InstanceId)_$(getRegionAbbreviation $region).csv"
-
-# $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
-# $header > $outputFile
-
-# $ec2InstanceId
-# $region
-# $startTime
-# $endTime
-
-# getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime >> $outputFile
-
-# $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
-# Set-Location $outputDir
-
-# $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
-# $endTime = Get-Date -Date "2022-07-12 23:59:59Z"
-
-# $region = "us-west-2"
-# $cluster = "noae-sbx01"
-
-# GetClusterDataFiles $region $cluster $startTime $endTime
-
-# $clusters = @(getClusters $region)
-
-# $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
-# $Regions = @("us-east-2", "eu-west-1")
-
-foreach ($region in $Regions)
-{
-    $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
-    $endTime = Get-Date -Date "2022-06-30 23:59:59Z"
-
-    # $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
-    # $endTime = Get-Date -Date "2022-07-20 23:59:59Z"
-
-    $regionOutputDirectory = "$outputDir\Cluster_Service_Utilization\2022-06\$region"
-    ">> Processing $region"
-
-    $clusterArray = @(getClusters $region)
-
-    foreach($cluster in $clusterArray)
-    {
-        Set-Location $regionOutputDirectory
-
-        if (!(Test-Path -Path $cluster)) { New-Item -Name $cluster -ItemType Directory }
-
-        $outputDirectory = "$regionOutputDirectory\$cluster"
-
-        GetClusterUtilizationDataFiles $region $cluster $startTime $endTime $outputDirectory -IncludeCluster -IncludeService -GatherData
-    }
-}
-
-# $region, [String]$cluster, $startTime, $endTime, $outputDir, [switch]$noData
 function GetClusterUtilizationDataFiles()
 {
     [CmdletBinding()]
@@ -196,15 +99,18 @@ function getClusterUtilizationData()
     ">>>> Processing Cluster $cluster in $region"
 
     # $outputFile = "C-$($cluster)_$(getRegionAbbreviation $region).csv" 
-    $outputFile = "C-$($cluster).csv" 
 
     $arn = Get-ECSClusterDetail -Cluster $cluster -Region $region | 
         Select-Object -Expand Clusters | 
         Select-Object -Property ClusterArn
 
+    $outputFile = "CC-$($cluster).csv"         
+
+    "  >> Gathering CPU Utilization Data"
+
     if($GatherData)
     {
-        "Region,$($region)" > $outputFile
+        "Region,$($region),CPU" > $outputFile
         "ClusterArn,$($arn.ClusterArn)" >> $outputFile
         "" >> $outputFile
         "StartTime,,$($startTime)" >> $outputFile
@@ -213,6 +119,22 @@ function getClusterUtilizationData()
 
         getCW_ECS_Cluster_CPUUtilization $cluster $region $startTime $endTime >> $outputFile
     }
+
+    $outputFile = "CM-$($cluster).csv"         
+
+    "  >> Gathering Memory Utilization Data"
+
+    if($GatherData)
+    {
+        "Region,$($region),Memory" > $outputFile
+        "ClusterArn,$($arn.ClusterArn)" >> $outputFile
+        "" >> $outputFile
+        "StartTime,,$($startTime)" >> $outputFile
+        "EndTime,,$($endTime)" >> $outputFile        
+        "Region,Cluster,TimeStamp,Minimum,Average,Maximum" >> $outputFile
+
+        getCW_ECS_Cluster_MemoryUtilization $cluster $region $startTime $endTime >> $outputFile
+    }    
 }
 
 # Get-ECSClusterDetail -Cluster $cluster -Region $region | Select-Object -Expand Clusters | Select-Object -Property ClusterArn
@@ -253,11 +175,13 @@ function getServiceUtilizationData()
         $serviceName = $csi.ServiceName
 
         # $outputFile = "S-$($serviceName)_$(getRegionAbbreviation $region).csv"
-        $outputFile = "S-$($serviceName).csv"
+        $outputFile = "SC-$($serviceName).csv"
+
+        "               >> Gathering CPU Utilization Data"
             
         if ($GatherData)
         {
-            "Region,$($region)" > $outputFile
+            "Region,$($region),CPU" > $outputFile
             "ClusterArn,$($clusterArn)" >> $outputFile
             "ServiceArn,$($serviceArn)" >> $outputFile
             "StartTime,,$($startTime)" >> $outputFile
@@ -266,51 +190,27 @@ function getServiceUtilizationData()
 
             getCW_ECS_Service_CPUUtilization $cluster $serviceName $region $startTime $endTime >> $outputFile
         }
+
+        $outputFile = "SM-$($serviceName).csv"
+
+        "               >> Gathering Memory Utilization Data"
+            
+        if ($GatherData)
+        {
+            "Region,$($region),Memory" > $outputFile
+            "ClusterArn,$($clusterArn)" >> $outputFile
+            "ServiceArn,$($serviceArn)" >> $outputFile
+            "StartTime,,$($startTime)" >> $outputFile
+            "EndTime,,$($endTime)" >> $outputFile  
+            "Region,Service,TimeStamp,Minimum,Average,Maximum" >> $outputFile            
+
+            getCW_ECS_Service_MemoryUtilization $cluster $serviceName $region $startTime $endTime >> $outputFile
+        }        
     }
 }
 
-# $cluster = "zsystemcm-cnc00"
-# $region = "us-east-2"
-# $startTime
-# $endTime
-# $serviceName = "filebeat"
 
-# $cluster
-# $region
-# $startTime
-# $endTime
-# $serviceName
-
-
-# $outputFile = "$($cluster)_$($region).csv"
-
-# $header = "Region,Cluster,TimeStamp,Minimum,Average,Maximum"
-# $header > $outputFile
-
-# getCW_ECS_Cluster_CPUUtilization $cluster $region $startTime $endTime >> $outputFile
-
-
-# $cluster = "noae-sbx01"
-
-
-
-# $service = "notification"
-
-# $cluster
-# $service
-# $region
-# $startTime
-# $endTime
-
-# $outputFile = "$($cluster)_$($service)_$(getRegionAbbreviation $region).csv"
-
-# $header = "Region,Service,TimeStamp,Minimum,Average,Maximum"
-# $header > $outputFile
-
-# getCW_ECS_Service_CPUUtilization $cluster $service $region $startTime $endTime >> $outputFile
-
-
-#endregion #################### EC2 Utilization ####################
+#endregion#################### ECS Utilization ####################
 
 ################################################################################
 #

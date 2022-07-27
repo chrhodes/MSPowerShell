@@ -71,7 +71,6 @@ Set-AWSCredential -ProfileName PlatformCostsRO
 $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
 Set-Location $outputDir
 
-
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 
 # Takes ~ 26 minutes 4 seconds
@@ -98,7 +97,7 @@ refreshECS_TaskData $Regions
 
 refreshECS_ContainerInstanceData $Regions
 
-# Takes ~ 29 minutes 4 seconds
+# Takes ~ 58 minutes 15 seconds
 
 refreshECS_TaskDefinitionData $Regions
 
@@ -321,6 +320,8 @@ foreach ($region in $Regions)
 
 $region = "us-west-2"
 
+$region = "us-west-2"
+
 $ec2InstanceId = "i-57542c92"
 getEC2InstanceInfo $ec2InstanceId $region
 
@@ -328,6 +329,12 @@ $startTime.ToUniversalTime()
 $endTime.ToUniversalTime()
 
 getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime
+
+$Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+$Regions = @("us-east-2", "eu-west-1")
+
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
+Set-Location $outputDir
 
 foreach ($region in $Regions)
 {
@@ -343,10 +350,6 @@ foreach ($region in $Regions)
     {
         $outputFile = "CPU_$($ec2InstanceId)_$($region).csv"
 
-        # Don't need to add this as all data can be pulled using
-        # VLOOKUP to EC2 workbook
-        # getEC2InstanceInfo $ec2Instance $region > $outputFile
-
         $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
         $header > $outputFile
 
@@ -354,7 +357,6 @@ foreach ($region in $Regions)
 
         getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime `
             >> $outputFile
-            # ConvertTo-Csv >> "CPU_$($ec2InstanceId)_$($region).csv"
     }
 }
 
@@ -395,114 +397,46 @@ $clusters = @(getClusters $region)
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 
+#endregion #################### EC2 Utilization ####################
+
+#region #################### ECS Utilization ####################
+
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
+Set-Location $outputDir
+
+$Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+$Regions = @("us-east-2", "eu-west-1")
+
 foreach ($region in $Regions)
 {
     $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
     $endTime = Get-Date -Date "2022-06-30 23:59:59Z"
 
     # $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
-    # $endTime = Get-Date -Date "2022-07-12 23:59:59Z"
+    # $endTime = Get-Date -Date "2022-07-20 23:59:59Z"
 
-    $outputDirectory = "$outputDir\Cluster_Service_Utilization\"
-    "---------- Processing $region ----------"
+    Set-Location "$outputDir\Cluster_Service_Utilization\2022-06"
+
+    if (!(Test-Path -Path $region)) { New-Item -Name $region -ItemType Directory }
+
+    $regionOutputDirectory = "$outputDir\Cluster_Service_Utilization\2022-06\$region"
+    ">> Processing $region"
 
     $clusterArray = @(getClusters $region)
 
     foreach($cluster in $clusterArray)
     {
-        GetClusterDataFiles  $region $cluster $startTime $endTime $outputDirectory
+        Set-Location $regionOutputDirectory
+
+        if (!(Test-Path -Path $cluster)) { New-Item -Name $cluster -ItemType Directory }
+
+        $outputDirectory = "$regionOutputDirectory\$cluster"
+
+        GetClusterUtilizationDataFiles $region $cluster $startTime $endTime $outputDirectory -IncludeCluster -IncludeService -GatherData
     }
 }
 
-function GetClusterDataFiles($region, [String]$cluster, $startTime, $endTime, $outputDir)
-{
-    Set-Location $outputDir
-
-    "---------- Processing Cluster $cluster in $region"
-
-    # $outputFile = "C-$($cluster)_$(getRegionAbbreviation $region).csv" 
-
-    # $header = "Region,Cluster,TimeStamp,Minimum,Average,Maximum"
-    # $header > $outputFile
-    # getCW_ECS_Cluster_CPUUtilization $cluster $region $startTime $endTime >> $outputFile
-
-    "---------- Processing Services for $cluster $region"
-
-    foreach($serviceArn in (getECSClusterServices $cluster $region))
-    {
-        $service = getServiceName($serviceArn)
-
-        $csi = Get-ECSService -Cluster $cluster -Service $service -Region $region |
-            Select-Object -Expand Services
-
-        $serviceName = $csi.ServiceName
-
-        $outputFile = "S-$($serviceName)_$(getRegionAbbreviation $region).csv"
-  
-        "---------- Processing $cluster $serviceName $region ----------"
-
-        $header = "Region,Service,TimeStamp,Minimum,Average,Maximum"
-        $header > $outputFile        
-
-        getCW_ECS_Service_CPUUtilization $cluster $serviceName $region $startTime $endTime >> $outputFile
-    }
-
-    # "---------- Processing ContainerInstances for $cluster $region ---------- "
-
-    # foreach($containerInstanceArn in (getECSContainerInstances $cluster $region))
-    # {
-    #     $clsn = getContainerInstanceName $containerInstanceArn
-
-    #     $cntr = Get-ECSContainerInstanceDetail -Cluster $cluster -ContainerInstance $clsn -Region $region | 
-    #     Select-Object -ExpandProperty ContainerInstances
-
-    #     $ec2InstanceId = $cntr.Ec2InstanceId
-
-    #     $outputFile = "E-$($ec2InstanceId)_$(getRegionAbbreviation $region).csv"
-
-    #     $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
-    #     $header > $outputFile
-
-    # "---------- Processing $ec2InstanceId $region ----------"
-
-    #     getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime >> $outputFile
-
-    #     "    AddCPUUtilizationWorksheet reportName, ""$outputFile""" >> $vbaCommands        
-    # }
-}
-
-
-$cluster
-$region
-$startTime
-$endTime
-
-$outputFile = "$($cluster)_$($region).csv"
-
-$header = "Region,Cluster,TimeStamp,Minimum,Average,Maximum"
-$header > $outputFile
-
-getCW_ECS_Cluster_CPUUtilization $cluster $region $startTime $endTime >> $outputFile
-
-
-$cluster = "noae-sbx01"
-$service = "notification"
-
-$cluster
-$service
-$region
-$startTime
-$endTime
-
-$outputFile = "$($cluster)_$($service)_$(getRegionAbbreviation $region).csv"
-
-$header = "Region,Service,TimeStamp,Minimum,Average,Maximum"
-$header > $outputFile
-
-getCW_ECS_Service_CPUUtilization $cluster $service $region $startTime $endTime >> $outputFile
-
-
-#endregion #################### EC2 Utilization ####################
+#endregion#################### ECS Utilization ####################
 
 #region #################### AS AutoScalingGroup ####################
 

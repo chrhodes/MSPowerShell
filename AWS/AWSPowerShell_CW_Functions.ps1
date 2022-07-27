@@ -390,6 +390,70 @@ function getCW_ECS_Cluster_CPUUtilization([string]$cluster, [string]$region, [Sy
     }    
 }
 
+# $codeOutputDir = "C:\VNC\git\chrhodes\MSPowerShell\AWS"
+# Set-Location $codeOutputDir
+
+# . '.\AWSPowerShell_Utility_Functions.ps1'
+
+# . '.\AWSPowerShell_AS_Functions.ps1'
+# . '.\AWSPowerShell_CW_Functions.ps1'
+# . '.\AWSPowerShell_EC2_Functions.ps1'
+# . '.\AWSPowerShell_ECS_Functions.ps1'
+
+# . '.\Refresh_Data_Functions.ps1'
+# # . '.\Refresh_Utilization_Functions.ps1'
+
+# $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
+# Set-Location $outputDir
+
+# #
+# # If in VS Code, import module
+# #
+
+# Import-Module AWSPowerShell.NetCore
+
+# #
+# # Specify the profile to use
+# #
+
+# Set-AWSCredential -ProfileName PlatformCostsRO
+
+# $region = "us-west-2"
+# $cluster = "noae-prod02"
+# $service = "filebeat"
+# $utcStartTime = (Get-Date).AddDays(-1)
+# $utcEndTime = Get-Date
+
+# getCW_ECS_Cluster_MemoryUtilization $cluster $region $utcStartTime $utcEndTime
+
+# getCW_ECS_Service_MemoryUtilization $cluster $service $region $utcStartTime $utcEndTime
+
+function getCW_ECS_Cluster_MemoryUtilization([string]$cluster, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+{
+    $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
+    $dimFilter.Name="ClusterName"
+    $dimFilter.Value=$cluster  
+   
+    $outputALL = Get-CWMetricStatistics `
+    -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
+    -MetricName "MemoryUtilization" `
+    -Dimension $dimFilter `
+    -Namespace "AWS/ECS" `
+    -Period 3600 `
+    -Statistic @("Minimum","Average","Maximum") `
+    -Region $region 
+
+    $dataPoints = $outputAll.Datapoints | sort-object -Property Timestamp 
+
+    foreach($dp in $dataPoints)
+    {
+        $output = "$region,$($cluster)"
+        $output += ",$($dp.TimeStamp.ToUniversalTime()),$($dp.Minimum),$($dp.Average),$($dp.Maximum)"
+
+        $output
+    }    
+}
+
 function getCW_ECS_Service_CPUUtilization([string]$cluster, [string]$service, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
 {
     $clusterFilter=[Amazon.CloudWatch.Model.Dimension]::new()
@@ -409,6 +473,42 @@ function getCW_ECS_Service_CPUUtilization([string]$cluster, [string]$service, [s
     $outputALL = Get-CWMetricStatistics `
     -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
     -MetricName "CPUUtilization" `
+    -Dimension $dimFilter `
+    -Namespace "AWS/ECS" `
+    -Period 3600 `
+    -Statistic @("Minimum","Average","Maximum") `
+    -Region $region 
+
+    $dataPoints = $outputAll.Datapoints | sort-object -Property Timestamp 
+
+    foreach($dp in $dataPoints)
+    {
+        $output = "$region,$($service)"
+        $output += ",$($dp.TimeStamp.ToUniversalTime()),$($dp.Minimum),$($dp.Average),$($dp.Maximum)"
+
+        $output
+    }  
+}
+
+function getCW_ECS_Service_MemoryUtilization([string]$cluster, [string]$service, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+{
+    $clusterFilter=[Amazon.CloudWatch.Model.Dimension]::new()
+    $clusterFilter.Name="ClusterName"
+    $clusterFilter.Value=$cluster  
+
+    # $clusterFilter
+
+    $serviceFilter=[Amazon.CloudWatch.Model.Dimension]::new()
+    $serviceFilter.Name="ServiceName"
+    $serviceFilter.Value=$service
+
+    # $serviceFilter
+
+    $dimFilter = @($clusterFilter, $serviceFilter)
+  
+    $outputALL = Get-CWMetricStatistics `
+    -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
+    -MetricName "MemoryUtilization" `
     -Dimension $dimFilter `
     -Namespace "AWS/ECS" `
     -Period 3600 `
