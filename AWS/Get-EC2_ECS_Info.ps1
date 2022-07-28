@@ -405,8 +405,13 @@ $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
 Set-Location $outputDir
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+
+$Regions = @("us-west-2")
 $Regions = @("us-east-2", "eu-west-1")
 $Regions = @("eu-central-1")
+
+$region = "us-west-2"
+$cluster = "mservice-prod02"
 
 foreach ($region in $Regions)
 {
