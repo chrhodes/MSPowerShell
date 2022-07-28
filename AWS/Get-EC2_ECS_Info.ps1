@@ -23,7 +23,7 @@ Set-Location $codeOutputDir
 . '.\AWSPowerShell_ECS_Functions.ps1'
 
 . '.\Refresh_Data_Functions.ps1'
-# . '.\Refresh_Utilization_Functions.ps1'
+. '.\Refresh_Utilization_Functions.ps1'
 
 $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
 Set-Location $outputDir
@@ -406,6 +406,7 @@ Set-Location $outputDir
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 $Regions = @("us-east-2", "eu-west-1")
+$Regions = @("eu-central-1")
 
 foreach ($region in $Regions)
 {
