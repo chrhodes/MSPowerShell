@@ -312,7 +312,7 @@ function getECSClusterServicesInfo_FromClusters($clusterArray, $region)
 
 function getServicesTags_FromClusters($clusterArray, $region)
 {
-    Write-Output "Region,Cluster,Service,ServiceArn,Key,Value"
+    Write-Output "Region,Cluster,Service,ClusterArn,ServiceArn,Key,Value"
 
     foreach($cluster in $clusterArray)
     {
@@ -328,13 +328,13 @@ function getServicesTags_FromClusters($clusterArray, $region)
             if ($null -eq $tags) 
             {
                 # Always output $region, $cluster and $service even if no $tags
-                "$region,$cluster,$service,$($csi.ServiceArn),"
+                "$region,$cluster,$service,$($csi.ClusterArn),$($csi.ServiceArn),"
             }
             else
             {
                 foreach($tag in $tags)
                 {
-                    "$region,$cluster,$service,$($csi.ServiceArn),$($tag.Key),$($tag.Value)"
+                    "$region,$cluster,$service,$($csi.ClusterArn),$($csi.ServiceArn),$($tag.Key),$($tag.Value)"
                 }
             }
         }

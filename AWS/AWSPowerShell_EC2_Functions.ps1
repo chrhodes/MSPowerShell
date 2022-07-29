@@ -330,17 +330,17 @@ function getEC2VolumeInfo_FromRegion([String] $region)
     }
 }
 
-Import-Module AWSPowerShell.NetCore
-Set-AWSCredential -ProfileName PlatformCostsRO
+# Import-Module AWSPowerShell.NetCore
+# Set-AWSCredential -ProfileName PlatformCostsRO
 
-$region = "us-west-2"
-$volumeId = "vol-860f2b60"
+# $region = "us-west-2"
+# $volumeId = "vol-860f2b60"
 
-$volume = Get-EC2Volume -VolumeId $volumeId -Region $region
-getEC2VolumeInfo $volumeId $region
+# $volume = Get-EC2Volume -VolumeId $volumeId -Region $region
+# getEC2VolumeInfo $volumeId $region
 
-$attachments = $volume | Select-Object -Expand Attachments
-$attachment = $volume | Select-Object -Expand Attachment
+# $attachments = $volume | Select-Object -Expand Attachments
+# $attachment = $volume | Select-Object -Expand Attachment
 
 # getEC2VolumeInfo_FromRegion "us-east-2"
 # getEC2VolumeInfo_FromRegion "us-west-2"
