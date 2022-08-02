@@ -73,37 +73,23 @@ Set-Location $outputDir
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 
-# Takes ~ 26 minutes 4 seconds
 
-refreshEC2_Data $Regions
 
-# Takes ~ 19 minutes 55 seconds
+refreshEC2_Data $Regions                    # Takes ~ 26 minutes
 
-refreshEC2Volume_Data $Regions
+refreshEC2Volume_Data $Regions              # Takes ~ 20 minutes
 
-# Takes ~ 4 minutes 10 seconds
+refreshECS_ClusterData $Regions             # Takes ~ 4 minutes
 
-refreshECS_ClusterData $Regions
+refreshECS_ServiceData $Regions             # Takes ~ 8 minutes
 
-# Takes ~ 8 minutes 30 seconds
+refreshECS_TaskData $Regions                # Takes ~ 14 minutes
 
-refreshECS_ServiceData $Regions
+refreshECS_ContainerInstanceData $Regions   # Takes ~ 4 minutes
 
-# Takes ~ 13 minutes 57 seconds
+refreshECS_TaskDefinitionData $Regions      # Takes ~ 58 minutes
 
-refreshECS_TaskData $Regions
-
-# Takes ~ 4 minutes 3 seconds
-
-refreshECS_ContainerInstanceData $Regions
-
-# Takes ~ 58 minutes 15 seconds
-
-refreshECS_TaskDefinitionData $Regions
-
-# Takes ~ minutes seconds - contains delay loops
-
-refreshAS_Data $Regions
+refreshAS_Data $Regions                     # Takes ~ 60 minutes - contains delay loops
 
 #endregion minutes seconds
 
@@ -413,19 +399,24 @@ $Regions = @("eu-central-1")
 $region = "us-west-2"
 $cluster = "mservice-prod02"
 
+# Takes ~ X Minutes
+
+$startTime = Get-Date
+
 foreach ($region in $Regions)
 {
-    $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
-    $endTime = Get-Date -Date "2022-06-30 23:59:59Z"
+    # $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
+    # $endTime = Get-Date -Date "2022-06-30 23:59:59Z"
 
-    # $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
-    # $endTime = Get-Date -Date "2022-07-20 23:59:59Z"
+    $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
+    $endTime = Get-Date -Date "2022-07-31 23:59:59Z"
 
-    Set-Location "$outputDir\Cluster_Service_Utilization\2022-06"
+    Set-Location "$outputDir\Cluster_Service_Utilization\2022-07"
 
     if (!(Test-Path -Path $region)) { New-Item -Name $region -ItemType Directory }
 
-    $regionOutputDirectory = "$outputDir\Cluster_Service_Utilization\2022-06\$region"
+    $regionOutputDirectory = "$outputDir\Cluster_Service_Utilization\2022-07\$region"
+
     ">> Processing $region"
 
     $clusterArray = @(getClusters $region)
@@ -441,6 +432,11 @@ foreach ($region in $Regions)
         GetClusterUtilizationDataFiles $region $cluster $startTime $endTime $outputDirectory -IncludeCluster -IncludeService -GatherData
     }
 }
+
+$endTime = Get-Date
+
+"Elapsed Time: "
+$endTime - $startTime | Select-Object Hours, Minutes, Seconds
 
 #endregion#################### ECS Utilization ####################
 
