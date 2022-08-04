@@ -25,55 +25,33 @@ Set-Location $codeOutputDir
 . '.\Refresh_Data_Functions.ps1'
 . '.\Refresh_Utilization_Functions.ps1'
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
-Set-Location $outputDir
-
 #
 # If in VS Code, import module
 #
 
 Import-Module AWSPowerShell.NetCore
 
-#
-# Specify the profile to use
-#
 
-Set-AWSCredential -ProfileName PlatformCostsRO
 
 #endregion Intialization and Setup
 
-#region #################### Command Context ####################
-
-# $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
-# $Regions = @("us-east-2", "eu-west-1")
-# $region = $Regions[0]
-
-# # This is for developing and testing
-
-# # us-west-2
-# $ClusterArray = @("noae-sbx01", "daco-prod02")
-# # us-east-2
-# $ClusterArray = @("zsystemcm-cnc00", "kewtest2-cnc02")
-
-# $cluster = $ClusterArray[0]
-
-# # This is for full run against all clusters
-
-# $ClusterArray = @(getClusters "us-west-2")
-# $ClusterArray = @(getClusters "us-east-2")
-# $ClusterArray = @(getClusters "eu-west-1")
-# $ClusterArray = @(getClusters "eu-central-1")
-
-#endregion Commnand Context
-
 #region #################### Big Refresh Data Loop ####################
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
+#
+# Specify the profile to use and the output location
+#
+
+Set-AWSCredential -ProfileName PlatformCostsROStage
+
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging"
+Set-Location $outputDir
+
+Set-AWSCredential -ProfileName PlatformCostsRO
+
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production"
 Set-Location $outputDir
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
-
-
 
 refreshEC2_Data $Regions                    # Takes ~ 26 minutes
 
@@ -316,11 +294,18 @@ $endTime.ToUniversalTime()
 
 getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime
 
+Set-AWSCredential -ProfileName PlatformCostsROStage
+
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging"
+Set-Location $outputDir
+
+Set-AWSCredential -ProfileName PlatformCostsRO
+
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production"
+Set-Location $outputDir
+
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 $Regions = @("us-east-2", "eu-west-1")
-
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
-Set-Location $outputDir
 
 foreach ($region in $Regions)
 {
@@ -387,8 +372,17 @@ $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 
 #region #################### ECS Utilization ####################
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
+
+Set-AWSCredential -ProfileName PlatformCostsROStage
+
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging"
 Set-Location $outputDir
+
+Set-AWSCredential -ProfileName PlatformCostsRO
+
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production"
+Set-Location $outputDir
+
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 
@@ -407,15 +401,17 @@ foreach ($region in $Regions)
 {
     # $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
     # $endTime = Get-Date -Date "2022-06-30 23:59:59Z"
+    # $outputDirYearMonth = "$outputDir\Cluster_Service_Utilization\2022-06"
+    # Set-Location $outputDirYearMonth    
 
     $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
     $endTime = Get-Date -Date "2022-07-31 23:59:59Z"
-
-    Set-Location "$outputDir\Cluster_Service_Utilization\2022-07"
+    $outputDirYearMonth = "$outputDir\Cluster_Service_Utilization\2022-07"    
+    Set-Location $outputDirYearMonth   
 
     if (!(Test-Path -Path $region)) { New-Item -Name $region -ItemType Directory }
 
-    $regionOutputDirectory = "$outputDir\Cluster_Service_Utilization\2022-07\$region"
+    $regionOutputDirectory = "$outputDirYearMonth\$region"
 
     ">> Processing $region"
 

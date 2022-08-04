@@ -44,13 +44,14 @@ Get-AWSPowerShellVersion
 Get-AWSPowerShellVersion -ListServiceVersionInfo
 
 Set-AWSCredential `
-                 -AccessKey <ACCESSKEY> `
-                 -SecretKey <SecretKey> `
-                 -StoreAs PlatformCostsRO
+    -AccessKey <ACCESSKEY> `
+    -SecretKey <SecretKey> `
+    -StoreAs PlatformCostsRO              
 
 Get-AWSCredential -ListProfileDetail
 
 Set-AWSCredential -ProfileName PlatformCostsRO
+Set-AWSCredential -ProfileName PlatformCostsROStage
 
 Remove-AWSCredentialProfile -ProfileName an-old-profile-I-do-not-need
 
