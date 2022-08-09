@@ -31,8 +31,6 @@ Set-Location $codeOutputDir
 
 Import-Module AWSPowerShell.NetCore
 
-
-
 #endregion Intialization and Setup
 
 #region #################### Big Refresh Data Loop ####################
@@ -41,33 +39,45 @@ Import-Module AWSPowerShell.NetCore
 # Specify the profile to use and the output location
 #
 
+#**********************************************************************
+#   S T A G I N G
+#**********************************************************************
+
 Set-AWSCredential -ProfileName PlatformCostsROStage
 
 $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging"
 Set-Location $outputDir
+
+#**********************************************************************
+#   P R O D U C T I O N
+#**********************************************************************
 
 Set-AWSCredential -ProfileName PlatformCostsRO
 
 $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production"
 Set-Location $outputDir
 
+#**********************************************************************
+#   S E T    R E G I O N S        G A T H E R    D A T A
+#**********************************************************************
+
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 
-refreshEC2_Data $Regions                    # Takes ~ 26 minutes
+refreshEC2_Data $Regions                    # Prod Takes ~ 26 minutes
 
-refreshEC2Volume_Data $Regions              # Takes ~ 20 minutes
+refreshEC2Volume_Data $Regions              # Prod Takes ~ 20 minutes
 
-refreshECS_ClusterData $Regions             # Takes ~ 4 minutes
+refreshECS_ClusterData $Regions             # Prod Takes ~ 4 minutes
 
-refreshECS_ServiceData $Regions             # Takes ~ 8 minutes
+refreshECS_ServiceData $Regions             # Prod Takes ~ 8 minutes
 
-refreshECS_TaskData $Regions                # Takes ~ 14 minutes
+refreshECS_TaskData $Regions                # Prod Takes ~ 14 minutes
 
-refreshECS_ContainerInstanceData $Regions   # Takes ~ 4 minutes
+refreshECS_ContainerInstanceData $Regions   # Prod Takes ~ 4 minutes
 
-refreshECS_TaskDefinitionData $Regions      # Takes ~ 58 minutes
+refreshECS_TaskDefinitionData $Regions      # Prod Takes ~ 58 minutes
 
-refreshAS_Data $Regions                     # Takes ~ 60 minutes - contains delay loops
+refreshAS_Data $Regions                     # Prod Takes ~ 60 minutes - contains delay loops
 
 #endregion minutes seconds
 
