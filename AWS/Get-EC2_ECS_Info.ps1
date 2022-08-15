@@ -63,21 +63,21 @@ Set-Location $outputDir
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 
-refreshEC2_Data $Regions                    # Prod Takes ~ 26 minutes
+refreshEC2_Data $Regions                    # Prod Takes ~26 minutes (Staging ~6)
 
-refreshEC2Volume_Data $Regions              # Prod Takes ~ 20 minutes
+refreshEC2Volume_Data $Regions              # Prod Takes ~20 minutes (Staging ~5)
 
-refreshECS_ClusterData $Regions             # Prod Takes ~ 4 minutes
+refreshECS_ClusterData $Regions             # Prod Takes ~4 minutes (Staging ~2)
 
-refreshECS_ServiceData $Regions             # Prod Takes ~ 8 minutes
+refreshECS_ServiceData $Regions             # Prod Takes ~9 minutes (Staging ~4)
 
-refreshECS_TaskData $Regions                # Prod Takes ~ 14 minutes
+refreshECS_TaskData $Regions                # Prod Takes ~16 minutes (Staging ~4)
 
-refreshECS_ContainerInstanceData $Regions   # Prod Takes ~ 4 minutes
+refreshECS_ContainerInstanceData $Regions   # Prod Takes ~5 minutes (Staging ~1)
 
-refreshECS_TaskDefinitionData $Regions      # Prod Takes ~ 58 minutes
+refreshECS_TaskDefinitionData $Regions      # Prod Takes ~60 minutes (Staging ~35)
 
-refreshAS_Data $Regions                     # Prod Takes ~ 60 minutes - contains delay loops
+refreshAS_Data $Regions                     # Prod Takes ~60 minutes (Staging ~12) - contains delay loops
 
 #endregion minutes seconds
 
