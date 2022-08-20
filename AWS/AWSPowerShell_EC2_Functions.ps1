@@ -65,6 +65,10 @@ function getEC2InstanceInfo($ec2InstanceId, $region)
         $output += ",$hypervisor,$virtualizationType"
         # $output += ",$($ec2ei.State.Name.Value)"
         $output += ",$state"
+        $output += ",$($ec2ie.LaunchTime)"
+        $output += ",$($ec2ie.UsageOperation),$($ec2ie.UsageOperationUpdateTime)"
+        $output += ",$($ec2rie.LaunchTime)"
+        $output += ",$($ec2rie.UsageOperation),$($ec2rie.UsageOperationUpdateTime)"        
         
         $output
     }
@@ -92,6 +96,10 @@ function getEC2InstanceInfo_FromInstances($instanceArray, $region)
     $output += ",RootDeviceType"
     $output += ",Hypervisor,VirualizationType"
     $output += ",State"
+    $output += ",LaunchTime-I"
+    $output += ",UsageOperation-I,UsageOperationUpdateTime-I"
+    $output += ",LaunchTime_RI"
+    $output += ",UsageOperation-RI,UsageOperationUpdateTime-RI"    
 
     $output
 

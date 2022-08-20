@@ -299,10 +299,15 @@ $region = "us-west-2"
 $ec2InstanceId = "i-57542c92"
 getEC2InstanceInfo $ec2InstanceId $region
 
+$startTime = Get-Date -Date "2022-08-18 00:00:00Z"
+$endTime = Get-Date -Date "2022-08-19 23:59:59Z"
+
 $startTime.ToUniversalTime()
 $endTime.ToUniversalTime()
 
 getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime
+getCW_EC2_NetworkInUtilization $ec2InstanceId $region $startTime $endTime
+getCW_EC2_NetworkOutUtilization $ec2InstanceId $region $startTime $endTime
 
 Set-AWSCredential -ProfileName PlatformCostsROStage
 
@@ -316,6 +321,105 @@ Set-Location $outputDir
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 $Regions = @("us-east-2", "eu-west-1")
+
+foreach ($region in $Regions)
+{
+    # $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
+    # $endTime = Get-Date -Date "2022-06-30 23:59:59Z"
+    # $outputDirYearMonth = "$outputDir\EC2_Utilization\2022-06"
+    # Set-Location $outputDirYearMonth
+
+    $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
+    $endTime = Get-Date -Date "2022-07-31 23:59:59Z"
+    $outputDirYearMonth = "$outputDir\EC2_Utilization\2022-07"
+    Set-Location $outputDirYearMonth    
+
+    if (!(Test-Path -Path $region)) { New-Item -Name $region -ItemType Directory }    
+
+    $regionOutputDirectory = "$outputDirYearMonth\$region"
+
+    ">> Processing $region"
+
+    $instances = @(getEC2Instances $region)
+
+    Set-Location $regionOutputDirectory
+
+    foreach($ec2InstanceId in $instances)
+    {
+        $outputFile = "CPU_$($ec2InstanceId)_$($region).csv"
+
+        $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
+        $header > $outputFile
+
+        "Gathering CPU Utilization for $region $ec2InstanceId"
+
+        getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime `
+            >> $outputFile
+    }
+
+    foreach($ec2InstanceId in $instances)
+    {
+        $outputFile = "NetIn_$($ec2InstanceId)_$($region).csv"
+
+        $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
+        $header > $outputFile
+
+        "Gathering NetworkIn Utilization for $region $ec2InstanceId"
+
+        getCW_EC2_NetworkInUtilization $ec2InstanceId $region $startTime $endTime `
+            >> $outputFile
+    }
+
+    foreach($ec2InstanceId in $instances)
+    {
+        $outputFile = "NetOut_$($ec2InstanceId)_$($region).csv"
+
+        $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
+        $header > $outputFile
+
+        "Gathering NetworkOut Utilization for $region $ec2InstanceId"
+
+        getCW_EC2_NetworkOutUtilization $ec2InstanceId $region $startTime $endTime `
+            >> $outputFile
+    }     
+}
+
+foreach ($region in $Regions)
+{
+    $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
+    $endTime = Get-Date -Date "2022-06-30 23:59:59Z"
+
+    Set-Location "$outputDir\EC2 Network Utilization 2022.06\"
+    "---------- Processing $region ----------"
+
+    $instances = @(getEC2Instances $region)
+
+    foreach($ec2InstanceId in $instances)
+    {
+        $outputFile = "NetIn_$($ec2InstanceId)_$($region).csv"
+
+        $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
+        $header > $outputFile
+
+        "Gathering NetworkIn Utilization for $region $ec2InstanceId"
+
+        getCW_EC2_NetworkInUtilization $ec2InstanceId $region $startTime $endTime `
+            >> $outputFile
+    }
+
+    foreach($ec2InstanceId in $instances)
+    {
+        $outputFile = "NetOut_$($ec2InstanceId)_$($region).csv"
+
+        $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
+        $header > $outputFile
+
+        "Gathering NetworkOut Utilization for $region $ec2InstanceId"
+
+        getCW_EC2_NetworkOutUtilization $ec2InstanceId $region $startTime $endTime `
+            >> $outputFile
+    }    
+}
 
 foreach ($region in $Regions)
 {

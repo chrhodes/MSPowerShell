@@ -157,8 +157,15 @@ Set-StrictMode -Version Latest
 # Get-CWMetricList -Region $region -Namespace "AWS/ECS" `
 #     -MetricName "CPUUtilization" | more
 
-# Get-CWMetricList -Region $region -Namespace "AWS/ECS" `
+# Get-CWMetricList -Region $region -Namespace "AWS/EC2" `
 #     -MetricName "CPUUtilization" | Select-Object -Expand Dimensions | more
+
+# Get-CWMetricList -Region $region -Namespace "AWS/EC2" `
+#     -MetricName "NetworkIn" | Select-Object -Expand Dimensions | more
+
+# Get-CWMetricList -Region $region -Namespace "AWS/EC2" `
+#     -MetricName "NetworkOut" | Select-Object -Expand Dimensions | more
+
 # $dimFilter = @{}
 # $dimFilter.Add("ClusterName", "daco-prod02")
 # $dimFilter | Get-Type
@@ -362,6 +369,92 @@ function getCW_EC2_CPUUtilization([string]$ec2InstanceId, [string]$region, [Syst
 
     # |
     #     Select-Object -Property @("TimeStamp", "Minimum", "Average", "Maximum")     
+}
+
+# getCW_EC2_NetworkInUtilization $ec2InstanceId $region $startTime $endTime
+
+function getCW_EC2_NetworkOutUtilization([string]$ec2InstanceId, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+{
+    # $utcStartTime=[System.DateTime]::UtcNow.AddDays(-40)
+    # $utcEndTime=[System.DateTime]::UtcNow
+
+    $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
+    $dimFilter.Name="InstanceId"
+    $dimFilter.Value=$ec2InstanceId  
+    
+    $outputALL = Get-CWMetricStatistics `
+    -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
+    -MetricName "NetworkOut" `
+    -Dimension $dimFilter `
+    -Namespace "AWS/EC2" `
+    -Period 3600 `
+    -Statistic @("Minimum","Average","Maximum") `
+    -Region $region 
+
+    $dataPoints = $outputAll.Datapoints | sort-object -Property Timestamp 
+
+    foreach($dp in $dataPoints)
+    {
+        $output = "$region,$($ec2InstanceId)"
+        $output += ",$($dp.TimeStamp.ToUniversalTime()),$($dp.Minimum),$($dp.Average),$($dp.Maximum)"
+
+        $output
+    }  
+}
+
+# $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
+# $dimFilter.Name="InstanceId"
+# $dimFilter.Value=$ec2InstanceId  
+    
+# $outputALL = Get-CWMetricStatistics `
+# -UtcStartTime $startTime -UtcEndTime $endTime `
+# -MetricName "NetworkIn" `
+# -Dimension $dimFilter `
+# -Namespace "AWS/EC2" `
+# -Period 3600 `
+# -Region $region `
+# -Statistic @("Minimum","Average","Maximum")
+
+# $outputALL.Datapoints.Count
+
+# $dataPoints = $outputAll.Datapoints | sort-object -Property Timestamp 
+
+# foreach($dp in $dataPoints)
+# {
+#     $output = "$region,$($ec2InstanceId)"
+#     $output += ",$($dp.TimeStamp.ToUniversalTime()),$($dp.Minimum),$($dp.Average),$($dp.Maximum)"
+
+#     $output
+# }   
+
+# getCW_EC2_NetworkInUtilization $ec2InstanceId $region $startTime $endTime
+function getCW_EC2_NetworkInUtilization([string]$ec2InstanceId, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+{
+    # $utcStartTime=[System.DateTime]::UtcNow.AddDays(-40)
+    # $utcEndTime=[System.DateTime]::UtcNow
+
+    $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
+    $dimFilter.Name="InstanceId"
+    $dimFilter.Value=$ec2InstanceId  
+    
+    $outputALL = Get-CWMetricStatistics `
+    -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
+    -MetricName "NetworkIn" `
+    -Dimension $dimFilter `
+    -Namespace "AWS/EC2" `
+    -Period 3600 `
+    -Statistic @("Minimum","Average","Maximum") `
+    -Region $region 
+
+    $dataPoints = $outputAll.Datapoints | sort-object -Property Timestamp 
+
+    foreach($dp in $dataPoints)
+    {
+        $output = "$region,$($ec2InstanceId)"
+        $output += ",$($dp.TimeStamp.ToUniversalTime()),$($dp.Minimum),$($dp.Average),$($dp.Maximum)"
+
+        $output
+    }   
 }
 
 function getCW_ECS_Cluster_CPUUtilization([string]$cluster, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
