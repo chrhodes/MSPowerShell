@@ -6,6 +6,33 @@
 
 Set-StrictMode -Version Latest
 
+#region #################### Intialization and Setup ####################
+# Go play somewhere
+#
+
+# Source the functions we use
+
+# $codeOutputDir = "C:\VNC\git\chrhodes\MSPowerShell\AWS"
+# Set-Location $codeOutputDir
+
+# . '.\AWSPowerShell_Utility_Functions.ps1'
+
+# . '.\AWSPowerShell_AS_Functions.ps1'
+# . '.\AWSPowerShell_CW_Functions.ps1'
+# . '.\AWSPowerShell_EC2_Functions.ps1'
+# . '.\AWSPowerShell_ECS_Functions.ps1'
+
+# . '.\Refresh_Data_Functions.ps1'
+# . '.\Refresh_Utilization_Functions.ps1'
+
+#
+# If in VS Code, import module
+#
+
+# Import-Module AWSPowerShell.NetCore
+
+#endregion Intialization and Setup
+
 # Get-CWAlarm
 # Get-CWAlarmForMetric
 # Get-CWAlarmHistory
@@ -187,8 +214,6 @@ Set-StrictMode -Version Latest
 #      -Dimension $dimFilter2 |
 #     Select-Object -Expand Dimensions | more    
 
-
-
 # Here is a (hopefully complete) list of Namespaces
 # AWS/AmplifyHosting
 # AWS/ApiGateway
@@ -244,6 +269,7 @@ Set-StrictMode -Version Latest
 # ECS/ContainerInsights
 # System/Linux
 # WAF
+#
 
 # 
 # Get-CWMetricStatistic
@@ -402,6 +428,21 @@ function getCW_EC2_NetworkOutUtilization([string]$ec2InstanceId, [string]$region
     }  
 }
 
+# Set-AWSCredential -ProfileName PlatformCostsRO
+
+# $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production"
+# Set-Location $outputDir
+
+# $startTime = (Get-Date).AddDays(-10)
+# $endTime = Get-Date
+# $region = "us-west-2"
+# $ec2InstanceId = "i-57542c92"
+
+# $startTime 
+# $endTime
+# $region
+# $ec2InstanceId 
+
 # $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
 # $dimFilter.Name="InstanceId"
 # $dimFilter.Value=$ec2InstanceId  
@@ -428,6 +469,36 @@ function getCW_EC2_NetworkOutUtilization([string]$ec2InstanceId, [string]$region
 # }   
 
 # getCW_EC2_NetworkInUtilization $ec2InstanceId $region $startTime $endTime
+
+function getCW_EC2_MetricUtilization(
+    [string]$metricName, 
+    [string]$ec2InstanceId, [string]$region, 
+    [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+{
+    $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
+    $dimFilter.Name="InstanceId"
+    $dimFilter.Value=$ec2InstanceId  
+    
+    $outputALL = Get-CWMetricStatistics `
+    -UtcStartTime $utcStartTime -UtcEndTime $utcEndTime `
+    -MetricName $metricName `
+    -Dimension $dimFilter `
+    -Namespace "AWS/EC2" `
+    -Period 3600 `
+    -Statistic @("Minimum","Average","Maximum") `
+    -Region $region 
+
+    $dataPoints = $outputAll.Datapoints | sort-object -Property Timestamp 
+
+    foreach($dp in $dataPoints)
+    {
+        $output = "$region,$($ec2InstanceId)"
+        $output += ",$($dp.TimeStamp.ToUniversalTime()),$($dp.Minimum),$($dp.Average),$($dp.Maximum)"
+
+        $output
+    }   
+}
+
 function getCW_EC2_NetworkInUtilization([string]$ec2InstanceId, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
 {
     # $utcStartTime=[System.DateTime]::UtcNow.AddDays(-40)
@@ -456,6 +527,8 @@ function getCW_EC2_NetworkInUtilization([string]$ec2InstanceId, [string]$region,
         $output
     }   
 }
+
+#region ECS
 
 function getCW_ECS_Cluster_CPUUtilization([string]$cluster, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
 {
@@ -618,6 +691,8 @@ function getCW_ECS_Service_MemoryUtilization([string]$cluster, [string]$service,
         $output
     }  
 }
+
+#endregion
 
 # Get-CWMetricStream
 # Get-CWMetricStreamList
