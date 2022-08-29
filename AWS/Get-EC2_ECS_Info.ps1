@@ -375,34 +375,48 @@ function gatherEC2UtilizationMetricsForRegion(
 
     foreach($ec2InstanceId in $instances)
     {
-        gatherEC2Metric "CPUUtilization" $ec2InstanceId $region $startTime $endTime
+        if (!(Test-Path -Path $ec2InstanceId)) { New-Item -Name $region -ItemType Directory } 
+
+        Set-Location $ec2InstanceId
         
-        gatherEC2Metric "NetworkIn" $ec2InstanceId $region $startTime $endTime
-        gatherEC2Metric "NetworkOut" $ec2InstanceId $region $startTime $endTime
+        gatherEC2Metric "CPUUtilization" $ec2InstanceId $region $startTime $endTime -GatherData
+        
+        gatherEC2Metric "NetworkIn" $ec2InstanceId $region $startTime $endTime -GatherData
+        gatherEC2Metric "NetworkOut" $ec2InstanceId $region $startTime $endTime -GatherData
 
-        gatherEC2Metric "DiskReadOps" $ec2InstanceId $region $startTime $endTime
-        gatherEC2Metric "DiskWriteOps" $ec2InstanceId $region $startTime $endTime
+        gatherEC2Metric "DiskReadOps" $ec2InstanceId $region $startTime $endTime -GatherData
+        gatherEC2Metric "DiskWriteOps" $ec2InstanceId $region $startTime $endTime -GatherData
 
-        gatherEC2Metric "EBSReadOps" $ec2InstanceId $region $startTime $endTime                    
-        gatherEC2Metric "EBSWriteOps" $ec2InstanceId $region $startTime $endTime
+        gatherEC2Metric "EBSReadOps" $ec2InstanceId $region $startTime $endTime -GatherData                  
+        gatherEC2Metric "EBSWriteOps" $ec2InstanceId $region $startTime $endTime -GatherData
+
+        Set-Location $regionOutputDirectory
     } 
 }
 
 function gatherEC2Metric(
     [string]$metricName, 
     [string]$ec2InstanceId, [string]$region, 
-    [System.DateTime]$startTime, [System.DateTime]$endTime)
+    [System.DateTime]$startTime, [System.DateTime]$endTime,
+    [switch]$GatherData)
 {
         $outputFile = "$($ec2InstanceId)_$($metricName)_$($region).csv"
 
-        "$($metricName),$($startTime),$($endTime)" > $outputFile
-        $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
-        $header >> $outputFile        
-
         "Gathering $metricName Utilization for $region $ec2InstanceId"
 
-        getCW_EC2_MetricUtilization $metricName $ec2InstanceId $region $startTime $endTime `
-            >> $outputFile
+        if ($GatherData)
+        {
+            "Region,$($region)" > $outputFile
+            "ec2Instance,$($ec2InstanceId)" >> $outputFile
+            "Metric,$($metricName)" >> $outputFile
+            "StartTime,,$($startTime)" >> $outputFile
+            "EndTime,,$($endTime)" >> $outputFile              
+
+            "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum" >> $outputFile        
+
+            getCW_EC2_MetricUtilization $metricName $ec2InstanceId $region $startTime $endTime `
+                >> $outputFile
+        }
 }
 
 # foreach ($region in $Regions)
