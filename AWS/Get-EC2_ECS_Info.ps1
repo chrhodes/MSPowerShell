@@ -234,6 +234,7 @@ getECSContainerInstanceInfo_FromClusters $ClusterArray $Regions[0]
 # getEC2Instances_FromClusters $ClusterArray $Regions[0]
 
 
+
 foreach ($region in $Regions)
 {
     Set-Location $outputDir

@@ -29,6 +29,25 @@ Set-StrictMode -Version Latest
 #   [<CommonParameters>]
 #
 
+# $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+
+function getEC2InstanceCount([String[]]$Regions)
+{
+    foreach ($region in $Regions)
+    {
+        $instances = getEC2Instances $region
+
+        if ($null -eq $instances)
+        {
+            "$($region),0"
+        }
+        else
+        {
+            "$($region),$($instances.Count)"
+        }
+    }
+}
+
 function getEC2Instances([String]$region)
 {
     @(Get-EC2Instance -Region $region) | 
