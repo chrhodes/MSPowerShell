@@ -443,6 +443,29 @@ function refreshAS_Data([string[]]$Regions)
 
 #endregion #################### AS AutoScalingGroup ####################
 
+function gatherMonthlyEC2_Utilization_Data(
+    [string]$outputDir,    
+    [string[]]$regions, 
+    [string]$yearMonth,
+    [System.DateTime]$startTime, [System.DateTime]$endTime)
+{
+    $runStartTime = Get-Date
+    
+    ">>>>>>>>>> Gathering EC2 Utilization Data"
+
+    foreach ($region in $Regions)
+    {    
+        Set-Location $outputDir
+        # gatherEC2UtilizationMetricsForRegion $outputDir "2022-06" $region $startTime $endTime
+        gatherEC2UtilizationMetricsForRegion $outputDir $yearMonth $region $startTime $endTime
+    }   
+
+    $runEndTime = Get-Date
+
+    "Elapsed Time: "
+    $runEndTime - $runStartTime | Select-Object Hours, Minutes, Seconds
+}
+
 ################################################################################
 #
 # Refresh_Data_Functions.ps1

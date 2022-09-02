@@ -233,8 +233,6 @@ getECSContainerInstanceInfo_FromClusters $ClusterArray $Regions[0]
 # getEC2Instances $ClusterArray[0] $Regions[0]
 # getEC2Instances_FromClusters $ClusterArray $Regions[0]
 
-
-
 foreach ($region in $Regions)
 {
     Set-Location $outputDir
@@ -328,158 +326,27 @@ $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 $Regions = @("us-east-2", "eu-west-1")
 $Regions = @("eu-west-1")
 $region = "eu-west-1"
-
-
+$region = "us-west-2"
+$yearMonth = "2022-08"
 
 # $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
 # $endTime = Get-Date -Date "2022-06-30 23:59:59Z"
 
-$startTime = Get-Date -Date "2022-07-01 00:00:00Z"
-$endTime = Get-Date -Date "2022-07-31 23:59:59Z"
+# $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
+# $endTime = Get-Date -Date "2022-07-31 23:59:59Z"
 
-# $startTime = Get-Date -Date "2022-08-01 00:00:00Z"
-# $endTime = Get-Date -Date "2022-08-31 23:59:59Z"
+$startTime = Get-Date -Date "2022-08-01 00:00:00Z"
+$endTime = Get-Date -Date "2022-08-31 23:59:59Z"
 
 $outputDir
 $Regions
 $startTime
 $endTime
 
-foreach ($region in $Regions)
-{
-    Set-Location $outputDir
-    # gatherEC2UtilizationMetricsForRegion $outputDir "2022-06" $region $startTime $endTime
-    gatherEC2UtilizationMetricsForRegion $outputDir "2022-07" $region $startTime $endTime
-}
+# 2H 15M Staging
+# xH xxM Production
 
-function gatherEC2UtilizationMetricsForRegion(
-    [string]$outputDir,
-    [string]$yearMonth,    
-    [string]$region,
-    [System.DateTime]$startTime, [System.DateTime]$endTime
-)
-{
-    $outputDirYearMonth = "$outputDir\EC2_Utilization\$yearMonth"
-    if (!(Test-Path -Path $outputDirYearMonth)) { New-Item -Name $outputDirYearMonth -ItemType Directory } 
-
-    Set-Location $outputDirYearMonth
-
-    if (!(Test-Path -Path $region)) { New-Item -Name $region -ItemType Directory }    
-
-    $regionOutputDirectory = "$($outputDirYearMonth)\$($region)"
-
-    ">> Processing $region"
-
-    $instances = @(getEC2Instances $region)
-
-    Set-Location $regionOutputDirectory
-
-    foreach($ec2InstanceId in $instances)
-    {
-        if (!(Test-Path -Path $ec2InstanceId)) { New-Item -Name $region -ItemType Directory } 
-
-        Set-Location $ec2InstanceId
-        
-        gatherEC2Metric "CPUUtilization" $ec2InstanceId $region $startTime $endTime -GatherData
-        
-        gatherEC2Metric "NetworkIn" $ec2InstanceId $region $startTime $endTime -GatherData
-        gatherEC2Metric "NetworkOut" $ec2InstanceId $region $startTime $endTime -GatherData
-
-        gatherEC2Metric "DiskReadOps" $ec2InstanceId $region $startTime $endTime -GatherData
-        gatherEC2Metric "DiskWriteOps" $ec2InstanceId $region $startTime $endTime -GatherData
-
-        gatherEC2Metric "EBSReadOps" $ec2InstanceId $region $startTime $endTime -GatherData                  
-        gatherEC2Metric "EBSWriteOps" $ec2InstanceId $region $startTime $endTime -GatherData
-
-        Set-Location $regionOutputDirectory
-    } 
-}
-
-function gatherEC2Metric(
-    [string]$metricName, 
-    [string]$ec2InstanceId, [string]$region, 
-    [System.DateTime]$startTime, [System.DateTime]$endTime,
-    [switch]$GatherData)
-{
-        $outputFile = "$($ec2InstanceId)_$($metricName)_$($region).csv"
-
-        "Gathering $metricName Utilization for $region $ec2InstanceId"
-
-        if ($GatherData)
-        {
-            "Region,$($region)" > $outputFile
-            "ec2Instance,$($ec2InstanceId)" >> $outputFile
-            "Metric,$($metricName)" >> $outputFile
-            "StartTime,,$($startTime)" >> $outputFile
-            "EndTime,,$($endTime)" >> $outputFile              
-
-            "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum" >> $outputFile        
-
-            getCW_EC2_MetricUtilization $metricName $ec2InstanceId $region $startTime $endTime `
-                >> $outputFile
-        }
-}
-
-# foreach ($region in $Regions)
-# {
-#     $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
-#     $endTime = Get-Date -Date "2022-06-30 23:59:59Z"
-
-#     Set-Location "$outputDir\EC2 CPU Utilization 2022.06\"
-#     "---------- Processing $region ----------"
-
-#     $instances = @(getEC2Instances $region)
-
-#     foreach($ec2InstanceId in $instances)
-#     {
-#         $outputFile = "CPU_$($ec2InstanceId)_$($region).csv"
-
-#         $header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
-#         $header > $outputFile
-
-#         "Gathering CPU Utilization for $region $ec2InstanceId"
-
-#         getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime `
-#             >> $outputFile
-#     }
-# }
-
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\CPU Utilization Explore"
-Set-Location $outputDir
-
-$startTime = Get-Date -Date "2022-07-01 00:00:00Z"
-$endTime = Get-Date -Date "2022-07-12 23:59:59Z"
-
-$region = "us-west-2"
-
-$ec2InstanceId = "i-0f65358267fb8074d"
-
-$outputFile = "$($ec2InstanceId)_$(getRegionAbbreviation $region).csv"
-
-$header = "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum"
-$header > $outputFile
-
-$ec2InstanceId
-$region
-$startTime
-$endTime
-
-getCW_EC2_CPUUtilization $ec2InstanceId $region $startTime $endTime >> $outputFile
-
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files"
-Set-Location $outputDir
-
-$startTime = Get-Date -Date "2022-07-01 00:00:00Z"
-$endTime = Get-Date -Date "2022-07-12 23:59:59Z"
-
-$region = "us-west-2"
-$cluster = "noae-sbx01"
-
-GetClusterDataFiles $region $cluster $startTime $endTime
-
-$clusters = @(getClusters $region)
-
-$Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+gatherMonthlyEC2_Utilization_Data $outputDir $Regions "2022-08" $startTime $endTime
 
 #endregion #################### EC2 Utilization ####################
 
@@ -516,10 +383,16 @@ foreach ($region in $Regions)
     # $outputDirYearMonth = "$outputDir\Cluster_Service_Utilization\2022-06"
     # Set-Location $outputDirYearMonth    
 
-    $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
-    $endTime = Get-Date -Date "2022-07-31 23:59:59Z"
-    $outputDirYearMonth = "$outputDir\Cluster_Service_Utilization\2022-07"    
-    Set-Location $outputDirYearMonth   
+    # $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
+    # $endTime = Get-Date -Date "2022-07-31 23:59:59Z"
+    # $outputDirYearMonth = "$outputDir\Cluster_Service_Utilization\2022-07"    
+    # Set-Location $outputDirYearMonth
+
+    $startTime = Get-Date -Date "2022-08-01 00:00:00Z"
+    $endTime = Get-Date -Date "2022-08-31 23:59:59Z"
+    $outputDirYearMonth = "$outputDir\Cluster_Service_Utilization\2022-08"
+    
+    Set-Location $outputDirYearMonth       
 
     if (!(Test-Path -Path $region)) { New-Item -Name $region -ItemType Directory }
 

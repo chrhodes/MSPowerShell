@@ -8,6 +8,76 @@ Set-StrictMode -Version Latest
 
 #region #################### EC2 Utilization ####################
 
+function gatherEC2UtilizationMetricsForRegion(
+    [string]$outputDir,
+    [string]$yearMonth,    
+    [string]$region,
+    [System.DateTime]$startTime, [System.DateTime]$endTime
+)
+{
+    Set-Location "$($outputDir)\EC2_Utilization"
+    $outputDirYearMonth = "$($outputDir)\EC2_Utilization\$($yearMonth)"
+
+    if (!(Test-Path -Path $yearMonth)) { New-Item -Name $yearMonth -ItemType Directory } 
+
+    Set-Location $outputDirYearMonth
+
+    if (!(Test-Path -Path $region)) { New-Item -Name $region -ItemType Directory }    
+
+    $regionOutputDirectory = "$($outputDirYearMonth)\$($region)"
+
+    ">> Processing $region"
+
+    $instances = @(getEC2Instances $region)
+
+    Set-Location $regionOutputDirectory
+
+    foreach($ec2InstanceId in $instances)
+    {
+        if (!(Test-Path -Path $ec2InstanceId)) { New-Item -Name $ec2InstanceId -ItemType Directory } 
+
+        Set-Location $ec2InstanceId
+        
+        gatherEC2Metric "CPUUtilization" $ec2InstanceId $region $startTime $endTime -GatherData
+        
+        gatherEC2Metric "NetworkIn" $ec2InstanceId $region $startTime $endTime -GatherData
+        gatherEC2Metric "NetworkOut" $ec2InstanceId $region $startTime $endTime -GatherData
+
+        gatherEC2Metric "DiskReadOps" $ec2InstanceId $region $startTime $endTime -GatherData
+        gatherEC2Metric "DiskWriteOps" $ec2InstanceId $region $startTime $endTime -GatherData
+
+        gatherEC2Metric "EBSReadOps" $ec2InstanceId $region $startTime $endTime -GatherData                  
+        gatherEC2Metric "EBSWriteOps" $ec2InstanceId $region $startTime $endTime -GatherData
+
+        Set-Location $regionOutputDirectory
+    } 
+}
+
+function gatherEC2Metric(
+    [string]$metricName, 
+    [string]$ec2InstanceId, [string]$region, 
+    [System.DateTime]$startTime, [System.DateTime]$endTime,
+    [switch]$GatherData)
+{
+        $outputFile = "$($ec2InstanceId)_$($metricName)_$($region).csv"
+
+        "Gathering $metricName Utilization for $region $ec2InstanceId"
+
+        if ($GatherData)
+        {
+            "Region,$($region)" > $outputFile
+            "ec2Instance,$($ec2InstanceId)" >> $outputFile
+            "Metric,$($metricName)" >> $outputFile
+            "StartTime,,$($startTime)" >> $outputFile
+            "EndTime,,$($endTime)" >> $outputFile              
+
+            "Region,EC2InstanceId,TimeStamp,Minimum,Average,Maximum" >> $outputFile        
+
+            getCW_EC2_MetricUtilization $metricName $ec2InstanceId $region $startTime $endTime `
+                >> $outputFile
+        }
+}
+
 #endregion #################### EC2 Utilization ####################
 
 #region #################### ECS Utilization ####################
@@ -209,8 +279,7 @@ function getServiceUtilizationData()
     }
 }
 
-
-#endregion#################### ECS Utilization ####################
+#endregion #################### ECS Utilization ####################
 
 ################################################################################
 #
