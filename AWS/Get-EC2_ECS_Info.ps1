@@ -7,8 +7,6 @@
 Set-StrictMode -Version Latest
 
 #region #################### Intialization and Setup ####################
-# Go play somewhere
-#
 
 # Source the functions we use
 
@@ -354,12 +352,12 @@ gatherMonthlyEC2_Utilization_Data $outputDir $Regions "2022-08" $startTime $endT
 
 Set-AWSCredential -ProfileName PlatformCostsROStage
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging"
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\Cluster_Service_Utilization"
 Set-Location $outputDir
 
 Set-AWSCredential -ProfileName PlatformCostsRO
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production"
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\Cluster_Service_Utilization"
 Set-Location $outputDir
 
 
@@ -374,7 +372,7 @@ $cluster = "mservice-prod02"
 
 # Takes ~ X Minutes
 
-$startTime = Get-Date
+$runStartTime = Get-Date
 
 foreach ($region in $Regions)
 {
@@ -390,7 +388,7 @@ foreach ($region in $Regions)
 
     $startTime = Get-Date -Date "2022-08-01 00:00:00Z"
     $endTime = Get-Date -Date "2022-08-31 23:59:59Z"
-    $outputDirYearMonth = "$outputDir\Cluster_Service_Utilization\2022-08"
+    $outputDirYearMonth = "$outputDir\2022-08"
     
     Set-Location $outputDirYearMonth       
 
@@ -414,10 +412,10 @@ foreach ($region in $Regions)
     }
 }
 
-$endTime = Get-Date
+$runEndTime = Get-Date
 
 "Elapsed Time: "
-$endTime - $startTime | Select-Object Hours, Minutes, Seconds
+$runEndTime - $runStartTime | Select-Object Hours, Minutes, Seconds
 
 #endregion#################### ECS Utilization ####################
 
