@@ -1,0 +1,55 @@
+{
+  "ARN": "arn:aws:elasticache:us-west-2:122972921717:cluster:advanced-payment-manager-staging-001",
+  "AtRestEncryptionEnabled": true,
+  "AuthTokenEnabled": true,
+  "AuthTokenLastModifiedDate": "2020-02-22T01:40:37.827-08:00",
+  "AutoMinorVersionUpgrade": true,
+  "CacheClusterCreateTime": "2019-11-27T09:18:28.598-08:00",
+  "CacheClusterId": "advanced-payment-manager-staging-001",
+  "CacheClusterStatus": "available",
+  "CacheNodes": [
+    {
+      "CacheNodeCreateTime": "2019-11-27T09:18:28.598-08:00",
+      "CacheNodeId": "0001",
+      "CacheNodeStatus": "available",
+      "CustomerAvailabilityZone": "us-west-2a",
+      "CustomerOutpostArn": null,
+      "Endpoint": {
+        "Address": "advanced-payment-manager-staging-001.advanced-payment-manager-staging.lo68mz.usw2.cache.amazonaws.com",
+        "Port": 6379
+      },
+      "ParameterGroupStatus": "in-sync",
+      "SourceCacheNodeId": null
+    }
+  ],
+  "CacheNodeType": "cache.t2.micro",
+  "CacheParameterGroup": {
+    "CacheNodeIdsToReboot": [],
+    "CacheParameterGroupName": "default.redis4.0",
+    "ParameterApplyStatus": "in-sync"
+  },
+  "CacheSecurityGroups": [],
+  "CacheSubnetGroupName": "connect-apps-subnet-grp",
+  "ClientDownloadLandingPage": "https://console.aws.amazon.com/elasticache/home#client-download:",
+  "ConfigurationEndpoint": null,
+  "Engine": "redis",
+  "EngineVersion": "4.0.10",
+  "LogDeliveryConfigurations": [],
+  "NotificationConfiguration": null,
+  "NumCacheNodes": 1,
+  "PendingModifiedValues": null,
+  "PreferredAvailabilityZone": "us-west-2a",
+  "PreferredMaintenanceWindow": "sat:09:30-sat:10:30",
+  "PreferredOutpostArn": null,
+  "ReplicationGroupId": "advanced-payment-manager-staging",
+  "ReplicationGroupLogDeliveryEnabled": false,
+  "SecurityGroups": [
+    {
+      "SecurityGroupId": "sg-057421ac3647121d8",
+      "Status": "active"
+    }
+  ],
+  "SnapshotRetentionLimit": 0,
+  "SnapshotWindow": "11:30-12:30",
+  "TransitEncryptionEnabled": true
+}
