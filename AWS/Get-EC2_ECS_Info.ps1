@@ -310,10 +310,18 @@ getCW_EC2_MetricUtilization "EBSWriteOps" $ec2InstanceId $region $startTime $end
 getCW_EC2_MetricUtilization "DiskReadOps" $ec2InstanceId $region $startTime $endTime
 getCW_EC2_MetricUtilization "DiskWriteOps" $ec2InstanceId $region $startTime $endTime
 
+#**********************************************************************
+#   S T A G I N G
+#**********************************************************************
+
 Set-AWSCredential -ProfileName PlatformCostsROStage
 
 $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging"
 Set-Location $outputDir
+
+#**********************************************************************
+#   P R O D U C T I O N
+#**********************************************************************
 
 Set-AWSCredential -ProfileName PlatformCostsRO
 
@@ -321,10 +329,13 @@ $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production"
 Set-Location $outputDir
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+
+
 $Regions = @("us-east-2", "eu-west-1")
 $Regions = @("eu-west-1")
 $region = "eu-west-1"
 $region = "us-west-2"
+
 $yearMonth = "2022-08"
 
 # $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
@@ -333,18 +344,23 @@ $yearMonth = "2022-08"
 # $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
 # $endTime = Get-Date -Date "2022-07-31 23:59:59Z"
 
-$startTime = Get-Date -Date "2022-08-01 00:00:00Z"
-$endTime = Get-Date -Date "2022-08-31 23:59:59Z"
+# $startTime = Get-Date -Date "2022-08-01 00:00:00Z"
+# $endTime = Get-Date -Date "2022-08-31 23:59:59Z"
+
+$startTime = Get-Date -Date "2022-09-01 00:00:00Z"
+$endTime = Get-Date -Date "2022-09-30 23:59:59Z"
+$yearMonth = "2022-09"
 
 $outputDir
 $Regions
 $startTime
 $endTime
+$yearMonth
 
 # 2H 15M Staging
 # xH xxM Production
 
-gatherMonthlyEC2_Utilization_Data $outputDir $Regions "2022-08" $startTime $endTime
+gatherMonthlyEC2_Utilization_Data $outputDir $Regions $yearMonth $startTime $endTime
 
 #endregion #################### EC2 Utilization ####################
 
@@ -370,25 +386,23 @@ $Regions = @("eu-central-1")
 $region = "us-west-2"
 $cluster = "mservice-prod02"
 
-# Takes ~ X Minutes
+# Takes ~ 2 Hours 30 Minutes - Production, 40 Minutes - Staging
 
 $runStartTime = Get-Date
 
 foreach ($region in $Regions)
 {
-    # $startTime = Get-Date -Date "2022-06-01 00:00:00Z"
-    # $endTime = Get-Date -Date "2022-06-30 23:59:59Z"
-    # $outputDirYearMonth = "$outputDir\Cluster_Service_Utilization\2022-06"
-    # Set-Location $outputDirYearMonth    
+    # $startTime = Get-Date -Date "2022-08-01 00:00:00Z"
+    # $endTime = Get-Date -Date "2022-08-31 23:59:59Z"
+    # $yearMonth = "2022-08"
 
-    # $startTime = Get-Date -Date "2022-07-01 00:00:00Z"
-    # $endTime = Get-Date -Date "2022-07-31 23:59:59Z"
-    # $outputDirYearMonth = "$outputDir\Cluster_Service_Utilization\2022-07"    
-    # Set-Location $outputDirYearMonth
+    $startTime = Get-Date -Date "2022-09-01 00:00:00Z"
+    $endTime = Get-Date -Date "2022-09-30 23:59:59Z"
+    $yearMonth = "2022-09"
 
-    $startTime = Get-Date -Date "2022-08-01 00:00:00Z"
-    $endTime = Get-Date -Date "2022-08-31 23:59:59Z"
-    $outputDirYearMonth = "$outputDir\2022-08"
+    if (!(Test-Path -Path $yearMonth)) { New-Item -Name $yearMonth -ItemType Directory }
+
+    $outputDirYearMonth = "$outputDir\$yearMonth"    
     
     Set-Location $outputDirYearMonth       
 

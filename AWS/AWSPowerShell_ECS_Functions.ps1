@@ -467,7 +467,11 @@ function getECSTaskInfo([String]$cluster, $region)
         $output += ",$($tsk.AvailabilityZone)"
         $output += ",$($tsk.Cpu),$($tsk.Memory)"
         $output += ",$($tsk.DesiredStatus),$($tsk.LastStatus)"
-        $output += "," + (getTaskName($($tsk.TaskArn)))
+        # $output += "," + (getTaskName($($tsk.TaskArn)))
+        # ARN's turn out to be much better for joins
+        $output += ",$($tsk.TaskArn)"
+        # Don't need both of these.  Need to clean this up and only return one
+        # Start by fixing the PowerQueryStuff in the AWS Analysis files and then remove the next line
         $output += "," + (getTaskDefinitionName($($tsk.TaskDefinitionArn)))
         $output += ",$($tsk.TaskDefinitionArn)"
         $output += ",$($tsk.Version)"
