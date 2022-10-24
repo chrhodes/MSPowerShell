@@ -20,8 +20,14 @@ Set-Location $codeOutputDir
 . '.\AWSPowerShell_EC2_Functions.ps1'
 . '.\AWSPowerShell_ECS_Functions.ps1'
 
-. '.\Refresh_Data_Functions.ps1'
-. '.\Refresh_Utilization_Functions.ps1'
+. '.\AWSPowerShell_EC_Functions.ps1'
+
+. '.\Gather_EC2Data_Functions.ps1'
+. '.\Gather_ECSData_Functions.ps1'
+. '.\Gather_ASData_Functions.ps1'
+. '.\Gather_ECData_Functions.ps1'
+
+. '.\Gather_Utilization_Functions.ps1'
 
 #
 # If in VS Code, import module
@@ -43,8 +49,9 @@ Import-Module AWSPowerShell.NetCore
 
 Set-AWSCredential -ProfileName PlatformCostsROStage
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging"
-Set-Location $outputDir
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10.24"
+
+# Set-Location $outputDir
 
 #**********************************************************************
 #   P R O D U C T I O N
@@ -52,8 +59,9 @@ Set-Location $outputDir
 
 Set-AWSCredential -ProfileName PlatformCostsRO
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production"
-Set-Location $outputDir
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\2022.10.24"
+
+# Set-Location $outputDir
 
 #**********************************************************************
 #   S E T    R E G I O N S        G A T H E R    D A T A
@@ -61,21 +69,25 @@ Set-Location $outputDir
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 
-refreshEC2_Data $Regions                    # Prod Takes ~26 minutes (Staging ~6)
+createOutputDirectory $outputDir
 
-refreshEC2Volume_Data $Regions              # Prod Takes ~20 minutes (Staging ~5)
+gatherEC2_Data $outputDir $Regions                    # Prod Takes ~26 minutes (Staging ~6)
 
-refreshECS_ClusterData $Regions             # Prod Takes ~4 minutes (Staging ~2)
+gatherEC2Volume_Data $outputDir $Regions              # Prod Takes ~20 minutes (Staging ~5)
 
-refreshECS_ServiceData $Regions             # Prod Takes ~9 minutes (Staging ~4)
+gatherECS_ClusterData $outputDir $Regions             # Prod Takes ~4 minutes (Staging ~2)
 
-refreshECS_TaskData $Regions                # Prod Takes ~18 minutes (Staging ~4)
+gatherECS_ServiceData $outputDir $Regions             # Prod Takes ~9 minutes (Staging ~4)
 
-refreshECS_ContainerInstanceData $Regions   # Prod Takes ~5 minutes (Staging ~1)
+gatherECS_TaskData $outputDir $Regions                # Prod Takes ~18 minutes (Staging ~4)
 
-refreshECS_TaskDefinitionData $Regions      # Prod Takes ~60 minutes (Staging ~35)
+gatherECS_ContainerInstanceData $outputDir $Regions   # Prod Takes ~5 minutes (Staging ~1)
 
-refreshAS_Data $Regions                     # Prod Takes ~60 minutes (Staging ~12) - contains delay loops
+gatherECS_TaskDefinitionData $outputDir $Regions      # Prod Takes ~60 minutes (Staging ~35)
+
+gatherAS_Data $outputDir $Regions                     # Prod Takes ~60 minutes (Staging ~12) - contains delay loops
+
+gatherEC_CacheClusterData $outputDir $Regions
 
 #endregion minutes seconds
 
@@ -435,48 +447,48 @@ $runEndTime - $runStartTime | Select-Object Hours, Minutes, Seconds
 
 #region #################### AS AutoScalingGroup ####################
 
-$region = "us-west-2"
-$asGroup = "zin-prod-asg"
-$asInstance = "i-04be99315aebb9dd3"
+# $region = "us-west-2"
+# $asGroup = "zin-prod-asg"
+# $asInstance = "i-04be99315aebb9dd3"
 
-getAutoScalingGroupInfo $asGroup $region
+# getAutoScalingGroupInfo $asGroup $region
 
-Get-ASAutoScalingInstance -InstanceId $asGroup -Region $region
-Get-ASAutoScalingInstance -InstanceId $asInstance -Region $region
+# Get-ASAutoScalingInstance -InstanceId $asGroup -Region $region
+# Get-ASAutoScalingInstance -InstanceId $asInstance -Region $region
 
-$asInstances = $asInstances[0..5]
-getASAutoScalingInstanceInfo_FromInstances $asInstances $region
+# $asInstances = $asInstances[0..5]
+# getASAutoScalingInstanceInfo_FromInstances $asInstances $region
 
-getASAutoScalingInstanceInfo $asInstance $region
+# getASAutoScalingInstanceInfo $asInstance $region
 
-function refreshAS_Data([string[]]$Regions)
-{
-    ">>>>>>>>>> Gathering AS_AutoScaling_Groups <<<<<<<<<<"
+# function gatherAS_Data([string[]]$Regions)
+# {
+#     ">>>>>>>>>> Gathering AS_AutoScaling_Groups <<<<<<<<<<"
 
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
+#     foreach ($region in $Regions)
+#     {
+#         Set-Location $outputDir
+#         "---------- Processing $region ----------"
 
-        $asGroups = @(getAutoScalingGroups $region)
+#         $asGroups = @(getAutoScalingGroups $region)
         
-        getAutoScalingGroupInfo_FromInstances $asGroups $region  `
-            > "AS_AutoScaling_Groups_$(getRegionAbbreviation $region).csv"
-    }
+#         getAutoScalingGroupInfo_FromInstances $asGroups $region  `
+#             > "AS_AutoScaling_Groups_$(getRegionAbbreviation $region).csv"
+#     }
 
-    ">>>>>>>>>> Gathering AS_AutoScaling_Instances <<<<<<<<<<"
+#     ">>>>>>>>>> Gathering AS_AutoScaling_Instances <<<<<<<<<<"
 
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "---------- Processing $region ----------"
+#     foreach ($region in $Regions)
+#     {
+#         Set-Location $outputDir
+#         "---------- Processing $region ----------"
 
-        $asInstances = @(getAutoScalingInstances $region)
+#         $asInstances = @(getAutoScalingInstances $region)
         
-        getASAutoScalingInstanceInfo_FromInstances $asInstances $region  `
-            > "AS_AutoScaling_Instances_$(getRegionAbbreviation $region).csv"
-    }
-}
+#         getASAutoScalingInstanceInfo_FromInstances $asInstances $region  `
+#             > "AS_AutoScaling_Instances_$(getRegionAbbreviation $region).csv"
+#     }
+# }
 
 #endregion #################### AS AutoScalingGroup ####################
 

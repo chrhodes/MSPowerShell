@@ -12,8 +12,7 @@ function gatherEC2UtilizationMetricsForRegion(
     [string]$outputDir,
     [string]$yearMonth,    
     [string]$region,
-    [System.DateTime]$startTime, [System.DateTime]$endTime
-)
+    [System.DateTime]$startTime, [System.DateTime]$endTime)
 {
     Set-Location "$($outputDir)\EC2_Utilization"
     $outputDirYearMonth = "$($outputDir)\EC2_Utilization\$($yearMonth)"

@@ -1,16 +1,24 @@
 ################################################################################
 #
-# Refresh_Data_Functions.ps1
+# Gather_ECSData_Functions.ps1
+#
+#
+# NB. These functions do not check if the $outputDir exists.
+# Handle in the caller
 #
 ################################################################################
 
 Set-StrictMode -Version Latest
 
+#region #################### ECS Data ####################
+
 #region #################### ECS Cluster ####################
 
-function refreshECS_ClusterData([string[]]$regions)
+function gatherECS_ClusterData([string]$outputDir, [string[]]$regions)
 {
     $startTime = Get-Date
+
+    "Start Time: " + $startTime
 
     ">>>>>>>>>> Gathering ECS_ClusterInfo"
 
@@ -66,17 +74,18 @@ function refreshECS_ClusterData([string[]]$regions)
 
     $endTime = Get-Date
 
-    "Elapsed Time: "
-    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
+    "Elapsed Time: " + ($endTime - $startTime | Select-Object Hours, Minutes, Seconds)
 }
 
 #endregion #################### ECS Cluster ####################
 
 #region #################### ECS Cluster Service ####################
 
-function refreshECS_ServiceData([string[]]$regions)
+function gatherECS_ServiceData([string]$outputDir, [string[]]$regions)
 {
     $startTime = Get-Date
+
+    "Start Time: " + $startTime
 
     ">>>>>>>>>> Gathering ECS_ServicesInfo"
 
@@ -105,16 +114,18 @@ function refreshECS_ServiceData([string[]]$regions)
 
     $endTime = Get-Date
 
-    "Elapsed Time: "
-    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
+    "Elapsed Time: " + ($endTime - $startTime | Select-Object Hours, Minutes, Seconds)
 }
 
 #endregion #################### ECS Cluster Sevice ####################
 
 #region #################### ECS Task Definition ####################
-function refreshECS_TaskDefinitionData([string[]]$regions)
+
+function gatherECS_TaskDefinitionData([string]$outputDir, [string[]]$regions)
 {
     $startTime = Get-Date
+
+    "Start Time: " + $startTime
 
     ">>>>>>>>>> Gathering ECS_TaskDefinitionFamilies"
 
@@ -170,16 +181,18 @@ function refreshECS_TaskDefinitionData([string[]]$regions)
 
     $endTime = Get-Date
 
-    "Elapsed Time: "
-    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
+    "Elapsed Time: " + ($endTime - $startTime | Select-Object Hours, Minutes, Seconds)
 }
 
 #endregion #################### ECS Task Definition Families ####################
 
 #region #################### ECS Cluster Task ####################
-function refreshECS_TaskData([string[]]$regions)
+
+function gatherECS_TaskData([string]$outputDir, [string[]]$regions)
 {
     $startTime = Get-Date
+
+    "Start Time: " + $startTime    
 
     ">>>>>>>>>> Gathering ECS_TaskInfo"
 
@@ -237,17 +250,18 @@ function refreshECS_TaskData([string[]]$regions)
 
     $endTime = Get-Date
 
-    "Elapsed Time: "
-    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
+    "Elapsed Time: " + ($endTime - $startTime | Select-Object Hours, Minutes, Seconds)
 }
 
 #endregion #################### ECS Cluster Task ####################
 
 #region #################### ECS Cluster Containers ####################
 
-function refreshECS_ContainerInstanceData([string[]]$regions)
+function gatherECS_ContainerInstanceData([string]$outputDir, [string[]]$regions)
 {
     $startTime = Get-Date
+
+    "Start Time: " + $startTime
 
     ">>>>>>>>>> Gathering ECS_ContainerInstanceInfo"
 
@@ -264,210 +278,15 @@ function refreshECS_ContainerInstanceData([string[]]$regions)
 
     $endTime = Get-Date
 
-    "Elapsed Time: "
-    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
+    "Elapsed Time: " + ($endTime - $startTime | Select-Object Hours, Minutes, Seconds)
 }
 
 #endregion #################### ECS Cluster Containers ####################
 
-#region #################### ECS EC2 Instance ####################
-
-function refreshEC2_Data([string[]]$regions)
-{
-    $startTime = Get-Date
-
-    # "---------- Gathering ECS_ContainerEC2InstanceInfo for $region ----------"
-
-    # foreach ($region in $Regions)
-    # {
-    #     Set-Location $outputDir
-    #     "    ---- Processing $region ----------"
-
-    #     $clusters = @(getClusters $region)
-
-    #     getECSContainerEC2InstanceInfo_FromClusters $clusters $region `
-    #         > "ECS_ContainerEC2InstanceInfo_$($region).csv"
-    # }
-
-    ">>>>>>>>>> Gathering EC2_InstanceInfo"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "    ---- Processing $region"
-    
-        $instances = @(getEC2Instances $region)
-    
-        getEC2InstanceInfo_FromInstances $instances $region `
-            > "EC2_InstanceInfo_$(getRegionAbbreviation $region).csv"
-    }
-    
-    ">>>>>>>>>> Gathering EC2_Tags_Instance"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "    ---- Processing $region"
-    
-        $instances = @(getEC2Instances $region)
-    
-        getTags_FromEC2Instances $instances $region `
-            > "EC2_Tags_Instance_$(getRegionAbbreviation $region).csv"
-    }   
-    
-    $endTime = Get-Date
-
-    "Elapsed Time: "
-    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
-}
-
-function refreshEC2Volume_Data([string[]]$regions)
-{
-    $startTime = Get-Date
-
-    ">>>>>>>>>> Gathering EC2VolumeInfo"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "    ---- Processing $region"
-      
-        getEC2VolumeInfo_FromRegion $region `
-            > "EC2_VolumeInfo_$(getRegionAbbreviation $region).csv"
-    }
-    
-    # ">>>>>>>>>> Gathering EC2_Tags_Instance"
-
-    # foreach ($region in $Regions)
-    # {
-    #     Set-Location $outputDir
-    #     "    ---- Processing $region"
-    
-    #     $instances = @(getEC2Instances $region)
-    
-    #     getTags_FromEC2Instances $instances $region `
-    #         > "EC2_Tags_Instance_$(getRegionAbbreviation $region).csv"
-    # }   
-    
-    $endTime = Get-Date
-
-    "Elapsed Time: "
-    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
-}
-
-#endregion #################### ECS EC2 Instance ####################
-
-#region #################### EC2 InstanceType ####################
-
-function refreshEC2_InstanceTypes([string[]]$regions)
-{
-    $startTime = Get-Date
-
-    ">>>>>>>>>> Gathering EC2_InstanceTypes"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "    ---- Processing $region"
-
-        $header = "Region,InstanceType"
-        $header += ",CurrentGeneration"
-        $header += ",BareMetal"
-
-        $header += ",SustainedClockSpeedGhz"
-        $header += ",DefaultCores"
-        $header += ",DefaultThreadsPerCore"
-        $header += ",DefaultVCpus"
-        $header += ",Memory (GB)"
-        $header += ",BurstablePerformanceSupported"
-
-        $header += ",EBS.EbsOptimizedSupport"
-        $header += ",EBS.EncryptionSupport"
-        $header += ",EBS.NvmeSupport"
-
-        $header += ",InstanceStorageSupported"
-        $header += ",IS.TotalSize (GB)"
-        $header += ",IS.EncryptionSupport"
-        $header += ",IS.NvmeSupport"    
-
-        $header > "EC2_InstanceTypes_$($region).csv"
-
-        getEC2InstanceTypes $region >> "EC2_InstanceTypes_$($region).csv"
-    }
-
-    $endTime = Get-Date
-
-    "Elapsed Time: "
-    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
-}
-
-#endregion #################### EC2 InstanceType ####################
-
-#region #################### AS AutoScalingGroup ####################
-
-function refreshAS_Data([string[]]$Regions)
-{
-    $startTime = Get-Date
-
-    ">>>>>>>>>> Gathering AS_AutoScaling_Groups"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "    ---- Processing $region"
-
-        $asGroups = @(getAutoScalingGroups $region)
-        
-        getAutoScalingGroupInfo_FromInstances $asGroups $region  `
-            > "AS_AutoScaling_Groups_$(getRegionAbbreviation $region).csv"
-    }
-
-    ">>>>>>>>>> Gathering AS_AutoScaling_Instances"
-
-    foreach ($region in $Regions)
-    {
-        Set-Location $outputDir
-        "    ---- Processing $region"
-
-        $asInstances = @(getAutoScalingInstances $region)
-        
-        getASAutoScalingInstanceInfo_FromInstances $asInstances $region  `
-            > "AS_AutoScaling_Instances_$(getRegionAbbreviation $region).csv"
-    }
-
-    $endTime = Get-Date
-
-    "Elapsed Time: "
-    $endTime - $startTime | Select-Object Hours, Minutes, Seconds
-}
-
-#endregion #################### AS AutoScalingGroup ####################
-
-function gatherMonthlyEC2_Utilization_Data(
-    [string]$outputDir,    
-    [string[]]$regions, 
-    [string]$yearMonth,
-    [System.DateTime]$startTime, [System.DateTime]$endTime)
-{
-    $runStartTime = Get-Date
-    
-    ">>>>>>>>>> Gathering EC2 Utilization Data"
-
-    foreach ($region in $Regions)
-    {    
-        Set-Location $outputDir
-        # gatherEC2UtilizationMetricsForRegion $outputDir "2022-06" $region $startTime $endTime
-        gatherEC2UtilizationMetricsForRegion $outputDir $yearMonth $region $startTime $endTime
-    }   
-
-    $runEndTime = Get-Date
-
-    "Elapsed Time: "
-    $runEndTime - $runStartTime | Select-Object Hours, Minutes, Seconds
-}
+#endregion #################### ECS Data ####################
 
 ################################################################################
 #
-# Refresh_Data_Functions.ps1
+# Gather_ECSData_Functions.ps1
 #
 ################################################################################

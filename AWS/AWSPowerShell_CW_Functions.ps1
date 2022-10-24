@@ -2,6 +2,8 @@
 #
 # AWSPowerShell_CW_Functions.ps1
 #
+# CloudWatch
+#
 ################################################################################
 
 Set-StrictMode -Version Latest
@@ -365,7 +367,10 @@ Set-StrictMode -Version Latest
 #      Select-Object -Property @("TimeStamp", "Minimum", "Average", "Maximum") | 
 #      ConvertTo-Csv > i-57542c92.csv
 
-function getCW_EC2_CPUUtilization([string]$ec2InstanceId, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+function getCW_EC2_CPUUtilization(
+    [string]$ec2InstanceId, 
+    [string]$region, 
+    [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
 {
     # $utcStartTime=[System.DateTime]::UtcNow.AddDays(-40)
     # $utcEndTime=[System.DateTime]::UtcNow
@@ -399,7 +404,10 @@ function getCW_EC2_CPUUtilization([string]$ec2InstanceId, [string]$region, [Syst
 
 # getCW_EC2_NetworkInUtilization $ec2InstanceId $region $startTime $endTime
 
-function getCW_EC2_NetworkOutUtilization([string]$ec2InstanceId, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+function getCW_EC2_NetworkOutUtilization(
+    [string]$ec2InstanceId, 
+    [string]$region, 
+    [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
 {
     # $utcStartTime=[System.DateTime]::UtcNow.AddDays(-40)
     # $utcEndTime=[System.DateTime]::UtcNow
@@ -499,7 +507,11 @@ function getCW_EC2_MetricUtilization(
     }   
 }
 
-function getCW_EC2_NetworkInUtilization([string]$ec2InstanceId, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+function getCW_EC2_NetworkInUtilization(
+    [string]$ec2InstanceId, 
+    [string]$region, 
+    [System.DateTime]$utcStartTime, 
+    [System.DateTime]$utcEndTime)
 {
     # $utcStartTime=[System.DateTime]::UtcNow.AddDays(-40)
     # $utcEndTime=[System.DateTime]::UtcNow
@@ -530,7 +542,10 @@ function getCW_EC2_NetworkInUtilization([string]$ec2InstanceId, [string]$region,
 
 #region ECS
 
-function getCW_ECS_Cluster_CPUUtilization([string]$cluster, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+function getCW_ECS_Cluster_CPUUtilization(
+    [string]$cluster, 
+    [string]$region, 
+    [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
 {
     $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
     $dimFilter.Name="ClusterName"
@@ -594,7 +609,11 @@ function getCW_ECS_Cluster_CPUUtilization([string]$cluster, [string]$region, [Sy
 
 # getCW_ECS_Service_MemoryUtilization $cluster $service $region $utcStartTime $utcEndTime
 
-function getCW_ECS_Cluster_MemoryUtilization([string]$cluster, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+function getCW_ECS_Cluster_MemoryUtilization(
+    [string]$cluster, 
+    [string]$region, 
+    [System.DateTime]$utcStartTime, 
+    [System.DateTime]$utcEndTime)
 {
     $dimFilter=[Amazon.CloudWatch.Model.Dimension]::new()
     $dimFilter.Name="ClusterName"
@@ -620,7 +639,11 @@ function getCW_ECS_Cluster_MemoryUtilization([string]$cluster, [string]$region, 
     }    
 }
 
-function getCW_ECS_Service_CPUUtilization([string]$cluster, [string]$service, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+function getCW_ECS_Service_CPUUtilization(
+    [string]$cluster, 
+    [string]$service, 
+    [string]$region, 
+    [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
 {
     $clusterFilter=[Amazon.CloudWatch.Model.Dimension]::new()
     $clusterFilter.Name="ClusterName"
@@ -656,7 +679,12 @@ function getCW_ECS_Service_CPUUtilization([string]$cluster, [string]$service, [s
     }  
 }
 
-function getCW_ECS_Service_MemoryUtilization([string]$cluster, [string]$service, [string]$region, [System.DateTime]$utcStartTime, [System.DateTime]$utcEndTime)
+function getCW_ECS_Service_MemoryUtilization(
+    [string]$cluster, 
+    [string]$service, 
+    [string]$region, 
+    [System.DateTime]$utcStartTime, 
+    [System.DateTime]$utcEndTime)
 {
     $clusterFilter=[Amazon.CloudWatch.Model.Dimension]::new()
     $clusterFilter.Name="ClusterName"

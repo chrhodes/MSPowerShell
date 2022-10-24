@@ -125,6 +125,11 @@ function getRegionAbbreviation([string] $region)
     }
 }
 
+function createOutputDirectory([string]$outputDir, [string]$outputFolder)
+{
+    if (!(Test-Path -Path $outputDir)) { New-Item -Path "$outputDir" -ItemType Directory } 
+}
+
 ################################################################################
 #
 # End AWSPowerShell_Utility_Functions.ps1
