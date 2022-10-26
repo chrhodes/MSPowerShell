@@ -16,15 +16,17 @@ Set-Location $codeOutputDir
 . '.\AWSPowerShell_Utility_Functions.ps1'
 
 . '.\AWSPowerShell_AS_Functions.ps1'
+. '.\Gather_ASData_Functions.ps1'
+
 . '.\AWSPowerShell_CW_Functions.ps1'
+
 . '.\AWSPowerShell_EC2_Functions.ps1'
+. '.\Gather_EC2Data_Functions.ps1'
+
 . '.\AWSPowerShell_ECS_Functions.ps1'
+. '.\Gather_ECSData_Functions.ps1'
 
 . '.\AWSPowerShell_EC_Functions.ps1'
-
-. '.\Gather_EC2Data_Functions.ps1'
-. '.\Gather_ECSData_Functions.ps1'
-. '.\Gather_ASData_Functions.ps1'
 . '.\Gather_ECData_Functions.ps1'
 
 . '.\Gather_Utilization_Functions.ps1'
@@ -49,7 +51,7 @@ Import-Module AWSPowerShell.NetCore
 
 Set-AWSCredential -ProfileName PlatformCostsROStage
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10.24"
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10.25"
 
 # Set-Location $outputDir
 
@@ -59,7 +61,7 @@ $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10
 
 Set-AWSCredential -ProfileName PlatformCostsRO
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\2022.10.24"
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\2022.10.25"
 
 # Set-Location $outputDir
 
@@ -88,6 +90,10 @@ gatherECS_TaskDefinitionData $outputDir $Regions      # Prod Takes ~60 minutes (
 gatherAS_Data $outputDir $Regions                     # Prod Takes ~60 minutes (Staging ~12) - contains delay loops
 
 gatherEC_CacheClusterData $outputDir $Regions
+
+gatherEC_ReplicationGroupData $outputDir $Regions
+
+gatherEC_SnapshotData $outputDir $Regions
 
 #endregion minutes seconds
 

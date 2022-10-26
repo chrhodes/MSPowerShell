@@ -14,9 +14,8 @@ Set-StrictMode -Version Latest
 
 #region #################### EC CacheCluster ####################
 
-# $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10.24"
+# $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10.25"
 # $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
-
 
 function gatherEC_CacheClusterData([string]$outputDir, [string[]]$regions)
 {
@@ -46,6 +45,75 @@ function gatherEC_CacheClusterData([string]$outputDir, [string[]]$regions)
 }
 
 #endregion #################### EC CacheCluster ####################
+
+#region #################### EC ReplicationGroup ####################
+
+# $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10.25"
+# $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+
+function gatherEC_ReplicationGroupData([string]$outputDir, [string[]]$regions)
+{
+    $startTime = Get-Date
+
+    "Start Time: " + $startTime
+
+    ">>>>>>>>>> Gathering EC_ReplicationGroupInfo"
+
+    foreach ($region in $Regions)
+    {
+        Set-Location $outputDir
+        "    ---- Processing $region"
+
+        $repGroups = @(getECReplicationGroups $region)
+
+        getECReplicationGroupInfo_FromClusters $repGroups $region `
+            > "EC_ReplicationGroupInfo_$(getRegionAbbreviation $region).csv"
+    }
+
+    # TODO(crhodes)
+    # Add more sections here
+
+    $endTime = Get-Date
+
+    "Elapsed Time: " + ($endTime - $startTime | Select-Object Hours, Minutes, Seconds)
+}
+
+#endregion #################### EC ReplicationGroup ####################
+
+#region #################### EC Snapshot ####################
+
+# $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10.25"
+# $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+# gatherEC_SnapshotData $outputDir $Regions
+
+function gatherEC_SnapshotData([string]$outputDir, [string[]]$regions)
+{
+    $startTime = Get-Date
+
+    "Start Time: " + $startTime
+
+    ">>>>>>>>>> Gathering EC_SnapshotInfo"
+
+    foreach ($region in $Regions)
+    {
+        Set-Location $outputDir
+        "    ---- Processing $region"
+
+        # $clusters = @(getECCacheClusters $region)
+
+        getECSnapshotInfo_FromRegion $region `
+            > "EC_SnapshotInfo_$(getRegionAbbreviation $region).csv"
+    }
+
+    # TODO(crhodes)
+    # Add more sections here
+
+    $endTime = Get-Date
+
+    "Elapsed Time: " + ($endTime - $startTime | Select-Object Hours, Minutes, Seconds)
+}
+
+#endregion #################### EC Snapshot ####################
 
 #endregion #################### EC Data ####################
 

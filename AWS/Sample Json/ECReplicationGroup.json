@@ -1,0 +1,75 @@
+{
+  "ARN": "arn:aws:elasticache:us-west-2:122972921717:replicationgroup:advanced-payment-manager-staging",
+  "AtRestEncryptionEnabled": true,
+  "AuthTokenEnabled": true,
+  "AuthTokenLastModifiedDate": "2020-02-22T01:40:37.827-08:00",
+  "AutomaticFailover": {
+    "Value": "disabled"
+  },
+  "CacheNodeType": "cache.t2.micro",
+  "ClusterEnabled": false,
+  "ConfigurationEndpoint": null,
+  "DataTiering": {
+    "Value": "disabled"
+  },
+  "Description": "advanced-payment-manager-staging",
+  "GlobalReplicationGroupInfo": null,
+  "KmsKeyId": null,
+  "LogDeliveryConfigurations": [],
+  "MemberClusters": [
+    "advanced-payment-manager-staging-001",
+    "advanced-payment-manager-staging-002"
+  ],
+  "MemberClustersOutpostArns": [],
+  "MultiAZ": {
+    "Value": "disabled"
+  },
+  "NodeGroups": [
+    {
+      "NodeGroupId": "0001",
+      "NodeGroupMembers": [
+        {
+          "CacheClusterId": "advanced-payment-manager-staging-001",
+          "CacheNodeId": "0001",
+          "CurrentRole": "primary",
+          "PreferredAvailabilityZone": "us-west-2a",
+          "PreferredOutpostArn": null,
+          "ReadEndpoint": {
+            "Address": "advanced-payment-manager-staging-001.advanced-payment-manager-staging.lo68mz.usw2.cache.amazonaws.com",
+            "Port": 6379
+          }
+        },
+        {
+          "CacheClusterId": "advanced-payment-manager-staging-002",
+          "CacheNodeId": "0001",
+          "CurrentRole": "replica",
+          "PreferredAvailabilityZone": "us-west-2b",
+          "PreferredOutpostArn": null,
+          "ReadEndpoint": {
+            "Address": "advanced-payment-manager-staging-002.advanced-payment-manager-staging.lo68mz.usw2.cache.amazonaws.com",
+            "Port": 6379
+          }
+        }
+      ],
+      "PrimaryEndpoint": {
+        "Address": "master.advanced-payment-manager-staging.lo68mz.usw2.cache.amazonaws.com",
+        "Port": 6379
+      },
+      "ReaderEndpoint": {
+        "Address": "replica.advanced-payment-manager-staging.lo68mz.usw2.cache.amazonaws.com",
+        "Port": 6379
+      },
+      "Slots": null,
+      "Status": "available"
+    }
+  ],
+  "PendingModifiedValues": null,
+  "ReplicationGroupCreateTime": "0001-01-01T00:00:00",
+  "ReplicationGroupId": "advanced-payment-manager-staging",
+  "SnapshotRetentionLimit": 0,
+  "SnapshottingClusterId": null,
+  "SnapshotWindow": "11:30-12:30",
+  "Status": "available",
+  "TransitEncryptionEnabled": true,
+  "UserGroupIds": []
+}

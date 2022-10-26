@@ -1,0 +1,42 @@
+{
+  "ARN": "arn:aws:elasticache:us-west-2:122972921717:snapshot:automatic.bcdc-debredis-stg01-001-2022-10-23-22-00",
+  "AutomaticFailover": null,
+  "AutoMinorVersionUpgrade": true,
+  "CacheClusterCreateTime": "2020-11-29T20:09:30.226-08:00",
+  "CacheClusterId": "bcdc-debredis-stg01-001",
+  "CacheNodeType": "cache.m3.large",
+  "CacheParameterGroupName": "default.redis3.2",
+  "CacheSubnetGroupName": "bil-cd-deb-stg01",
+  "DataTiering": {
+    "Value": "disabled"
+  },
+  "Engine": "redis",
+  "EngineVersion": "3.2.6",
+  "KmsKeyId": null,
+  "NodeSnapshots": [
+    {
+      "CacheClusterId": null,
+      "CacheNodeCreateTime": "2020-11-29T20:09:30.226-08:00",
+      "CacheNodeId": "0001",
+      "CacheSize": "3 GB",
+      "NodeGroupConfiguration": null,
+      "NodeGroupId": null,
+      "SnapshotCreateTime": "2022-10-23T15:01:10-07:00"
+    }
+  ],
+  "NumCacheNodes": 1,
+  "NumNodeGroups": 0,
+  "Port": 6379,
+  "PreferredAvailabilityZone": "us-west-2c",
+  "PreferredMaintenanceWindow": "wed:08:30-wed:09:30",
+  "PreferredOutpostArn": null,
+  "ReplicationGroupDescription": null,
+  "ReplicationGroupId": null,
+  "SnapshotName": "automatic.bcdc-debredis-stg01-001-2022-10-23-22-00",
+  "SnapshotRetentionLimit": 1,
+  "SnapshotSource": "automated",
+  "SnapshotStatus": "available",
+  "SnapshotWindow": "22:00-23:00",
+  "TopicArn": null,
+  "VpcId": "vpc-aaee05cd"
+}
