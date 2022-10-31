@@ -21,7 +21,7 @@ function gatherEC_CacheClusterData([string]$outputDir, [string[]]$regions)
 {
     $startTime = Get-Date
 
-    "Start Time: " + $startTime
+    "Start Time (gatherEC_CacheClusterData): " + $startTime
 
     ">>>>>>>>>> Gathering EC_CacheClusterInfo"
 
@@ -48,14 +48,15 @@ function gatherEC_CacheClusterData([string]$outputDir, [string[]]$regions)
 
 #region #################### EC ReplicationGroup ####################
 
-# $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10.25"
+# $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10.24"
 # $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+# gatherEC_ReplicationGroupData $outputDir $Regions
 
 function gatherEC_ReplicationGroupData([string]$outputDir, [string[]]$regions)
 {
     $startTime = Get-Date
 
-    "Start Time: " + $startTime
+    "Start Time (gatherEC_ReplicationGroupData): " + $startTime
 
     ">>>>>>>>>> Gathering EC_ReplicationGroupInfo"
 
@@ -64,9 +65,9 @@ function gatherEC_ReplicationGroupData([string]$outputDir, [string[]]$regions)
         Set-Location $outputDir
         "    ---- Processing $region"
 
-        $repGroups = @(getECReplicationGroups $region)
+        # $repGroups = @(getECReplicationGroups $region)
 
-        getECReplicationGroupInfo_FromClusters $repGroups $region `
+        getECReplicationGroupInfo_FromRegion $region `
             > "EC_ReplicationGroupInfo_$(getRegionAbbreviation $region).csv"
     }
 
@@ -90,7 +91,7 @@ function gatherEC_SnapshotData([string]$outputDir, [string[]]$regions)
 {
     $startTime = Get-Date
 
-    "Start Time: " + $startTime
+    "Start Time (gatherEC_SnapshotData): " + $startTime
 
     ">>>>>>>>>> Gathering EC_SnapshotInfo"
 

@@ -51,7 +51,7 @@ Import-Module AWSPowerShell.NetCore
 
 Set-AWSCredential -ProfileName PlatformCostsROStage
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10.25"
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10.31"
 
 # Set-Location $outputDir
 
@@ -61,7 +61,7 @@ $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10
 
 Set-AWSCredential -ProfileName PlatformCostsRO
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\2022.10.25"
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\2022.10.31"
 
 # Set-Location $outputDir
 
@@ -89,11 +89,11 @@ gatherECS_TaskDefinitionData $outputDir $Regions      # Prod Takes ~60 minutes (
 
 gatherAS_Data $outputDir $Regions                     # Prod Takes ~60 minutes (Staging ~12) - contains delay loops
 
-gatherEC_CacheClusterData $outputDir $Regions
+gatherEC_CacheClusterData $outputDir $Regions         # Prod Takes ~ minutes (Staging ~2)
 
-gatherEC_ReplicationGroupData $outputDir $Regions
+gatherEC_ReplicationGroupData $outputDir $Regions     # Prod Takes ~ minutes (Staging ~1)
 
-gatherEC_SnapshotData $outputDir $Regions
+gatherEC_SnapshotData $outputDir $Regions             # Prod Takes ~ minutes (Staging ~1)
 
 #endregion minutes seconds
 

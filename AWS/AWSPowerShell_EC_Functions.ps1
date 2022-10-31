@@ -42,16 +42,19 @@ function getECCacheClusterCount([String[]]$Regions)
 {
     foreach ($region in $Regions)
     {
-        $instances = Get-ECCacheCluster -Region $region
+        # Forcing to array makes Count work even if zero entries
+        $instances = @(Get-ECCacheCluster -Region $region)
 
-        if ($null -eq $instances)
-        {
-            "$($region),0"
-        }
-        else
-        {
-            "$($region),$($instances.Count)"
-        }
+        "$($region),$($instances.Count)"        
+
+        # if ($null -eq $instances)
+        # {
+        #     "$($region),0"
+        # }
+        # else
+        # {
+        #     "$($region),$($instances.Count)"
+        # }
     }
 }
 
@@ -157,20 +160,14 @@ function getECCacheClusterInfo_FromClusters($cacheClusterArray, $region)
 # $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
 # $region = $Regions[0]
 # getECSnapshotCount $Regions
+
 function getECSnapshotCount([String[]]$Regions)
 {
     foreach ($region in $Regions)
     {
-        $instances = Get-ECSnapshot -Region $region
+        $instances = @(Get-ECSnapshot -Region $region)
 
-        if ($null -eq $instances)
-        {
-            "$($region),0"
-        }
-        else
-        {
-            "$($region),$($instances.Count)"
-        }
+        "$($region),$($instances.Count)"
     }
 }
 
@@ -223,6 +220,10 @@ function getECSnapshotInfo([string]$snapshotName, [string]$region)
         # }
         # else
         # {
+
+        # PowerShell shows all values for property on a array of things
+        # Handle the mess in PowerQuery for now.
+
            $output += ",$($nodeSnapshots.CacheClusterId)"
            $output += ",$($nodeSnapshots.CacheNodeCreateTime)"
            $output += ",$($nodeSnapshots.CacheNodeId)"
@@ -286,7 +287,7 @@ function getECSnapshotInfo([string]$snapshotName, [string]$region)
 function getECSnapshotInfo_FromRegion($region)
 {
     # Establish Column Headers
-    # This needs to be in same order as field display in getECCacheClusterInfo
+    # This needs to be in same order as the field display in getECSnapshotInfo
 
     $output = "Region,ECSnapshotName"
     $output += ",ARN"
@@ -356,16 +357,9 @@ function getECReplicaionGroupCount([String[]]$Regions)
 {
     foreach ($region in $Regions)
     {
-        $instances = Get-ECReplicationGroup -Region $region
+        $instances = @(Get-ECReplicationGroup -Region $region)
 
-        if ($null -eq $instances)
-        {
-            "$($region),0"
-        }
-        else
-        {
-            "$($region),$($instances.Count)"
-        }
+        "$($region),$($instances.Count)"
     }
 }
 
@@ -374,39 +368,53 @@ function getECReplicaionGroupCount([String[]]$Regions)
 function getECReplicationGroups([String]$region)
 {
     @(Get-ECReplicationGroup -Region $region) | 
-       ForEach-Object {$_.SnapshotName}
+       ForEach-Object {$_.ReplicationGroupId}
 }
 
-# $replicationGroupId = $instances[0].CacheClusterId
+# $replicationGroupId = $instances[0].ReplicationGroupId
+# getECReplicationGroupInfo $replicationGroupId $region
 
 function getECReplicationGroupInfo([string]$replicationGroupId, [string]$region)
 {
     $replicationGroup = Get-ECReplicationGroup -ReplicationGroupId $replicationGroupId -Region $region
 
-    $memberClusters = $replicationGroup | Select-Object MemberClusters
-    $nodeGroups = $replicationGroup | Select-Object -Expand NodeGroups
+    $memberClusters = @($replicationGroup | Select-Object MemberClusters)
+    $nodeGroups = @($replicationGroup | Select-Object -Expand NodeGroups)
 
     $output = "$($region),$($replicationGroupId)"
 
     try
     {
-        $output += ",$($snapShot.ARN)"
-        $output += ",$($snapShot.CacheClusterCreateTime)"
-        $output += ",$($snapShot.CacheClusterId)"
-        $output += ",$($snapShot.DataTiering.Value)"
-        $output += ",$($snapShot.Engine)"
-        $output += ",$($snapShot.EngineVersion)"                
-        $output += ",$($snapShot.NodeSnapshots.Count)"
-        $output += ",$($nodeSnapshots.Count)"
-        $output += ",$($snapShot.SnapshotSource)"          
-        $output += ",$($snapShot.SnapshotStatus)"          
-        $output += ",$($snapShot.SnapshotWindow)"          
-        $output += ",$($snapShot.VpcId)"                                          
+        $output += ",$($replicationGroup.ARN)"
+        $output += ",$($replicationGroup.AutomaticFailover.Value)"
+        $output += ",$($replicationGroup.CacheNodeType)"
+        $output += ",$($replicationGroup.ClusterEnabled)"
+        $output += ",$($replicationGroup.DataTiering.Value)"
+        $output += ",$($replicationGroup.Description)"       
+        $output += ",$($replicationGroup.GlobalReplicationGroupInfo)"   
+
+        $output += ",$($memberClusters.Count)"
+        # MemberClusters is an Array
+        $output += ",$($replicationGroup.MemberClusters)"
+
+        $output += ",$($replicationGroup.MemberClustersOutpostArns)"        
+        $output += ",$($replicationGroup.MultiAZ.Value)" 
+
+        $output += ",$($nodeGroups.Count)" 
+        $output += ",$($nodeGroups.NodeGroupId)" 
+        $output += ",$($nodeGroups.NodeGroupId)"
+
+        $output += ",$($replicationGroup.ReplicationGroupCreateTime)" 
+        $output += ",$($replicationGroup.SnapshotRetentionLimit)" 
+        $output += ",$($replicationGroup.SnapshottingClusterId)" 
+        $output += ",$($replicationGroup.SnapshotWindow)" 
+        $output += ",$($replicationGroup.Status)" 
+        $output += ",$($replicationGroup.UserGroupIds)" 
     }
     catch
     {
         <#Do this if a terminating exception happens#>
-        Write-Error "getECSnapshotInfo $output"
+        Write-Error "getECReplicationGroupInfo $output"
     }
     finally
     {
@@ -415,29 +423,45 @@ function getECReplicationGroupInfo([string]$replicationGroupId, [string]$region)
     }
 }
 
-function getECReplicationGroups([string[]]$replicationGroups, $region)
+# $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+# $region = $Regions[0]
+
+# getECReplicationGroupInfo_FromRegion $region
+
+function getECReplicationGroupInfo_FromRegion($region)
 {
     # Establish Column Headers
-    # This needs to be in same order as field display in getECCacheClusterInfo
+    # This needs to be in same order as the field display in getECReplicationGroupInfo
 
-    $output = "Region,ECSnapshotName"
+    $output = "Region,ReplicationGroupId"
     $output += ",ARN"
-    $output += ",CacheClusterCreateTime"
-    $output += ",CacheClusterId"
-    $output += ",DataTieringValue"
-    $output += ",Engine,EngineVersion"
-    $output += ",NodeSnapshots.Count"
-    $output += ",nodeSnapshots.Count"
-    $output += ",SnapshotSource"
-    $output += ",ShaphotStatus"
-    $output += ",SnapshotWindow"            
-    $output += ",VpcId"
+    $output += ",AutomaticFailOver"
+    $output += ",CacheNodeType"
+    $output += ",ClusterEnabled"
+    $output += ",DataTiering"
+    $output += ",Description"
+    $output += ",GlobalReplicationGroupInfo"
+
+    $output += ",MemberClustersCount"
+    $output += ",MemberClusters"
+
+    $output += ",MemberClustersOutpostArns"
+    $output += ",MultiAZ"
+
+    $output += ",NodeGroupsCount"
+
+    $output += ",ReplicationGroupCreateTime" 
+    $output += ",SnapshotRetentionLimit"  
+    $output += ",SnapshottingClusterId"
+    $output += ",SnapshotWindow"
+    $output += ",Status"           
+    $output += ",UserGroupIds"
 
     $output
 
-    foreach($cacheClusterId in $cacheClusterArray)
+    foreach($replicationGroup in @(getECReplicationGroups $region))
     {
-        getECCacheClusterInfo $cacheClusterId $region
+        getECReplicationGroupInfo $replicationGroup $region
     }
 }
 
