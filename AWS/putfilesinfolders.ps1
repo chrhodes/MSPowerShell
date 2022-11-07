@@ -58,14 +58,40 @@ $outputFolder = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\EC2_
 
 Set-Location $outputFolder
 
-$csvFolder = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\EC2_Utilization\2022-07"
 $reportFolder = "C:\Users\crhodes\My Drive\Budget & Costs\Reports\Staging\2022-07\EC2"
 
 $unprocessedFolder = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\EC2_Utilization\2022-06\eu-central-1"
-$processedFolder = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\EC2_Utilization\2022-06\Processed\eu-central-1"
 
-Set-Location $unprocessedFolder
-$folders = @(Get-Item *)
+$csvFolder = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\EC2_Utilization\2022-10\eu-central-1"
+
+Set-Location $csvFolder
+$csvFolders = @(Get-Item *)
+$csvFolders.Count
+
+$processedFolder = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\EC2_Utilization\2022-10\Processed\eu-central-1"
+
+Set-Location $processedFolder
+$processedFolders = @(Get-Item *)
+$processedFolders.Count
+
+$processedCount = 0
+
+foreach ($folder in $processedFolders)
+{
+    $i = 0
+    $targetFolder = "$($csvFolder)\$($folder.Name)"
+
+    # $targetFolder
+
+    if ((Test-Path -Path $targetFolder))
+    {
+        $targetFolder + " has been processed, removing"
+        Remove-Item $targetFolder -Recurse -Force
+        $processedCount++     
+    }
+}
+
+"$processedCount Files Removed"
 
 foreach ($folder in $folders)
 {

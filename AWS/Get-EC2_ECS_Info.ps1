@@ -51,7 +51,7 @@ Import-Module AWSPowerShell.NetCore
 
 Set-AWSCredential -ProfileName PlatformCostsROStage
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10.31"
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.11.07"
 
 # Set-Location $outputDir
 
@@ -61,7 +61,7 @@ $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.10
 
 Set-AWSCredential -ProfileName PlatformCostsRO
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\2022.10.31"
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\2022.11.07"
 
 # Set-Location $outputDir
 
@@ -70,6 +70,8 @@ $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\2022
 #**********************************************************************
 
 $Regions = @("us-west-2", "us-east-2", "eu-west-1", "eu-central-1")
+
+$runStartTime = Get-Date
 
 createOutputDirectory $outputDir
 
@@ -94,6 +96,15 @@ gatherEC_CacheClusterData $outputDir $Regions         # Prod Takes ~ minutes (St
 gatherEC_ReplicationGroupData $outputDir $Regions     # Prod Takes ~ minutes (Staging ~1)
 
 gatherEC_SnapshotData $outputDir $Regions             # Prod Takes ~ minutes (Staging ~1)
+
+$runEndTime = Get-Date
+
+"Elapsed Time: "
+$runEndTime - $runStartTime | Select-Object Hours, Minutes, Seconds
+
+# Last Run Times
+# Staging - 1H 7m
+# Production - 4H 2m
 
 #endregion minutes seconds
 
@@ -211,7 +222,6 @@ $taskDefinitions.Count
 $taskDefinitions[1..9]
 
 $taskDefinitions[1..9] | ForEach-Object { getECSTaskDefinitionInfo $_ $region }
-
 
 #endregion #################### ECS Cluster Task ####################
 
