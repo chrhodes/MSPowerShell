@@ -51,7 +51,7 @@ Import-Module AWSPowerShell.NetCore
 
 Set-AWSCredential -ProfileName PlatformCostsROStage
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.11.07"
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.11.14"
 
 # Set-Location $outputDir
 
@@ -61,7 +61,7 @@ $outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Staging\2022.11
 
 Set-AWSCredential -ProfileName PlatformCostsRO
 
-$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\2022.11.07"
+$outputDir = "C:\Users\crhodes\My Drive\Budget & Costs\CSV Files\Production\2022.11.14"
 
 # Set-Location $outputDir
 
@@ -103,8 +103,8 @@ $runEndTime = Get-Date
 $runEndTime - $runStartTime | Select-Object Hours, Minutes, Seconds
 
 # Last Run Times
-# Staging - 1H 7m
-# Production - 4H 2m
+# Staging - 0H 55m, 1H 7m
+# Production - 3h 42M, 4H 2m
 
 #endregion minutes seconds
 
