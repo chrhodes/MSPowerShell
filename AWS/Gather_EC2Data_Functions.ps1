@@ -150,6 +150,54 @@ function gatherMonthlyEC2_Utilization_Data(
     "Elapsed Time: " + ($runEndTime - $runStartTime | Select-Object Hours, Minutes, Seconds)
 }
 
+function gatherMonthlyECS_Utilization_Data(
+    [string]$outputDir,    
+    [string[]]$regions, 
+    [string]$yearMonth,
+    [System.DateTime]$startTime, [System.DateTime]$endTime)
+{
+    Set-Location "$($outputDir)\Cluster_Service_Utilization"
+    $outputDirYearMonth = "$($outputDir)\Cluster_Service_Utilization\$($yearMonth)"
+
+    if (!(Test-Path -Path $yearMonth)) { New-Item -Name $yearMonth -ItemType Directory } 
+
+    $runStartTime = Get-Date
+    
+    ">>>>>>>>>> Gathering ECS Utilization Data"
+
+    foreach ($region in $Regions)
+    {
+        # if (!(Test-Path -Path $yearMonth)) { New-Item -Name $yearMonth -ItemType Directory }
+    
+        # $outputDirYearMonth = "$outputDir\$yearMonth"    
+        
+        Set-Location $outputDirYearMonth       
+    
+        if (!(Test-Path -Path $region)) { New-Item -Name $region -ItemType Directory }
+    
+        $regionOutputDirectory = "$outputDirYearMonth\$region"
+    
+        ">> Processing $region"
+    
+        $clusterArray = @(getClusters $region)
+    
+        foreach($cluster in $clusterArray)
+        {
+            Set-Location $regionOutputDirectory
+    
+            if (!(Test-Path -Path $cluster)) { New-Item -Name $cluster -ItemType Directory }
+    
+            $outputDirectory = "$regionOutputDirectory\$cluster"
+    
+            GetClusterUtilizationDataFiles $region $cluster $startTime $endTime $outputDirectory -IncludeCluster -IncludeService -GatherData
+        }
+    }
+
+    $runEndTime = Get-Date
+
+    "Elapsed Time: " + ($runEndTime - $runStartTime | Select-Object Hours, Minutes, Seconds)
+}
+
 ################################################################################
 #
 # Gather_EC2Data_Functions.ps1
